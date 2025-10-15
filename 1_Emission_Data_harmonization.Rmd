@@ -868,6 +868,7 @@ feed_intake <- merged_metadata$Data.Out %>%
       str_trim() %>%
       str_remove("/$")
   )
+  
 
 
 # Step 3: Convert replicate-level intake to individual-level when possible
@@ -886,7 +887,17 @@ feed_intake <- feed_intake %>%
       Out.Unit.Animals == "replicate" & !is.na(T.Animals) & T.Animals > 0 ~ "individual",
       TRUE ~ Out.Unit.Animals
     )
+  ) %>%
+  mutate(
+  Out.Unit = case_when(
+    !is.na(Out.Unit.Amount) & !is.na(Out.Unit.Animals) & !is.na(Out.Unit.Time) ~
+      paste0(Out.Unit.Amount, "/", Out.Unit.Animals, "/", Out.Unit.Time),
+    !is.na(Out.Unit.Amount) & !is.na(Out.Unit.Animals) ~
+      paste0(Out.Unit.Amount, "/", Out.Unit.Animals),
+    TRUE ~ Out.Unit  # fallback to whatever was already there
   )
+)
+
 
 
 

@@ -107,7 +107,7 @@ feed_tree_nfc_removed
 
 ```
 
-
+this chunck is to harmonize names 
 ```{r, warning=FALSE,message=FALSE}
 
 # ─────────────────────────────────────────────────────────────
@@ -146,6 +146,7 @@ nutrient_donor_map <- tribble(
   "leucaena leucocephala leaves dried ground",     "leucaena leucocephala leaves ground",
   "wheat straw effective microbes",                "wheat straw",
   "maize & wheat offal",                           "maize offal",
+  "maize offal ground",                            "maize offal",
   "leucaena leucocephala dried",                   "leucaena leucocephala leaves ground"
 ) %>%
   mutate(
@@ -188,9 +189,7 @@ Ing_classif_long <- Ing_classif %>%
     D.Item = canonicalize_item(D.Item),
     B.Code = str_trim(B.Code)
   ) %>%
-  select(B.Code, D.Item, DC.Variable, DC.Value)
-
-nutr_ing <- build_nutr_table(Ing_classif_long, type_lookup, backfill_by_item = TRUE)
+  select(B.Code, D.Item, DC.Variable, DC.Value,is_entire_diet,is_group)
 
 
 ```
@@ -241,7 +240,7 @@ csv_long <- csv_clean %>%
   filter(!is.na(DC.Value_new))
 
 # 4) Prepare Ing_classif with same canonical key
-Ing_classif <- Ing_classif %>%
+Ing_classif <- Ing_classif_long %>%
   mutate(
     D.Item_can = canonicalize_item(D.Item),
     DC.Value = ifelse(
@@ -291,7 +290,7 @@ is_false_or_na <- function(x) is.na(x) | x == FALSE | x == "FALSE"
 is_true        <- function(x) !is.na(x) & (x == TRUE | x == "TRUE")
 
 # Global D.Item → D.Type (built on canonical names)
-type_lookup <- diets %>% 
+type_lookup <- ingredients %>% 
   transmute(
     D.Item = canonicalize_item(D.Item),
     D.Type = str_trim(D.Type)
@@ -517,10 +516,6 @@ classif_ing <- canon_ing %>%   # ← use canonical means for INGREDIENTS
   method1() %>% method2() %>% method3() %>% method4() %>%
   method5() %>% method6() %>% method7()
 
-
-
-
-
 ```
 
 ```{r}
@@ -600,6 +595,7 @@ ingredients_joinable <- ingredients %>%
 # Simplify classification tables (already canonicalized)
 classif_ing_simple <- classif_ing %>%
   select(D.Item, Ingredient_Category = M7_Category)
+
 
 
 # Join the classifications

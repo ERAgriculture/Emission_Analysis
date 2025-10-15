@@ -28,7 +28,20 @@ yield_data       <- read.csv("data/yield_data.csv")
 weights_unique   <- read.csv("data/weights_unique.csv")
 practice_tbl     <- read.csv("data/practice_tbl.csv")
 merged_metadata <- readRDS("~/Emission_Analysis/data/merged_metadata_nutrition_inference.rds")
+classif_ing_simple <- read.csv("~/Emission_Analysis/data/classif_ing_simple.csv")
+diet_percentages <- read.csv("~/Emission_Analysis/data/diet_percentages_classif.csv")
 
+```
+
+
+### to be removed papers with problems 
+
+```{r}
+#EM1047 too high intake not possible 
+
+GE_combined<-GE_combined %>%
+  filter(B.Code!="EM1047")
+  
 ```
 
 
@@ -38,6 +51,7 @@ merged_metadata <- readRDS("~/Emission_Analysis/data/merged_metadata_nutrition_i
 
 # Step 1: Make sure the key columns match (D.Item and A.Level.Name)
 GE_combined_for_merge <- GE_combined %>%
+  filter(!is.na(CH4_kg_year))%>%
   rename(A.Level.Name = D.Item)%>%
   select(-"ED.Mean.T")
 
@@ -56,28 +70,6 @@ bcode_per_product <- yield_with_emissions %>%          # or yield_data
 bcode_per_product
 
 ```
-
-```{r}
-# # 0) Yield papers (unique B.Codes that have yield linked)
-# yield_bcodes <- yield_with_emissions %>%
-#   distinct(B.Code)
-# 
-# practice_with_yield <- practice_in_2plus %>%
-#   semi_join(yield_bcodes, by = "B.Code")
-# 
-# # 3) Count by product (Cattle / Sheep / Goat)
-# practice_yield_by_product <- practice_with_yield %>%
-#   left_join(
-#     merged_metadata$`Prod.Out` %>%
-#       filter(P.Product %in% c("Cattle","Sheep","Goat")) %>%
-#       distinct(B.Code, P.Product),
-#     by = "B.Code"
-#   ) %>%
-#   count(P.Product, name = "Papers_with_practice_≥2_classified_and_yield")
-
-
-```
-
 
 
 ### 18.2) Plot the data
@@ -995,3 +987,102 @@ add_summ
 sub_summ
 
 ```
+
+
+###set 2 
+
+```{r}
+# ─────────────────────────────────────────────────────────────
+# Libraries
+# ─────────────────────────────────────────────────────────────
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(stringr)
+library(forcats)
+
+
+
+# ─────────────────────────────────────────────────────────────
+# Clean and merge: diet_percentages + ingredient classification
+# ─────────────────────────────────────────────────────────────
+diet_percentages <- diet_percentages %>%
+  mutate(D.Item_clean = tolower(str_trim(D.Item)))
+
+classif_ing_simple <- classif_ing_simple %>%
+  mutate(D.Item_clean = tolower(str_trim(D.Item)))
+
+diet_pct_classif <- diet_percentages %>%
+  left_join(classif_ing_simple %>% select(D.Item_clean, Ingredient_Category),
+            by = "D.Item_clean") %>%
+  filter(!is.na(Ingredient_Category))
+
+# ─────────────────────────────────────────────────────────────
+# FIGURE 1: Barplot of Contribution by Ingredient Category
+# ─────────────────────────────────────────────────────────────
+diet_pct_classif %>%
+  group_by(Ingredient_Category) %>%
+  summarise(TotalPct = sum(Percentage_of_Diet, na.rm = TRUE)) %>%
+  ggplot(aes(x = reorder(Ingredient_Category, TotalPct), y = TotalPct)) +
+  geom_col(fill = "forestgreen") +
+  coord_flip() +
+  labs(
+    title = "Contribution of Ingredient Categories to Livestock Diets",
+    x = "Ingredient Category",
+    y = "Cumulative Share of Diet (%)"
+  ) +
+  theme_minimal()
+
+# ─────────────────────────────────────────────────────────────
+# FIGURE 2: Histogram of Practice Type Intensity (Addition vs Substitution)
+# ─────────────────────────────────────────────────────────────
+practice_tbl %>%
+  filter(Practice %in% c("Addition", "Substitution")) %>%
+  ggplot(aes(x = Magnitude_pct, fill = Practice)) +
+  geom_histogram(binwidth = 2, color = "white") +
+  facet_wrap(~Practice, scales = "free_y") +
+  labs(
+    title = "Magnitude of Diet Change by Practice Type",
+    x = "Change in % of Diet",
+    y = "Number of Cases"
+  ) +
+  theme_minimal()
+
+# ─────────────────────────────────────────────────────────────
+# FIGURE 3: Top Substitution Pairs
+# ─────────────────────────────────────────────────────────────
+practice_tbl %>%
+  filter(Practice == "Substitution", Substitution_pairs != "") %>%
+  count(Substitution_pairs, sort = TRUE) %>%
+  slice_head(n = 10) %>%
+  ggplot(aes(x = reorder(Substitution_pairs, n), y = n)) +
+  geom_col(fill = "steelblue") +
+  coord_flip() +
+  labs(
+    title = "Top 10 Substitution Category Pairs",
+    x = "From → To",
+    y = "Frequency"
+  ) +
+  theme_minimal()
+
+# ─────────────────────────────────────────────────────────────
+# FIGURE 4: GE vs CH4 Emissions
+# ─────────────────────────────────────────────────────────────
+GE_combined %>%
+  filter(!is.na(CH4_kg_year), !is.na(GE_daily)) %>%
+  ggplot(aes(x = GE_daily, y = CH4_kg_year)) +
+  geom_point(alpha = 0.6, color = "gray30") +
+  geom_smooth(method = "lm", se = FALSE, color = "firebrick") +
+  labs(
+    title = "Methane Emissions vs Gross Energy Intake",
+    x = "Gross Energy (MJ/day)",
+    y = "Methane (kg CH₄ / year)"
+  ) +
+  theme_minimal()
+
+
+
+```
+
+
+
