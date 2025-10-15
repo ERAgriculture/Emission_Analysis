@@ -27,7 +27,21 @@ author:
 
 
 ```{r}
-merged_metadata <- readRDS("~/ERL/Emission_Analysis/data/merged_metadata.rds")
+
+library(ERAg)
+library(stringr)
+library(knitr)
+library(dplyr)
+library(DT)
+library(readxl)
+library(tidyr)
+library(arrow)
+library(ggplot2)
+library(data.table)
+library(purrr)
+library(janitor)
+library(ggalt)
+merged_metadata <- readRDS("~/Emission_Analysis/data/merged_metadata.rds")
 ```
 
 

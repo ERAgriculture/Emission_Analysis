@@ -5,7 +5,7 @@ date: "2025-09-26"
 ---
 ```{r}
 
-merged_metadata <- readRDS("~/ERL/Emission_Analysis/data/merged_metadata_harmonized_subset.rds")
+merged_metadata <- readRDS("~/Emission_Analysis/data/merged_metadata_harmonized_subset.rds")
 
 
 

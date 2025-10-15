@@ -27,7 +27,7 @@ GE_combined      <- read.csv("data/GE_combined.csv")
 yield_data       <- read.csv("data/yield_data.csv")
 weights_unique   <- read.csv("data/weights_unique.csv")
 practice_tbl     <- read.csv("data/practice_tbl.csv")
-merged_metadata <- readRDS("~/ERL/Emission_Analysis/data/merged_metadata_nutrition_inference.rds")
+merged_metadata <- readRDS("~/Emission_Analysis/data/merged_metadata_nutrition_inference.rds")
 
 ```
 

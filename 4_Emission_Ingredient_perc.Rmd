@@ -5,8 +5,8 @@ date: "2025-09-26"
 ---
 
 ```{r}
-ingredients <- readRDS("~/ERL/Emission_Analysis/data/ingredients_harmonized_subset.rds")
-feed_intake <- read.csv("~/ERL/Emission_Analysis/data/feed_intake_harmonized.csv")
+ingredients <- readRDS("~/Emission_Analysis/data/ingredients_harmonized_subset.rds")
+feed_intake <- read.csv("~/Emission_Analysis/data/feed_intake_harmonized.csv")
 
 ```
 

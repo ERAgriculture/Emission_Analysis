@@ -5,11 +5,11 @@ date: "2025-09-26"
 ---
 
 ```{r}
-diet_percentages <- read.csv("~/ERL/Emission_Analysis/data/diet_percentages.csv")
-total_amounts <- read.csv("~/ERL/Emission_Analysis/data/total_amounts.csv")
-classif_ing_simple <- read.csv("~/ERL/Emission_Analysis/data/classif_ing_simple.csv")
-merged_metadata <- readRDS("~/ERL/Emission_Analysis/data/merged_metadata_nutrition_inference.rds")
-GE_combined<-read.csv("~/ERL/Emission_Analysis/data/GE_combined.csv")
+diet_percentages <- read.csv("~/Emission_Analysis/data/diet_percentages_classif.csv")
+total_amounts <- read.csv("~/Emission_Analysis/data/total_amounts.csv")
+classif_ing_simple <- read.csv("~/Emission_Analysis/data/classif_ing_simple.csv")
+merged_metadata <- readRDS("~/Emission_Analysis/data/merged_metadata_nutrition_inference.rds")
+GE_combined<-read.csv("~/Emission_Analysis/data/GE_combined.csv")
 
 ctrl_key <- merged_metadata$MT.Out[, .(
   B.Code,

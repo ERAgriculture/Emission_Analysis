@@ -5,12 +5,12 @@ date: "2025-09-26"
 ---
 
 ```{r}
-Gross_energy <- read.csv("~/ERL/Emission_Analysis/data/Gross_energy.csv")
-merged_metadata <- readRDS("~/ERL/Emission_Analysis/data/merged_metadata_nutrition_inference.rds")
-ingredients <- readRDS("~/ERL/Emission_Analysis/data/ingredients_harmonized_subset.rds")
-total_amounts <- read.csv("~/ERL/Emission_Analysis/data/total_amounts.csv")
-feed_intake_ingredients <- read.csv("~/ERL/Emission_Analysis/data/feed_intake_ingredients_harmonized.csv")
-feed_intake_diet <- read.csv("~/ERL/Emission_Analysis/data/feed_intake_diet_harmonized.csv")
+Gross_energy <- read.csv("~/Emission_Analysis/data/Gross_energy.csv")
+merged_metadata <- readRDS("~/Emission_Analysis/data/merged_metadata_nutrition_inference.rds")
+ingredients <- readRDS("~/Emission_Analysis/data/ingredients_harmonized_subset.rds")
+total_amounts <- read.csv("~/Emission_Analysis/data/total_amounts.csv")
+feed_intake_ingredients <- read.csv("~/Emission_Analysis/data/feed_intake_ingredients_harmonized.csv")
+feed_intake_diet <- read.csv("~/Emission_Analysis/data/feed_intake_diet_harmonized.csv")
 
 
 ```

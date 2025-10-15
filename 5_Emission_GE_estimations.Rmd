@@ -6,8 +6,8 @@ date: "2025-09-26"
 
 
 ```{r}
-merged_metadata <- readRDS("~/ERL/Emission_Analysis/data/merged_metadata_nutrition_inference.rds")
-ingredients <- readRDS("~/ERL/Emission_Analysis/data/ingredients_harmonized_subset.rds")
+merged_metadata <- readRDS("~/Emission_Analysis/data/merged_metadata_nutrition_inference.rds")
+ingredients <- readRDS("~/Emission_Analysis/data/ingredients_harmonized_subset.rds")
 
 ```
 
