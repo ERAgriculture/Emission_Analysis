@@ -23,10 +23,10 @@ library(purrr)
 library(janitor)
 library(ggalt)
 
-GE_combined      <- read.csv("data/GE_combined.csv")          
-yield_data       <- read.csv("data/yield_data.csv")
-weights_unique   <- read.csv("data/weights_unique.csv")
-practice_tbl     <- read.csv("data/practice_tbl.csv")
+GE_combined      <- read.csv("~/Emission_Analysis/data/GE_combined.csv")          
+yield_data       <- read.csv("~/Emission_Analysis/data/yield_data.csv")
+weights_unique   <- read.csv("~/Emission_Analysis/data/weights_unique.csv")
+practice_tbl     <- read.csv("~/Emission_Analysis/data/practice_tbl.csv")
 merged_metadata <- readRDS("~/Emission_Analysis/data/merged_metadata_nutrition_inference.rds")
 classif_ing_simple <- read.csv("~/Emission_Analysis/data/classif_ing_simple.csv")
 diet_percentages <- read.csv("~/Emission_Analysis/data/diet_percentages_classif.csv")
@@ -41,11 +41,13 @@ diet_percentages <- read.csv("~/Emission_Analysis/data/diet_percentages_classif.
 
 GE_combined<-GE_combined %>%
   filter(B.Code!="EM1047")
-  
+
+#BO1076 loo at practice tbl becaus esays no change but ther eis 
+
 ```
 
 
-### 18.1) Merge yield and emission data 
+### 18.1) Merge yield and emission data and number of papers 
 
 ```{r}
 
@@ -55,12 +57,21 @@ GE_combined_for_merge <- GE_combined %>%
   rename(A.Level.Name = D.Item)%>%
   select(-"ED.Mean.T")
 
+
+yield_data <- yield_data %>%
+  filter(!is.na(ED.Mean.T))
+
+
 # Step 2: Merge yield and emission data
-yield_with_emissions <- yield_data %>%
+yield_with_emissions <- GE_combined_for_merge %>%
   left_join(
-    GE_combined_for_merge,
+    yield_data,
     by = c("B.Code", "A.Level.Name")
-  )
+  )%>%
+    filter(!is.na(ED.Mean.T))%>%
+  filter(!is.na(CH4_kg_year))
+
+  
 
 # distinct B.Code per product
 bcode_per_product <- yield_with_emissions %>%          # or yield_data
@@ -69,8 +80,128 @@ bcode_per_product <- yield_with_emissions %>%          # or yield_data
 
 bcode_per_product
 
+practice_tbl<-practice_tbl%>%
+  filter(B.Code %in% yield_with_emissions$B.Code)
+
+length(unique(practice_tbl$B.Code))
+
 ```
 
+
+primary data exploration
+```{r}
+# ─────────────────────────────────────────────────────────────
+# Libraries
+# ─────────────────────────────────────────────────────────────
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(stringr)
+library(forcats)
+
+# ─────────────────────────────────────────────────────────────
+# Clean and merge: diet_percentages + ingredient classification
+# ─────────────────────────────────────────────────────────────
+diet_percentages <- diet_percentages %>%
+  mutate(D.Item_clean = tolower(str_trim(D.Item)))
+
+classif_ing_simple <- classif_ing_simple %>%
+  mutate(D.Item_clean = tolower(str_trim(D.Item)))
+
+diet_pct_classif <- diet_percentages %>%
+  left_join(classif_ing_simple %>% select(D.Item_clean, Ingredient_Category),
+            by = "D.Item_clean") %>%
+  filter(!is.na(Ingredient_Category))
+
+# ─────────────────────────────────────────────────────────────
+# FIGURE 1: Barplot of Contribution by Ingredient Category
+# ─────────────────────────────────────────────────────────────
+diet_pct_classif %>%
+  group_by(Ingredient_Category) %>%
+  summarise(TotalPct = sum(Percentage_of_Diet, na.rm = TRUE)) %>%
+  ggplot(aes(x = reorder(Ingredient_Category, TotalPct), y = TotalPct)) +
+  geom_col(fill = "forestgreen") +
+  coord_flip() +
+  labs(
+    title = "Contribution of Ingredient Categories to Livestock Diets",
+    x = "Ingredient Category",
+    y = "Cumulative Share of Diet (%)"
+  ) +
+  theme_minimal()
+
+# ─────────────────────────────────────────────────────────────
+# FIGURE 2: Histogram of Practice Type Intensity (Addition vs Substitution)
+# ─────────────────────────────────────────────────────────────
+library(ggplot2)
+library(dplyr)
+
+# Compute count of unique B.Code per Practice
+practice_counts <- practice_tbl %>%
+  filter(Practice %in% c("Addition", "Substitution", "No change")) %>%
+  group_by(Practice) %>%
+  summarise(N_cases = n_distinct(B.Code)) %>%
+  ungroup()
+
+# Join back to the main table for labeling inside each facet
+practice_labeled <- practice_tbl %>%
+  filter(Practice %in% c("Addition", "Substitution", "No change")) %>%
+  left_join(practice_counts, by = "Practice")
+
+# Base plot with counts annotated in facet titles
+ggplot(practice_labeled, aes(x = Magnitude_pct, fill = Practice)) +
+  geom_histogram(binwidth = 2, color = "white") +
+  facet_wrap(~ Practice + N_cases, scales = "free_y",
+             labeller = labeller(.cols = function(practice) {
+               paste0(practice, "\n(n = ", practice_counts$N_cases[match(practice, practice_counts$Practice)], ")")
+             })) +
+  labs(
+    title = "Magnitude of Diet Change by Practice Type",
+    x = "Change in % of Diet",
+    y = "Number of Cases",
+    fill = "Practice"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    strip.text = element_text(face = "bold", size = 12),
+    legend.position = "none"
+  )
+
+
+# ─────────────────────────────────────────────────────────────
+# FIGURE 3: Top Substitution Pairs
+# ─────────────────────────────────────────────────────────────
+practice_tbl %>%
+  filter(Practice == "Substitution", Substitution_pairs != "") %>%
+  count(Substitution_pairs, sort = TRUE) %>%
+  slice_head(n = 10) %>%
+  ggplot(aes(x = reorder(Substitution_pairs, n), y = n)) +
+  geom_col(fill = "steelblue") +
+  coord_flip() +
+  labs(
+    title = "Top 10 Substitution Category Pairs",
+    x = "From → To",
+    y = "Frequency"
+  ) +
+  theme_minimal()
+
+# ─────────────────────────────────────────────────────────────
+# FIGURE 4: GE vs CH4 Emissions
+# ─────────────────────────────────────────────────────────────
+GE_combined %>%
+  filter(!is.na(CH4_kg_year), !is.na(GE_daily)) %>%
+  ggplot(aes(x = GE_daily, y = CH4_kg_year)) +
+  geom_point(alpha = 0.6, color = "gray30") +
+  geom_smooth(method = "lm", se = FALSE, color = "firebrick") +
+  labs(
+    title = "Methane Emissions vs Gross Energy Intake",
+    x = "Gross Energy (MJ/day)",
+    y = "Methane (kg CH₄ / year)"
+  ) +
+  theme_minimal()
+
+
+
+```
 
 ### 18.2) Plot the data
 ```{r}
@@ -132,7 +263,7 @@ ggplot(yield_milk, aes(x = ED.Mean.T, y = CH4_kg_year, color = P.Product)) +
     labels = scales::comma_format()
   ) +
   labs(
-    title = "CH4 Emissions vs. Meat Yield",
+    title = "CH4 Emissions vs. Milk Yield",
     x = "Milk Yield per Individual (kg)",
     y = "Annual CH4 Emissions (kg)",
     color = "Livestock Species"
@@ -184,218 +315,6 @@ ggplot(emissions_by_species, aes(x = P.Product, y = CH4_kg_year, fill = P.Produc
 
 
 
-```{r}
-## 1) Live‑weight table --------------------------------------------------------
-bw_tbl <- weights_unique %>% 
-  select(B.Code, LiveWeight_kg = Out.WG.Start) %>% 
-  filter(!is.na(LiveWeight_kg))
-
-## 2) Merge with CH₄ and keep P.Product already present -----------------------
-ch4_vs_bw <- GE_combined %>%                       # contains P.Product
-  filter(!is.na(CH4_kg_year)) %>% 
-  left_join(bw_tbl, by = "B.Code") %>% 
-  filter(!is.na(LiveWeight_kg) & LiveWeight_kg > 0)
-
-## 3) Plot ---------------------------------------------------------------------
-##########################################################
-## CH4 vs. live‑weight with 95 % confidence intervals   ##
-##########################################################
-
-ggplot(ch4_vs_bw,
-       aes(x = LiveWeight_kg, y = CH4_kg_year, colour = P.Product)) +
-  geom_point(alpha = 0.65, size = 2.3) +
-  geom_smooth(method  = "lm",
-              formula = y ~ log10(x),  # linear in log‑weight
-              se      = TRUE,          # << confidence ribbon
-              linetype = "dashed",
-              linewidth = 1) +
-  scale_x_log10(breaks = scales::log_breaks(), labels = scales::comma) +
-  labs(
-    title  = "Annual CH4 emissions vs. live weight",
-    x      = "Body weight (kg, log scale)",
-    y      = "CH₄  (kg animal⁻¹ year⁻¹)",
-    colour = "Species"
-  ) +
-  theme_minimal(base_size = 13) +
-  theme(legend.position = "bottom")
-
-
-
-```
-```{r}
-wg<-merged_metadata$Data.Out%>%filter(Out.Subind=="Weight Gain")
-###############################################################################
-##  STANDARDISE WEIGHT-GAIN TO kg animal⁻¹ day⁻¹  (no totals, no wk/mo)      ##
-###############################################################################
-wg_clean <- wg %>%
-  ## 1. normalise text ---------------------------------------------------------
-  mutate(
-    unit_raw = tolower(trimws(Out.Unit)),
-    value    = as.numeric(ED.Mean.T)                 # be sure it's numeric
-  ) %>%
-  
-  ## 2. discard relative indices (% IBW, % SGR) -------------------------------
-  filter(
-    !str_detect(unit_raw, "% ibw") &
-    !str_detect(unit_raw, "% sgr")
-  ) %>%
-  
-  ## 3. keep only entries that already contain “/d” or “/day” ------------------
-  filter(str_detect(unit_raw, "/d") | str_detect(unit_raw, "/day") |
-         str_detect(unit_raw, "g/kg metabolic weight")) %>%
-  
-  ## 4. parse amount unit ------------------------------------------------------
-  mutate(
-    amount_unit = case_when(
-      str_starts(unit_raw, "mg") ~ "mg",
-      str_starts(unit_raw, "g")  ~ "g",
-      str_starts(unit_raw, "kg") ~ "kg",
-      TRUE                       ~ NA_character_
-    ),
-    gain_kg = case_when(
-      amount_unit == "mg" ~ value / 1e6,
-      amount_unit == "g"  ~ value / 1e3,
-      amount_unit == "kg" ~ value,
-      TRUE                ~ NA_real_
-    )
-  ) %>%
-  
-  ## 5. handle “g/kg metabolic weight” -----------------------------------------
-  left_join(
-    weights_unique %>% 
-      select(B.Code, A.Level.Name, BW_start_kg = Out.WG.Start),
-    by = c("B.Code", "A.Level.Name")
-  ) %>%
-  mutate(
-    ADG_kg = case_when(
-      str_detect(unit_raw, "g/kg metabolic weight") &
-        !is.na(value) & !is.na(BW_start_kg)
-          ~ (value / 1000) * (BW_start_kg ^ 0.75),   # g → kg × BW^0.75
-      TRUE ~ gain_kg                                # already kg/d
-    )
-  ) %>%
-  
-  ## 6. final screen -----------------------------------------------------------
-  filter(!is.na(ADG_kg) & ADG_kg > 0) %>%
-  select(B.Code, A.Level.Name, ADG_kg)
-
-```
-
-```{r}
-############################################################
-##  EMISSION INTENSITY  (kg CH₄  kg-¹ live-weight gain)   ##
-############################################################
-
-
-## 1. merge CH₄ and ADG ------------------------------------
-ei_df <- GE_combined %>%                    # CH₄ table
-  select(B.Code, A.Level.Name = D.Item,
-         CH4_kg_year, P.Product) %>%
-  inner_join(
-    wg_clean,                               # weight-gain table
-    by = c("B.Code", "A.Level.Name")
-  ) %>%
-
-  ## 2. compute emission intensity -------------------------
-  mutate(
-    gain_kg_year = ADG_kg * 365,                           # kg yr-¹
-    EI_CH4_kg = CH4_kg_year / gain_kg_year
-  ) %>%
-
-  ## 3. basic QC  ------------------------------------------
-  filter(
-    !is.na(EI_CH4_kg) & EI_CH4_kg > 0,          # remove missing / negative
-    EI_CH4_kg < 1                               # drop extreme outliers (>1 kg CH₄ kg-¹ LW-gain)
-  )
-
-length(unique(ei_df$B.Code))
-
-# A) box-and-jitter by species -----------------------------------------------
-ggplot(ei_df, aes(x = P.Product, y = EI_CH4_kg, fill = P.Product)) +
-  geom_boxplot(outlier.shape = NA, alpha = 0.35) +
-  geom_jitter(width = 0.15, alpha = 0.65, size = 2) +
-  scale_y_continuous("Emission intensity (kg CH₄ kg⁻¹ LW-gain)",
-                     labels = scales::comma_format()) +
-  labs(title = "Enteric-methane intensity of growth",
-       x = NULL) +
-  theme_minimal(base_size = 13) +
-  theme(legend.position = "none")
-
-# B) relationship between growth rate and EI ---------------------------------
-ggplot(ei_df, aes(x = ADG_kg, y = EI_CH4_kg, colour = P.Product)) +
-  geom_point(alpha = 0.7, size = 2.3) +
-  geom_smooth(method = "lm", se = TRUE, linetype = "dashed") +
-  scale_x_log10("Average daily gain (kg animal⁻¹ day⁻¹)",
-                breaks = scales::log_breaks(),
-                labels = scales::comma_format()) +
-  scale_y_continuous("Emission intensity (kg CH₄ kg⁻¹ LW-gain)",
-                     labels = scales::comma_format()) +
-  labs(title = "Faster-growing animals generally emit less CH₄ per kg gain",
-       colour = "Species") +
-  theme_minimal(base_size = 13) +
-  theme(legend.position = "bottom")
-
-```
-
-```{r,warning=FALSE}
-library(dplyr); library(ggplot2); library(scales)
-# 0.  Make sure your weight-gain table is available
-#     (this is the object you built in the earlier step)
-adg_clean <- wg_clean %>%                 # <- rename for clarity
-  select(B.Code, A.Level.Name, ADG_kg)    # keep only the essentials
-# 1.  Bring EI together with the absolute-CH₄ table you already built
-ei_tbl <- adg_clean %>%                           # has A.Level.Name
-  inner_join(
-    GE_combined, 
-    by = c("B.Code"       = "B.Code",             # same name
-           "A.Level.Name" = "D.Item")             # different names
-  ) %>% 
-  mutate(
-    EI = CH4_kg_year / (ADG_kg * 365)             # kg CH₄ kg⁻¹ LW-gain
-  )
-
-
-# 2.  Median split lines (or choose any threshold you like)
-vline <- median(ei_tbl$CH4_kg_year,   na.rm = TRUE)
-hline <- median(ei_tbl$EI,            na.rm = TRUE)
-
-x_lim <- range(ei_tbl$ADG_kg,  na.rm = TRUE)   # e.g. 0.002 – 0.8
-y_lim <- range(ei_tbl$EI,      na.rm = TRUE)   # e.g. 0.005 – 1.2
-ch4_lim <- range(ei_tbl$CH4_kg_year, na.rm = TRUE)
-
-
-# 3.  Plot ----------------------------------------------------------------
-ggplot(ei_tbl,
-       aes(x = ADG_kg,
-           y = EI,
-           colour = CH4_kg_year,
-           size   = CH4_kg_year)) +
-  geom_point(alpha = 0.7) +
-  geom_smooth(method = "lm", se = TRUE, colour = "black") +
-  scale_x_log10(limits = x_lim,
-                breaks  = log_breaks(),
-                labels  = comma_format()) +
-  scale_y_log10(limits = y_lim,
-                breaks  = c(.005, .01, .03, .1, .3, 1),
-                labels  = comma_format()) +
-  scale_colour_viridis_c(option = "plasma",
-                         trans   = "log10",
-                         limits  = ch4_lim,
-                         name    = "Annual CH₄ (kg)") +
-  scale_size(range = c(2, 6),
-             trans  = "log10",
-             limits = ch4_lim,
-             guide  = "none") +
-  facet_wrap(~ P.Product) +                # same axes in every facet
-  labs(title   = "Faster-growing animals emit less CH4 per kg gain",
-       subtitle = "Axes are identical across cattle, goat and sheep panels",
-       x = "Average daily gain (kg animal⁻¹ day⁻¹, log scale)",
-       y = "Emission intensity (kg CH4 kg⁻¹ live-weight gain)",
-       caption = "Point colour & size scale with absolute annual CH4 per animal") +
-  theme_minimal(base_size = 12) +
-  theme(legend.position = "right")
-
-```
 
 ```{r}
 ##############################################
@@ -457,26 +376,6 @@ ggplot(ei_prod, aes(x = P.Product, y = EI_CH4_prod,
   theme_minimal(base_size = 13) +
   theme(legend.position = "none")
 
-# ── B) Relationship between yield and EI ────────────────────────────────
-ggplot(ei_prod,
-       aes(x = Yield_kg_day,
-           y = EI_CH4_prod,
-           colour = P.Product)) +
-  geom_point(alpha = .7, size = 2.3) +
-  geom_smooth(method = "lm", se = TRUE, linetype = "dashed") +
-  scale_x_log10("Yield (kg animal⁻¹ day⁻¹, log scale)",
-                breaks = scales::log_breaks(),
-                labels = scales::comma_format()) +
-  scale_y_log10("Emission-intensity (kg CH₄ kg⁻¹ product)",
-                breaks = scales::log_breaks(),
-                labels = scales::comma_format()) +
-  facet_wrap(~ Product, nrow = 1) +
-  labs(title  = "Higher-yielding animals emit less CH₄ per kg of product",
-       colour = "Species") +
-  theme_minimal(base_size = 13) +
-  theme(legend.position = "bottom")
-
-length(unique(ei_prod$B.Code))
 
 ```
 ## Practice diet analysis 
@@ -988,101 +887,6 @@ sub_summ
 
 ```
 
-
-###set 2 
-
-```{r}
-# ─────────────────────────────────────────────────────────────
-# Libraries
-# ─────────────────────────────────────────────────────────────
-library(dplyr)
-library(ggplot2)
-library(readr)
-library(stringr)
-library(forcats)
-
-
-
-# ─────────────────────────────────────────────────────────────
-# Clean and merge: diet_percentages + ingredient classification
-# ─────────────────────────────────────────────────────────────
-diet_percentages <- diet_percentages %>%
-  mutate(D.Item_clean = tolower(str_trim(D.Item)))
-
-classif_ing_simple <- classif_ing_simple %>%
-  mutate(D.Item_clean = tolower(str_trim(D.Item)))
-
-diet_pct_classif <- diet_percentages %>%
-  left_join(classif_ing_simple %>% select(D.Item_clean, Ingredient_Category),
-            by = "D.Item_clean") %>%
-  filter(!is.na(Ingredient_Category))
-
-# ─────────────────────────────────────────────────────────────
-# FIGURE 1: Barplot of Contribution by Ingredient Category
-# ─────────────────────────────────────────────────────────────
-diet_pct_classif %>%
-  group_by(Ingredient_Category) %>%
-  summarise(TotalPct = sum(Percentage_of_Diet, na.rm = TRUE)) %>%
-  ggplot(aes(x = reorder(Ingredient_Category, TotalPct), y = TotalPct)) +
-  geom_col(fill = "forestgreen") +
-  coord_flip() +
-  labs(
-    title = "Contribution of Ingredient Categories to Livestock Diets",
-    x = "Ingredient Category",
-    y = "Cumulative Share of Diet (%)"
-  ) +
-  theme_minimal()
-
-# ─────────────────────────────────────────────────────────────
-# FIGURE 2: Histogram of Practice Type Intensity (Addition vs Substitution)
-# ─────────────────────────────────────────────────────────────
-practice_tbl %>%
-  filter(Practice %in% c("Addition", "Substitution")) %>%
-  ggplot(aes(x = Magnitude_pct, fill = Practice)) +
-  geom_histogram(binwidth = 2, color = "white") +
-  facet_wrap(~Practice, scales = "free_y") +
-  labs(
-    title = "Magnitude of Diet Change by Practice Type",
-    x = "Change in % of Diet",
-    y = "Number of Cases"
-  ) +
-  theme_minimal()
-
-# ─────────────────────────────────────────────────────────────
-# FIGURE 3: Top Substitution Pairs
-# ─────────────────────────────────────────────────────────────
-practice_tbl %>%
-  filter(Practice == "Substitution", Substitution_pairs != "") %>%
-  count(Substitution_pairs, sort = TRUE) %>%
-  slice_head(n = 10) %>%
-  ggplot(aes(x = reorder(Substitution_pairs, n), y = n)) +
-  geom_col(fill = "steelblue") +
-  coord_flip() +
-  labs(
-    title = "Top 10 Substitution Category Pairs",
-    x = "From → To",
-    y = "Frequency"
-  ) +
-  theme_minimal()
-
-# ─────────────────────────────────────────────────────────────
-# FIGURE 4: GE vs CH4 Emissions
-# ─────────────────────────────────────────────────────────────
-GE_combined %>%
-  filter(!is.na(CH4_kg_year), !is.na(GE_daily)) %>%
-  ggplot(aes(x = GE_daily, y = CH4_kg_year)) +
-  geom_point(alpha = 0.6, color = "gray30") +
-  geom_smooth(method = "lm", se = FALSE, color = "firebrick") +
-  labs(
-    title = "Methane Emissions vs Gross Energy Intake",
-    x = "Gross Energy (MJ/day)",
-    y = "Methane (kg CH₄ / year)"
-  ) +
-  theme_minimal()
-
-
-
-```
 
 
 
