@@ -22,6 +22,11 @@ library(data.table)
 library(purrr)
 library(janitor)
 library(ggalt)
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(stringr)
+library(forcats)
 
 GE_combined      <- read.csv("~/Emission_Analysis/data/GE_combined.csv")          
 yield_data       <- read.csv("~/Emission_Analysis/data/yield_data.csv")
@@ -30,6 +35,27 @@ practice_tbl     <- read.csv("~/Emission_Analysis/data/practice_tbl.csv")
 merged_metadata <- readRDS("~/Emission_Analysis/data/merged_metadata_nutrition_inference.rds")
 classif_ing_simple <- read.csv("~/Emission_Analysis/data/classif_ing_simple.csv")
 diet_percentages <- read.csv("~/Emission_Analysis/data/diet_percentages_classif.csv")
+
+
+roman_to_name <- function(x) dplyr::recode(
+  x,
+  "I"   = "High-starch",
+  "II"  = "High-fat",
+  "III" = "Protein",
+  "IV"  = "Good forage",
+  "V"   = "Poor forage",
+  "VI"  = "Mineral/Vitamin",
+  .default = x,
+  .missing = NA_character_
+)
+
+# Update the ingredient database
+classif_ing_simple <- classif_ing_simple %>%
+  dplyr::mutate(
+    Ingredient_Category = roman_to_name(Ingredient_Category))
+    # If you also keep a diet-level tag, uncomment:
+    # , Diet_Category = roman_to_name(Diet_Category)
+  
 
 ```
 
@@ -93,12 +119,6 @@ primary data exploration
 # ─────────────────────────────────────────────────────────────
 # Libraries
 # ─────────────────────────────────────────────────────────────
-library(dplyr)
-library(ggplot2)
-library(readr)
-library(stringr)
-library(forcats)
-
 # ─────────────────────────────────────────────────────────────
 # Clean and merge: diet_percentages + ingredient classification
 # ─────────────────────────────────────────────────────────────
@@ -129,11 +149,6 @@ diet_pct_classif %>%
   ) +
   theme_minimal()
 
-# ─────────────────────────────────────────────────────────────
-# FIGURE 2: Histogram of Practice Type Intensity (Addition vs Substitution)
-# ─────────────────────────────────────────────────────────────
-library(ggplot2)
-library(dplyr)
 
 # Compute count of unique B.Code per Practice
 practice_counts <- practice_tbl %>%
@@ -202,7 +217,317 @@ GE_combined %>%
 
 
 ```
+## Emission in function of the highest cat in each diet 
 
+```{r}
+emission_ing_classif<-diet_pct_classif%>%
+  left_join(GE_combined_for_merge,by=c("B.Code","A.Level.Name"))%>%
+  filter(!is.na(CH4_kg_year))
+
+#number of unique codes 
+emission_ing_classif %>%
+  group_by(P.Product) %>%
+  summarise(n_unique_B = n_distinct(B.Code), .groups = "drop") %>%
+  arrange(desc(n_unique_B))
+
+```
+
+
+```{r}
+
+
+df <- emission_ing_classif
+
+# 1) Dominant ingredient per diet (max % of diet), keep Product
+dom <- df %>%
+  group_by(A.Level.Name) %>%
+  slice_max(Percentage_of_Diet, n = 1, with_ties = FALSE) %>%
+  ungroup() %>%
+  select(A.Level.Name, P.Product, dom_category = Ingredient_Category)
+
+# 2) One CH4 value per diet
+ch4 <- df %>%
+  group_by(A.Level.Name) %>%
+  summarise(CH4_kg_year = mean(CH4_kg_year, na.rm = TRUE), .groups = "drop")
+
+# 3) Join and summarise BY PRODUCT × DOMINANT INGREDIENT
+summary_by_prod_dom <- dom %>%
+  left_join(ch4, by = "A.Level.Name") %>%
+  group_by(P.Product, dom_category) %>%
+  summarise(
+    n_diets    = n(),
+    mean_CH4   = mean(CH4_kg_year, na.rm = TRUE),
+    median_CH4 = median(CH4_kg_year, na.rm = TRUE),
+    sd_CH4     = sd(CH4_kg_year, na.rm = TRUE),
+    .groups = "drop_last"
+  ) %>%
+  arrange(P.Product, desc(n_diets))
+
+summary_by_prod_dom
+
+```
+
+```{r}
+plot_df <- dom %>%
+  left_join(ch4, by = "A.Level.Name") %>%
+  filter(CH4_kg_year < 100)   # optional outlier trim; remove if not desired
+# get common y-limits across all products (after any filtering you apply)
+y_lims <- range(plot_df$CH4_kg_year, na.rm = TRUE)
+
+ggplot(plot_df, aes(x = dom_category, y = CH4_kg_year, fill = dom_category)) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.5) +
+  geom_jitter(width = 0.15, height = 0, alpha = 0.5, size = 1.4, show.legend = FALSE) +
+  facet_wrap(~ P.Product, scales = "fixed") +              # <- same y for all facets
+  scale_y_continuous(limits = y_lims, expand = expansion(mult = c(0.02, 0.05))) +
+  labs(x = NULL, y = "CH₄ (kg / animal / year)",
+       title = "Enteric CH₄ by dominant ingredient category within each product") +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 25, hjust = 1))
+
+
+
+```
+
+```{r}
+suppressPackageStartupMessages({
+  library(dplyr); library(stringr); library(tidyr); library(forcats); library(ggplot2)
+})
+
+# ---------- helpers ----------
+str_clean <- function(x) stringr::str_squish(as.character(x))
+has <- function(x, pat) stringr::str_detect(stringr::str_to_lower(coalesce(x, "")),
+                                            stringr::str_to_lower(pat))
+first_non_na <- function(x){ x <- x[!is.na(x)]; if (length(x)==0) NA else x[1] }
+
+# ---------- 1) CH4 per arm + species from emissions ----------
+em_dat <- emission_ing_classif %>%
+  mutate(B.Code = str_clean(B.Code), A.Level.Name = str_clean(A.Level.Name)) %>%
+  group_by(B.Code, A.Level.Name) %>%
+  summarise(
+    CH4_kg_year = mean(CH4_kg_year, na.rm = TRUE),
+    P.Product   = dplyr::first(na.omit(P.Product)),
+    .groups = "drop"
+  )
+
+# ---------- 2) Practice/Subpractice map (include controls) ----------
+practice_tbl <- practice_tbl %>%
+  mutate(B.Code = str_clean(B.Code), Control = str_clean(Control), Trt = str_clean(Trt))
+
+map_trt <- practice_tbl %>%
+  transmute(B.Code, A.Level.Name = Trt, Practice, Subpractice, Magnitude_pct)
+
+map_ctrl <- practice_tbl %>%
+  distinct(B.Code, A.Level.Name = Control) %>%
+  mutate(Practice="Control", Subpractice="", Magnitude_pct = 0)
+
+practice_map <- bind_rows(map_trt, map_ctrl) %>%
+  distinct(B.Code, A.Level.Name, .keep_all = TRUE) %>%
+  # ---- collapse multi-category Additions into "Mixed" ----
+  mutate(Subpractice = if_else(Practice=="Addition" & str_detect(Subpractice, ","),
+                               "Mixed", Subpractice))
+
+# ---------- 3) Choose one yield per arm ----------
+yld <- yield_with_emissions %>%
+  mutate(B.Code = str_clean(B.Code), A.Level.Name = str_clean(A.Level.Name)) %>%
+  group_by(B.Code, A.Level.Name) %>%
+  mutate(is_yield = str_detect(str_to_lower(coalesce(Out.Subind, "")), "yield")) %>%
+  arrange(B.Code, A.Level.Name, desc(is_yield), desc(!is.na(ED.Mean.T))) %>%
+  summarise(
+    Yield   = first_non_na(ED.Mean.T),
+    Product = first_non_na(Out.Subind),
+    Units   = first_non_na(Out.Unit),
+    .groups = "drop"
+  )
+
+# ---------- 4) Final joined table (keeps controls) ----------
+final_df <- em_dat %>%
+  left_join(practice_map, by = c("B.Code", "A.Level.Name")) %>%
+  left_join(yld,         by = c("B.Code", "A.Level.Name")) %>%
+  transmute(
+    B.Code, A.Level.Name,
+    Practice    = coalesce(Practice, "Unknown"),
+    Subpractice = coalesce(Subpractice, ""),
+    Magnitude_pct,
+    CH4_kg_year,
+    Yield, Product, Units,
+    P.Product
+  ) %>%
+  filter(Practice != "Unknown") %>%
+  drop_na(CH4_kg_year, Yield, Units, P.Product) %>%
+  arrange(B.Code, A.Level.Name)%>%
+  filter(Practice!="No change")
+
+```
+
+```{r}
+# ---------- 5) Compute EI (g CH4 / kg product) ----------
+final_with_ei_all <- final_df %>%
+  mutate(
+    days_per_year = case_when(
+      has(Units, "/day")  ~ 365,
+      has(Units, "/year") ~ 1,
+      TRUE ~ NA_real_
+    ),
+    yield_kg = case_when(
+      has(Units, "kg") ~ Yield,
+      has(Units, "g")  ~ Yield/1000,
+      has(Units, "l") & has(Product, "milk") ~ Yield * 1.03,  # L→kg for milk
+      TRUE ~ NA_real_
+    ),
+    annual_yield_kg = yield_kg * days_per_year,
+    EI_g_per_kg     = (CH4_kg_year * 1000) / annual_yield_kg
+  ) %>%
+  filter(is.finite(EI_g_per_kg), EI_g_per_kg > 0, is.finite(annual_yield_kg))
+
+# ---------- 6) Deltas vs control (treatment–control within B.Code) ----------
+ctrl_map <- practice_tbl %>% distinct(B.Code, Control) %>% rename(Control_Arm = Control)
+
+ctrl_metrics <- final_with_ei_all %>%
+  select(B.Code, A.Level.Name, EI_ctrl = EI_g_per_kg,
+         CH4_ctrl = CH4_kg_year, Y_ctrl = annual_yield_kg) %>%
+  rename(Control_Arm = A.Level.Name)
+
+final_with_deltas <- practice_tbl %>%
+  select(B.Code, Control_Arm = Control, A.Level.Name = Trt, Practice, Subpractice, Magnitude_pct) %>%
+  # align "Mixed" rule for Additions here too
+  mutate(Subpractice = if_else(Practice=="Addition" & str_detect(Subpractice, ","),
+                               "Mixed", Subpractice)) %>%
+  inner_join(final_with_ei_all, by = c("B.Code","A.Level.Name")) %>%
+  inner_join(ctrl_metrics,      by = c("B.Code","Control_Arm")) %>%
+  mutate(
+    Delta_EI_pct       = 100 * (EI_g_per_kg / EI_ctrl - 1),
+    Delta_EI_g_per_kg  = EI_g_per_kg - EI_ctrl,
+    Delta_CH4_pct      = 100 * (CH4_kg_year / CH4_ctrl - 1),
+    Delta_Y_pct        = 100 * (annual_yield_kg / Y_ctrl - 1))
+
+
+    
+  final_with_deltas <- final_with_deltas %>%
+  dplyr::mutate(
+    Practice      = dplyr::coalesce(Practice.x, Practice.y),
+    Subpractice   = dplyr::coalesce(Subpractice.x, Subpractice.y),
+    Magnitude_pct = dplyr::coalesce(Magnitude_pct.x, Magnitude_pct.y)
+  ) %>%
+  dplyr::select(
+    B.Code, Control_Arm, A.Level.Name,
+    Practice, Subpractice, Magnitude_pct,
+    CH4_kg_year, Yield, Product, Units, P.Product,
+    days_per_year, yield_kg, annual_yield_kg, EI_g_per_kg,
+    EI_ctrl, CH4_ctrl, Y_ctrl,
+    Delta_EI_pct, Delta_EI_g_per_kg, Delta_CH4_pct, Delta_Y_pct
+  ) %>%
+  dplyr::distinct()
+
+# (optional) keep only treatment rows (i.e., exclude the control arm itself)
+final_with_deltas <- final_with_deltas %>%
+  dplyr::filter(A.Level.Name != Control_Arm)
+
+  
+
+```
+
+
+```{r}
+# ---- A) EI by Practice (treatments only; point overlay + median diamond) ----
+ei_practice_df <- final_with_ei_all %>% filter(!Practice %in% c("Control","No change"))
+
+ggplot(ei_practice_df, aes(x = Practice, y = EI_g_per_kg, fill = Practice)) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
+  stat_summary(fun = median, geom = "point",
+               shape = 23, size = 2.8, fill = "white", color = "black") +
+  geom_jitter(width = 0.15, alpha = 0.55, size = 1.4, show.legend = FALSE) +
+  labs(x = NULL, y = expression("Emission intensity (g CH"[4]*"/ kg product)"),
+       title = "Emission intensity by practice") +
+  theme_minimal(12) + theme(legend.position = "none")
+
+# ---- B) ΔEI (%) by Practice (treatments vs control) ----
+ggplot(final_with_deltas, aes(x = Practice, y = Delta_EI_pct, fill = Practice)) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
+  stat_summary(fun = median, geom = "point",
+               shape = 23, size = 2.6, fill = "white", color = "black") +
+  geom_jitter(width = 0.15, alpha = 0.55, size = 1.3, show.legend = FALSE) +
+  labs(x = NULL, y = "Δ Emission intensity (% vs control)",
+       title = "Δ Emission intensity by practice") +
+  theme_minimal(12) + theme(legend.position = "none")
+
+```
+
+
+```{r}
+# ---- C) EI by Subpractice (with Ns in labels; reorder by median) ----
+labs_sub <- final_with_ei_all %>%
+  count(Subpractice, name = "n") %>%
+  mutate(Subpractice_lab = paste0(Subpractice, " (n=", n, ")"))
+
+plot_ei_sub <- final_with_ei_all %>%
+  left_join(labs_sub, by = "Subpractice") %>%
+  mutate(Subpractice_lab = fct_reorder(Subpractice_lab, EI_g_per_kg, median, na.rm = TRUE))
+
+ggplot(plot_ei_sub,
+       aes(x = Subpractice_lab, y = EI_g_per_kg, fill = Subpractice)) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
+  stat_summary(fun = median, geom = "point",
+               shape = 23, size = 2.6, fill = "white", color = "black") +
+  geom_jitter(width = 0.15, alpha = 0.55, size = 1.2, show.legend = FALSE) +
+  coord_flip() +
+  labs(x = NULL, y = expression("Emission intensity (g CH"[4]*"/ kg product)"),
+       title = "Emission intensity by subpractice (dominant diet lever)") +
+  theme_minimal(12) + theme(legend.position = "none")
+
+# ---- D) ΔEI (%) by Subpractice (with points + median; Ns; reordered) ----
+labs_sub_delta <- final_with_deltas %>%
+  count(Subpractice, name = "n") %>%
+  mutate(Subpractice_lab = paste0(Subpractice, " (n=", n, ")"))
+
+plot_delta_sub <- final_with_deltas %>%
+  left_join(labs_sub_delta, by = "Subpractice") %>%
+  mutate(Subpractice_lab = fct_reorder(Subpractice_lab, Delta_EI_pct, median, na.rm = TRUE))
+
+ggplot(plot_delta_sub,
+       aes(x = Subpractice_lab, y = Delta_EI_pct, fill = Subpractice)) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
+  stat_summary(fun = median, geom = "point",
+               shape = 23, size = 2.6, fill = "white", color = "black") +
+  geom_jitter(width = 0.15, height = 0, alpha = 0.55, size = 1.4, show.legend = FALSE) +
+  coord_flip() +
+  labs(x = NULL, y = "Δ Emission intensity (% vs control)",
+       title = "Δ Emission intensity by subpractice (dominant diet lever)") +
+  theme_minimal(12) + theme(legend.position = "none")
+
+plot_delta_sub <- final_with_deltas %>%
+  filter(Practice=="Addition")%>%
+  left_join(labs_sub_delta, by = "Subpractice") %>%
+  mutate(Subpractice_lab = fct_reorder(Subpractice_lab, Delta_EI_pct, median, na.rm = TRUE))
+
+ggplot(plot_delta_sub,
+       aes(x = Subpractice_lab, y = Delta_EI_pct, fill = Subpractice)) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
+  stat_summary(fun = median, geom = "point",
+               shape = 23, size = 2.6, fill = "white", color = "black") +
+  geom_jitter(width = 0.15, height = 0, alpha = 0.55, size = 1.4, show.legend = FALSE) +
+  coord_flip() +
+  labs(x = NULL, y = "Δ Emission intensity (% vs control)",
+       title = "Δ Emission intensity by subpractice (dominant diet lever)") +
+  theme_minimal(12) + theme(legend.position = "none")
+
+
+ggplot(plot_delta_sub,
+       aes(x = Subpractice_lab, y = Delta_Y_pct, fill = Subpractice)) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
+  stat_summary(fun = median, geom = "point",
+               shape = 23, size = 2.6, fill = "white", color = "black") +
+  geom_jitter(width = 0.15, height = 0, alpha = 0.55, size = 1.4, show.legend = FALSE) +
+  coord_flip() +
+  labs(x = NULL, y = "Δ yield intensity (% vs control)",
+       title = "Δ yield  by subpractice (dominant diet lever)") +
+  theme_minimal(12) + theme(legend.position = "none")
+
+```
 ### 18.2) Plot the data
 ```{r}
 
@@ -235,8 +560,6 @@ ggplot(yield_meat, aes(x = ED.Mean.T, y = CH4_kg_year, color = P.Product)) +
   ) +
   theme_minimal() +
   theme(legend.position = "bottom")
-
-
 
 ```
 
@@ -378,515 +701,3 @@ ggplot(ei_prod, aes(x = P.Product, y = EI_CH4_prod,
 
 
 ```
-## Practice diet analysis 
-```{r}
-suppressPackageStartupMessages({
-  library(dplyr); library(tidyr); library(stringr); library(ggplot2); library(scales)
-})
-
-# ---------- 0) Pick the EI/CH4 fields you want ------------------------------
-ei_core <- ei_prod %>%
-  select(B.Code,
-         A.Level.Name,
-         EI_CH4_prod,      # emission intensity (kg CH4 / kg product)
-         CH4_kg_year,      # absolute (if available)
-         Product, P.Product,
-         T.Control,        # "yes"/"no" or TRUE/FALSE
-         Yield_kg_day, Yield_kg_year)
-
-# ---------- 1) Join practice_tbl to EI on both arms --------------------------
-# practice_tbl must have: B.Code, Control, Trt, Practice, Magnitude_pct, ΔTOTAL, Substitution_pairs, ...
-stopifnot(all(c("B.Code","Control","Trt","Practice","Magnitude_pct") %in% names(practice_tbl)))
-
-practice_ei <- practice_tbl %>%
-  # attach control EI
-  left_join(ei_core, by = c("B.Code","Control" = "A.Level.Name")) %>%
-  # attach treatment EI (suffix conflicts)
-  left_join(ei_core, by = c("B.Code","Trt" = "A.Level.Name"),
-            suffix = c("_ctrl", "_trt")) %>%
-  # rename the key metrics so they're easier to read
-  rename(
-    EI_ctrl         = EI_CH4_prod_ctrl,
-    EI_trt          = EI_CH4_prod_trt,
-    CH4_ctrl        = CH4_kg_year_ctrl,
-    CH4_trt         = CH4_kg_year_trt,
-    Yield_day_ctrl  = Yield_kg_day_ctrl,
-    Yield_day_trt   = Yield_kg_day_trt,
-    Yield_year_ctrl = Yield_kg_year_ctrl,
-    Yield_year_trt  = Yield_kg_year_trt
-  ) %>%
-  mutate(
-    # deltas: + means treatment is worse/higher
-    delta_EI_prod   = EI_trt  - EI_ctrl,
-    delta_CH4_year  = CH4_trt - CH4_ctrl,
-    delta_Yield_day = Yield_day_trt - Yield_day_ctrl,
-    delta_Yield_yr  = Yield_year_trt - Yield_year_ctrl,
-    # best-available product/species label
-    Product = coalesce(Product_trt, Product_ctrl, P.Product_trt, P.Product_ctrl)
-  ) %>%
-  filter(!is.na(delta_EI_prod))   # keep only pairs with EI on both sides
-
-# Quick species count (how many papers per species)
-species_counts <- practice_ei %>%
-  distinct(B.Code, Species = coalesce(P.Product_ctrl, P.Product_trt, Product_ctrl, Product_trt)) %>%
-  count(Species, name = "n_papers") %>%
-  arrange(desc(n_papers))
-
-# ---------- 2) Simple summaries ---------------------------------------------
-# (a) By practice (Addition/Substitution/No change)
-summary_by_practice <- practice_ei %>%
-  group_by(Practice) %>%
-  summarise(
-    n_pairs   = n(),
-    mean_ΔEI  = mean(delta_EI_prod, na.rm = TRUE),
-    median_ΔEI= median(delta_EI_prod, na.rm = TRUE),
-    mean_mag  = mean(Magnitude_pct, na.rm = TRUE),
-    .groups = "drop"
-  )
-
-# (b) By practice × species
-summary_by_practice_species <- practice_ei %>%
-  group_by(Product, Practice) %>%
-  summarise(
-    n_pairs   = n(),
-    mean_ΔEI  = mean(delta_EI_prod, na.rm = TRUE),
-    median_ΔEI= median(delta_EI_prod, na.rm = TRUE),
-    mean_mag  = mean(Magnitude_pct, na.rm = TRUE),
-    .groups = "drop"
-  ) %>%
-  arrange(Product, Practice)
-
-# ---------- 3) Plots (practice-level) ---------------------------------------
-# 3a) Scatter: magnitude vs ΔEI by practice
-p_scatter <- ggplot(practice_ei,
-                    aes(Magnitude_pct, delta_EI_prod, colour = Practice)) +
-  geom_hline(yintercept = 0, linetype = 2, colour = "grey60") +
-  geom_point(alpha = .7, size = 2) +
-  geom_smooth(method = "lm", se = TRUE, colour = "black", formula = y ~ x) +
-  scale_x_continuous("% of diet DM moved (practice magnitude)") +
-  scale_y_continuous("Δ EI (kg CH₄ / kg product)") +
-  facet_wrap(~ Product) +
-  theme_bw() +
-  theme(legend.position = "bottom")
-
-# 3b) Violin/box: ΔEI by practice
-p_violin <- ggplot(practice_ei,
-                   aes(Practice, delta_EI_prod, fill = Practice)) +
-  geom_violin(trim = FALSE, alpha = .35, colour = NA) +
-  geom_boxplot(width = .18, outlier.shape = NA) +
-  stat_summary(fun = median, geom = "point", size = 2, colour = "black") +
-  geom_hline(yintercept = 0, linetype = 2, colour = "grey50") +
-  scale_y_continuous("Δ EI (kg CH₄ / kg product)") +
-  facet_wrap(~ Product, nrow = 1) +
-  labs(x = NULL, title = "Emission-intensity shift by practice") +
-  theme_bw() +
-  theme(legend.position = "none")
-
-# 3c) Trade-off: ΔYield vs ΔEI; size = magnitude
-p_tradeoff <- ggplot(practice_ei,
-                     aes(delta_Yield_day, delta_EI_prod,
-                         colour = Practice,
-                         size   = Magnitude_pct)) +
-  geom_vline(xintercept = 0, linetype = 2, colour = "grey60") +
-  geom_hline(yintercept = 0, linetype = 2, colour = "grey60") +
-  geom_point(alpha = .75) +
-  scale_size(range = c(2,6), name = "% moved") +
-  scale_x_continuous("Δ Yield (kg animal⁻¹ d⁻¹)", labels = comma) +
-  scale_y_continuous("Δ EI (kg CH₄ / kg product)", labels = comma) +
-  facet_wrap(~ Product) +
-  labs(title = "Productivity vs emission-intensity trade-offs, by practice") +
-  theme_minimal() +
-  theme(legend.position = "bottom")
-
-# Print them as needed:
-# p_scatter; p_violin; p_tradeoff
-
-# ---------- 4) Optional: look inside Substitution pairs ---------------------
-# Uses the text column `Substitution_pairs` built in practice_tbl, e.g. "Forage → Concentrate; X → Y"
-subs_pairs <- practice_ei %>%
-  filter(Practice == "Substitution") %>%
-  select(B.Code, Control, Trt, Product, Magnitude_pct, delta_EI_prod, Substitution_pairs) %>%
-  mutate(Substitution_pairs = ifelse(is.na(Substitution_pairs), "", Substitution_pairs)) %>%
-  filter(Substitution_pairs != "") %>%
-  separate_rows(Substitution_pairs, sep = ";\\s*") %>%
-  mutate(
-    left  = str_trim(str_split_fixed(Substitution_pairs, "→", 2)[,1]),
-    right = str_trim(str_split_fixed(Substitution_pairs, "→", 2)[,2])
-  ) %>%
-  filter(left != "", right != "") %>%
-  mutate(pair_id = paste(left, "→", right))
-
-# quick tally and mean ΔEI per pair (overall and by species)
-subs_pair_summary <- subs_pairs %>%
-  group_by(pair_id) %>%
-  summarise(n = n(),
-            mean_ΔEI = mean(delta_EI_prod, na.rm = TRUE),
-            mean_mag = mean(Magnitude_pct, na.rm = TRUE),
-            .groups = "drop") %>%
-  arrange(desc(n))
-
-subs_pair_by_product <- subs_pairs %>%
-  group_by(Product, pair_id) %>%
-  summarise(n = n(),
-            mean_ΔEI = mean(delta_EI_prod, na.rm = TRUE),
-            mean_mag = mean(Magnitude_pct, na.rm = TRUE),
-            .groups = "drop") %>%
-  arrange(Product, desc(n))
-
-# Example plot: ΔEI vs % moved, coloured by pair direction
-p_subs <- ggplot(subs_pairs,
-                 aes(x = delta_EI_prod, y = Magnitude_pct,
-                     colour = pair_id)) +
-  geom_vline(xintercept = 0, linetype = 2, colour = "grey60") +
-  geom_point(alpha = .8) +
-  facet_wrap(~ Product) +
-  scale_y_continuous("% of diet DM substituted") +
-  scale_x_continuous("Δ EI (kg CH₄ / kg product)", breaks = pretty_breaks()) +
-  labs(title = "Substitution pairs: direction & intensity vs ΔEI",
-       colour = "Removed → Added") +
-  theme_bw() +
-  theme(legend.position = "right")
-
-# ---------- 5) A compact “effect” label (optional) --------------------------
-EI_THRESH <- 0.02   # tweak as you like (kg CH4 / kg product)
-practice_ei <- practice_ei %>%
-  mutate(effect = case_when(
-    delta_EI_prod <= -EI_THRESH ~ "Lower EI",
-    delta_EI_prod >=  EI_THRESH ~ "Higher EI",
-    TRUE                        ~ "Neutral"
-  ))
-
-effect_by_practice_species <- practice_ei %>%
-  group_by(Product, Practice, effect) %>%
-  summarise(n = n(), .groups = "drop") %>%
-  group_by(Product, Practice) %>%
-  mutate(pct = 100*n / sum(n)) %>%
-  ungroup() %>%
-  arrange(Product, Practice, desc(pct))
-
-# View the main outputs:
-species_counts
-summary_by_practice
-summary_by_practice_species
-subs_pair_summary
-subs_pair_by_product
-p_scatter; p_violin; p_tradeoff; p_subs
-
-```
-
-
-```{r}
-suppressPackageStartupMessages({
-  library(dplyr); library(tidyr); library(stringr); library(ggplot2); library(scales)
-})
-
-# -------- helpers -------------------------------------------------------------
-norm_key <- function(x){
-  x %>% tolower() %>% stringr::str_replace_all("[[:space:]]+", " ") %>% trimws()
-}
-
-# robust find of WG/ADG subinds (handles many name variants)
-is_wg_subind <- function(x){
-  str_detect(
-    tolower(x),
-    "(^|\\b)(weight\\s*gain|daily\\s*average\\s*weight\\s*gain|average\\s*daily\\s*weight\\s*gain|adg)(\\b|$)"
-  )
-}
-
-# -------- 1) STANDARDISE WEIGHT GAIN to kg/day --------------------------------
-# Source: merged_metadata$Data.Out  (your harmonised outcomes table)
-# Uses weights_unique for BW^0.75 cases (g/kg metabolic weight).
-stopifnot(exists("merged_metadata"), "Data.Out" %in% names(merged_metadata))
-stopifnot(exists("weights_unique"))
-
-wg_raw <- merged_metadata$Data.Out %>%
-  filter(!is.na(Out.Subind)) %>%
-  filter(is_wg_subind(Out.Subind)) %>%
-  mutate(
-    unit_raw = tolower(str_squish(Out.Unit)),
-    value    = suppressWarnings(as.numeric(ED.Mean.T))
-  ) %>%
-  # keep only per-day measures or metabolic-weight forms
-  filter(
-    str_detect(unit_raw, "/d|/day| per day") |
-    str_detect(unit_raw, "g/kg metabolic weight")
-  ) %>%
-  mutate(
-    mass_unit = case_when(
-      str_starts(unit_raw, "mg") ~ "mg",
-      str_starts(unit_raw, "g")  ~ "g",
-      str_starts(unit_raw, "kg") ~ "kg",
-      TRUE                       ~ NA_character_
-    ),
-    gain_kg_day = case_when(
-      mass_unit == "mg" ~ value / 1e6,
-      mass_unit == "g"  ~ value / 1e3,
-      mass_unit == "kg" ~ value,
-      TRUE              ~ NA_real_
-    )
-  ) %>%
-  # for g/kg metabolic weight, convert using BW^0.75
-  left_join(
-    weights_unique %>%
-      transmute(B.Code, A.Level.Name, BW_start_kg = as.numeric(Out.WG.Start)),
-    by = c("B.Code","A.Level.Name")
-  ) %>%
-  mutate(
-    WG_kg_day_std = case_when(
-      str_detect(unit_raw, "g/kg metabolic weight") &
-        !is.na(value) & !is.na(BW_start_kg) ~ (value/1000) * (BW_start_kg^0.75),
-      TRUE ~ gain_kg_day
-    ),
-    # normalised diet-arm key for safer joining later
-    A_norm = norm_key(A.Level.Name)
-  ) %>%
-  filter(!is.na(WG_kg_day_std) & WG_kg_day_std > 0) %>%
-  select(B.Code, A.Level.Name, A_norm, WG_kg_day_std)
-
-# -------- 2) CH4 table with normalised arm names ------------------------------
-# GE_combined has CH4_kg_year and diet arm under D.Item
-ch4_tbl <- GE_combined %>%
-  transmute(
-    B.Code,
-    A.Level.Name = D.Item,
-    A_norm = norm_key(D.Item),
-    CH4_kg_year = as.numeric(CH4_kg_year),
-    P.Product,
-    T.Control = ifelse(is.na(T.Control), NA_character_, T.Control)
-  ) %>%
-  filter(!is.na(CH4_kg_year))
-
-# -------- 3) Build EI for weight gain (ei_wg) ---------------------------------
-ei_wg <- ch4_tbl %>%
-  inner_join(wg_raw, by = c("B.Code","A_norm")) %>%
-  mutate(
-    WG_kg_year = WG_kg_day_std * 365,
-    EI_CH4_WG  = CH4_kg_year / WG_kg_year
-  ) %>%
-  filter(!is.na(EI_CH4_WG), EI_CH4_WG > 0, EI_CH4_WG < 1) %>%  # trim extremes
-  select(B.Code,
-         A.Level.Name = A.Level.Name.x,  # keep CH4-side label
-         CH4_kg_year, P.Product, T.Control,
-         WG_kg_day_std, WG_kg_year, EI_CH4_WG)
-
-# (Optional) quick diagnostics: unmatched WG or CH4
-wg_unmatched  <- anti_join(wg_raw,  ch4_tbl, by = c("B.Code","A_norm")) %>% distinct(B.Code, A.Level.Name)
-ch4_unmatched <- anti_join(ch4_tbl, wg_raw,  by = c("B.Code","A_norm")) %>% distinct(B.Code, A.Level.Name)
-# View(wg_unmatched); View(ch4_unmatched)
-
-# -------- 4) Join EI_WG to practice_tbl comparisons --------------------------
-# Expect practice_tbl with columns: B.Code, Control, Trt, Practice, Magnitude_pct (from your earlier code)
-stopifnot(exists("practice_tbl"))
-
-ei_core <- ei_wg %>%
-  select(B.Code, A.Level.Name, P.Product, T.Control,
-         WG_kg_day_std, WG_kg_year, EI_CH4_WG, CH4_kg_year)
-
-wg_pairs <- practice_tbl %>%
-  transmute(B.Code, Control, Trt, Practice, Magnitude_pct) %>%
-  # attach A (control)
-  left_join(ei_core,
-            by = c("B.Code","Control" = "A.Level.Name"),
-            multiple = "first") %>%
-  rename(
-    P.Product_A    = P.Product,
-    T.Control_A    = T.Control,
-    WG_kg_day_A    = WG_kg_day_std,
-    WG_kg_year_A   = WG_kg_year,
-    EI_WG_A        = EI_CH4_WG,
-    CH4_kg_year_A  = CH4_kg_year
-  ) %>%
-  # attach B (treatment)
-  left_join(ei_core,
-            by = c("B.Code","Trt" = "A.Level.Name"),
-            multiple = "first") %>%
-  rename(
-    P.Product_B    = P.Product,
-    T.Control_B    = T.Control,
-    WG_kg_day_B    = WG_kg_day_std,
-    WG_kg_year_B   = WG_kg_year,
-    EI_WG_B        = EI_CH4_WG,
-    CH4_kg_year_B  = CH4_kg_year
-  ) %>%
-  mutate(
-    Species        = coalesce(P.Product_B, P.Product_A),
-    delta_EI_WG    = EI_WG_B - EI_WG_A,          # (+) = worse intensity
-    delta_WG_day   = WG_kg_day_B - WG_kg_day_A,  # change in ADG
-    delta_CH4_year = CH4_kg_year_B - CH4_kg_year_A
-  ) %>%
-  filter(!is.na(EI_WG_A), !is.na(EI_WG_B))
-
-# -------- 5) A couple of ready-to-run summaries/plots ------------------------
-
-# A) Box/violin: EI shift by practice type (all species together)
-ggplot(wg_pairs,
-       aes(x = Practice, y = delta_EI_WG, fill = Practice)) +
-  geom_violin(trim = FALSE, alpha = .35, colour = NA) +
-  geom_boxplot(width = .15, outlier.shape = NA) +
-  geom_hline(yintercept = 0, linetype = 2, colour = "grey40") +
-  stat_summary(fun = median, geom = "point", size = 2, colour = "black") +
-  scale_y_continuous("Δ EI (kg CH₄ per kg LW-gain)",
-                     labels = comma_format()) +
-  labs(x = NULL, title = "Change in CH₄ intensity of growth by practice") +
-  theme_bw() + theme(legend.position = "none")
-
-# B) Scatter: magnitude of reformulation vs intensity shift (faceted by species)
-ggplot(wg_pairs,
-       aes(x = Magnitude_pct, y = delta_EI_WG, colour = Practice)) +
-  geom_hline(yintercept = 0, linetype = 2, colour = "grey60") +
-  geom_point(alpha = .7, size = 2) +
-  geom_smooth(method = "lm", se = TRUE, colour = "black") +
-  scale_x_continuous("% of diet DM changed") +
-  scale_y_continuous("Δ EI (kg CH₄ per kg LW-gain)",
-                     labels = comma_format()) +
-  facet_wrap(~ Species) +
-  theme_bw() + theme(legend.position = "bottom")
-
-# C) Table: how many comparisons per species × practice
-wg_pairs %>%
-  count(Species, Practice, name = "n_pairs") %>%
-  arrange(desc(n_pairs))
-
-```
-
-```{r}
-suppressPackageStartupMessages({
-  library(dplyr); library(tidyr); library(stringr)
-  library(ggplot2); library(forcats); library(scales)
-})
-
-# ── config ────────────────────────────────────────────────────────────────────
-MIN_N <- 3         # hide groups with <3 comparisons to keep plots clean
-FACET_BY_SPECIES <- FALSE  # set TRUE if you want species facets
-
-# ── 0) Bring types onto the EI deltas (wg_pairs) ─────────────────────────────
-stopifnot(exists("wg_pairs"), exists("practice_tbl"))
-
-pairs_with_types <- wg_pairs %>%
-  left_join(
-    practice_tbl %>%
-      select(B.Code, Control, Trt, Practice,
-             Types_added, Types_decreased, Substitution_pairs),
-    by = c("B.Code","Control","Trt","Practice")
-  )
-
-# ── 1) ADDITIONS: explode Types_added → one row per category added ───────────
-added_long <- pairs_with_types %>%
-  filter(Practice == "Addition") %>%
-  mutate(Types_added = na_if(Types_added, "")) %>%
-  separate_rows(Types_added, sep = "\\s*,\\s*") %>%
-  mutate(Category_added = str_trim(Types_added)) %>%
-  filter(!is.na(Category_added),
-         Category_added != "", Category_added != "Unclassified")
-
-# keep only categories with enough points
-add_keep <- added_long %>%
-  count(Category_added, name = "n") %>%
-  filter(n >= MIN_N)
-
-added_long <- added_long %>%
-  semi_join(add_keep, by = "Category_added") %>%
-  mutate(
-    x_lab = fct_reorder(
-      paste0(Category_added, " (n=", add_keep$n[match(Category_added, add_keep$Category_added)], ")"),
-      delta_EI_WG,
-      .fun = median, .desc = TRUE, na.rm = TRUE
-    )
-  )
-
-# ── Plot A: ΔEI by CATEGORY ADDED ────────────────────────────────────────────
-p_add <- ggplot(
-  added_long,
-  aes(x = delta_EI_WG, y = x_lab)
-) +
-  geom_vline(xintercept = 0, linetype = 2, colour = "grey65") +
-  geom_boxplot(outlier.shape = NA, fill = "grey85") +
-  geom_point(alpha = .55, size = 1.8) +
-  scale_x_continuous("Δ EI (kg CH₄ per kg live-weight gain)", labels = comma) +
-  labs(y = NULL, title = "Change in emission intensity by category ADDED") +
-  theme_bw() +
-  theme(panel.grid.minor = element_blank())
-
-if (FACET_BY_SPECIES) {
-  p_add <- p_add + facet_wrap(~ Species, ncol = 1, scales = "free_y")
-}
-
-p_add
-
-# ── 2) SUBSTITUTIONS: explode "Removed → Added" pairs ────────────────────────
-subs_long <- pairs_with_types %>%
-  filter(Practice == "Substitution") %>%
-  mutate(Substitution_pairs = coalesce(Substitution_pairs, "")) %>%
-  separate_rows(Substitution_pairs, sep = ";\\s*") %>%
-  mutate(Substitution_pairs = str_trim(Substitution_pairs)) %>%
-  filter(Substitution_pairs != "") %>%
-  separate(Substitution_pairs, into = c("Removed", "Added"),
-           sep = "\\s*→\\s*", remove = FALSE) %>%
-  filter(!Removed %in% c("", "Unclassified"),
-         !Added   %in% c("", "Unclassified"))
-
-# keep only pairs with enough points
-subs_keep <- subs_long %>%
-  count(Removed, Added, name = "n") %>%
-  filter(n >= MIN_N)
-
-subs_long <- subs_long %>%
-  inner_join(subs_keep, by = c("Removed","Added")) %>%
-  mutate(
-    pair_lab = paste0(Removed, " → ", Added, " (n=", n, ")")
-  ) %>%
-  mutate(
-    pair_lab = forcats::fct_reorder(
-      pair_lab, delta_EI_WG,
-      .fun  = ~ median(.x, na.rm = TRUE),
-      .desc = TRUE
-    )
-  )
-
-# ── Plot B: ΔEI by SUBSTITUTION PAIR ─────────────────────────────────────────
-p_sub <- ggplot(
-  subs_long,
-  aes(x = delta_EI_WG, y = pair_lab)
-) +
-  geom_vline(xintercept = 0, linetype = 2, colour = "grey65") +
-  geom_boxplot(outlier.shape = NA, fill = "grey85") +
-  geom_point(aes(size = Magnitude_pct), alpha = .6) +   # size encodes % DM swapped
-  scale_size(range = c(1.5, 6), name = "% diet DM moved") +
-  scale_x_continuous("Δ EI (kg CH₄ per kg live-weight gain)", labels = comma) +
-  labs(y = NULL, title = "Change in emission intensity by SUBSTITUTION (Removed → Added)") +
-  theme_bw() +
-  theme(panel.grid.minor = element_blank(),
-        legend.position = "right")
-
-
-if (FACET_BY_SPECIES) {
-  p_sub <- p_sub + facet_wrap(~ Species, ncol = 1, scales = "free_y")
-}
-
-p_sub
-
-# ── 3) (Optional) quick tables you may want in the text/report  --------------
-add_summ <- added_long %>%
-  group_by(Category_added) %>%
-  summarise(n = n(),
-            median_delta = median(delta_EI_WG, na.rm = TRUE),
-            iqr_delta    = IQR(delta_EI_WG, na.rm = TRUE),
-            .groups = "drop") %>%
-  arrange(median_delta)
-
-sub_summ <- subs_long %>%
-  group_by(Removed, Added) %>%
-  summarise(n = n(),
-            median_delta = median(delta_EI_WG, na.rm = TRUE),
-            iqr_delta    = IQR(delta_EI_WG, na.rm = TRUE),
-            .groups = "drop") %>%
-  arrange(median_delta)
-
-add_summ
-sub_summ
-
-```
-
-
-
-

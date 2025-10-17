@@ -24,6 +24,29 @@ ctrl_key <- ctrl_key %>%
     diet_percentages %>% distinct(B.Code, A.Level.Name),
     by = c("B.Code", "A.Level.Name")
   )
+
+
+#clear names
+
+roman_to_name <- function(x) dplyr::recode(
+  x,
+  "I"   = "High-starch",
+  "II"  = "High-fat",
+  "III" = "Protein",
+  "IV"  = "Good forage",
+  "V"   = "Poor forage",
+  "VI"  = "Mineral/Vitamin",
+  .default = x,
+  .missing = NA_character_
+)
+
+# Update the ingredient database
+classif_ing_simple <- classif_ing_simple %>%
+  dplyr::mutate(
+    Ingredient_Category = roman_to_name(Ingredient_Category))
+    # If you also keep a diet-level tag, uncomment:
+    # , Diet_Category = roman_to_name(Diet_Category)
+  
 ```
 
 ### 19 practice ingredient comparison 
@@ -38,42 +61,37 @@ classify_diet_practice <- function(
   total_amounts,
   ctrl_key,
   classif_ing_simple,
-  TOTAL_TOL = 0.05,   # ±5% total DM offered
-  ING_TOL   = 1.0,    # %-point threshold to count a change
-  BAL_TOL   = 3.0     # %-point imbalance allowed for a "balanced swap"
+  TOTAL_TOL = 0.05,
+  ING_TOL   = 1.0,
+  BAL_TOL   = 3.0
 ){
-
   ensure_col <- function(df, col, fill = NA_character_) {
     if (!col %in% names(df)) df[[col]] <- fill
     df
   }
-
   norm_item <- function(x){
-    x %>%
-      stringr::str_to_lower() %>%
+    x %>% stringr::str_to_lower() %>%
       stringr::str_replace_all("[[:space:]]+", " ") %>%
       stringr::str_trim()
   }
 
-  # ---- Ingredient lookup (dedup + normalized) ----
+  # ---- Ingredient lookup ----
   ing_lu <- classif_ing_simple %>%
-    transmute(
-      D.Item_norm = norm_item(D.Item),
-      Ingredient_Category_lu = Ingredient_Category
-    ) %>%
+    transmute(D.Item_norm = norm_item(D.Item),
+              Ingredient_Category_lu = Ingredient_Category) %>%
     filter(!is.na(D.Item_norm), D.Item_norm != "") %>%
     group_by(D.Item_norm) %>%
     summarise(Ingredient_Category_lu = dplyr::first(na.omit(Ingredient_Category_lu)),
               .groups = "drop")
 
-  # ---- Control lookup (1 control per B.Code) ----
+  # ---- Control per study ----
   ctrl_lu <- ctrl_key %>%
     filter(tolower(T.Control) == "yes") %>%
     arrange(B.Code, A.Level.Name) %>%
     group_by(B.Code) %>%
     summarise(Control = first(A.Level.Name), .groups = "drop")
 
-  # ---- Totals to kg (aggregate duplicates) ----
+  # ---- Totals (kg) ----
   totals_kg <- total_amounts %>%
     mutate(Total_kg = case_when(
       D.Unit.Amount == "g"  ~ Total_Amount/1000,
@@ -83,7 +101,7 @@ classify_diet_practice <- function(
     group_by(B.Code, A.Level.Name) %>%
     summarise(Total_kg = sum(Total_kg, na.rm = TRUE), .groups = "drop")
 
-  # ---- Percentages + robust category join ----
+  # ---- Percentages + category fill ----
   dp <- ensure_col(diet_percentages, "Ingredient_Category")
 
   pct_long <- dp %>%
@@ -92,12 +110,10 @@ classify_diet_practice <- function(
     summarise(Percentage_of_Diet = sum(Percentage_of_Diet, na.rm = TRUE), .groups = "drop") %>%
     mutate(D.Item_norm = norm_item(D.Item)) %>%
     left_join(ing_lu, by = "D.Item_norm") %>%
-    mutate(
-      Ingredient_Category = coalesce(Ingredient_Category, Ingredient_Category_lu, "Unclassified")
-    ) %>%
+    mutate(Ingredient_Category = coalesce(Ingredient_Category, Ingredient_Category_lu, "Unclassified")) %>%
     select(-D.Item_norm, -Ingredient_Category_lu)
 
-  # ---- Pairs (treatment vs control) ----
+  # ---- Pairs ----
   pairs <- pct_long %>%
     distinct(B.Code, A.Level.Name) %>%
     inner_join(ctrl_lu, by = "B.Code") %>%
@@ -134,7 +150,6 @@ classify_diet_practice <- function(
               by = c("B.Code","Control" = "A.Level.Name")) %>%
     mutate(ΔTOTAL = (Total_trt_kg - Total_ctrl_kg)/Total_ctrl_kg)
 
-  # Precompute top-3 item changes (avoids the earlier vctrs error)
   top_changes <- trt_vs_ctrl %>%
     group_by(B.Code, Control, Trt) %>%
     arrange(desc(abs(dP)), .by_group = TRUE) %>%
@@ -205,12 +220,26 @@ classify_diet_practice <- function(
       }
     ) %>%
     ungroup() %>%
+    # NEW: add Subpractice but KEEP the detailed columns
+    mutate(
+      Subpractice = dplyr::case_when(
+        Practice == "Addition"     ~ Types_added,
+        Practice == "Substitution" ~ Substitution_pairs,
+        TRUE                       ~ ""
+      )
+    ) %>%
+    select(
+      B.Code, Control, Trt,
+      Practice, Subpractice, Magnitude_pct,
+      ΔTOTAL, POS_sum, NEG_sum, n_pos, n_neg,
+      Types_added, Types_decreased, Substitution_pairs, Top_changes
+    ) %>%
     arrange(B.Code, Control, Trt)
 
   paired
 }
 
-# ── Run it ──
+# Run
 practice_tbl <- classify_diet_practice(
   diet_percentages   = diet_percentages,
   total_amounts      = total_amounts,
@@ -220,6 +249,7 @@ practice_tbl <- classify_diet_practice(
 )
 
 ```
+
 
 
 ```{r}
