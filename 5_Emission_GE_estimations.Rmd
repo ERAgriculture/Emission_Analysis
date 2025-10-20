@@ -667,6 +667,6 @@ missing_GE_items <- Gross_energy %>%   # replace with your dataframe name
 
 
 ```{r}
-write.csv(Gross_energy, "~/ERL/Emission_Analysis/data/Gross_energy.csv")
+write.csv(Gross_energy, "~/Emission_Analysis/data/Gross_energy.csv")
 ```
 

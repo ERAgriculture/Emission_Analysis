@@ -57,8 +57,14 @@ feed_intake_diet_g <- feed_intake %>%
 
 # ────────────────────────────────────────────────────────────────────────────
 # (c) Merge the two sources, prefer feed-intake -----------------------------
-total_amounts <-total_ingr%>%
-  rename(Total_Amount=Total_Amount_ingr)
+# --- Final merge: prefer feed-intake total when available ---
+total_amounts <- feed_intake_diet_g %>%
+  full_join(total_ingr, by = c("B.Code", "A.Level.Name", "D.Unit.Amount")) %>%
+  mutate(
+    Total_Amount = coalesce(Intake_Amount_g, Total_Amount_ingr)  # prefer measured intake
+  ) %>%
+  select(B.Code, A.Level.Name, D.Unit.Amount, Total_Amount)
+
 
 # ────────────────────────────────────────────────────────────────────────────
 # 2.  Check unit correspondence  ---------------------------------------------

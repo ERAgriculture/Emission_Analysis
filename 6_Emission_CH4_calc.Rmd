@@ -775,8 +775,8 @@ n_CH4_codes_by_product
 ```
 
 ```{r}
-write.csv(GE_combined, "~/ERL/Emission_Analysis/data/GE_Combined.csv")
-write.csv(yield_data, "~/ERL/Emission_Analysis/data/yield_data.csv")
+write.csv(GE_combined, "~/Emission_Analysis/data/GE_Combined.csv")
+write.csv(yield_data, "~/Emission_Analysis/data/yield_data.csv")
 
 ```
 

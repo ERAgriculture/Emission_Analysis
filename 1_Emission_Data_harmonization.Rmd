@@ -581,6 +581,48 @@ rm(harmonize_units,reps,feed_data)
 
 ```
 
+
+### 1.6) remove experimental scales because no times and then amounts are too big 
+
+```{r}
+# ingredients<-ingredients%>%
+#   filter(D.Unit.Time!="experiment")
+# 
+# # --- Fix unit representation for LM0128 to "g day individual" -------------------
+# ingredients <- ingredients %>%
+#   mutate(
+#     # Convert mg → g for LM0128
+#     D.Amount = if_else(B.Code == "LM0128" & D.Unit.Amount == "mg",
+#                        D.Amount / 1000,   # convert mg to g
+#                        D.Amount),
+#     # Update all relevant unit fields for LM0128
+#     D.Unit.Amount = if_else(B.Code == "LM0128", "g", D.Unit.Amount),
+#     D.Unit.Time = if_else(B.Code == "LM0128", "day", D.Unit.Time),
+#     D.Unit.Animals = if_else(B.Code == "LM0128", "individual", D.Unit.Animals),
+#     # Combine them into a single standardized unit descriptor
+#     D.Unit.Standard = if_else(B.Code == "LM0128",
+#                               "g day individual",
+#                               paste(D.Unit.Amount, D.Unit.Time, D.Unit.Animals))
+#   )
+# 
+# merged_metadata$Animals.Diet <- merged_metadata$Animals.Diet %>%
+#   mutate(
+#     # Convert mg → g for LM0128
+#     D.Amount = if_else(B.Code == "LM0128" & D.Unit.Amount == "mg",
+#                        D.Amount / 1000,   # convert mg to g
+#                        D.Amount),
+#     # Update all relevant unit fields for LM0128
+#     D.Unit.Amount = if_else(B.Code == "LM0128", "g", D.Unit.Amount),
+#     D.Unit.Time = if_else(B.Code == "LM0128", "day", D.Unit.Time),
+#     D.Unit.Animals = if_else(B.Code == "LM0128", "individual", D.Unit.Animals),
+#     # Combine them into a single standardized unit descriptor
+#     D.Unit.Standard = if_else(B.Code == "LM0128",
+#                               "g day individual",
+#                               paste(D.Unit.Amount, D.Unit.Time, D.Unit.Animals))
+#   )
+
+```
+
 ### 2.1) Suspicious dry amounts TO DO ADD IN ERA DEV 
 
 This chunk systematically fills in missing “DC.Is.Dry” flags by combining three complementary sources—analytical moisture/DM thresholds, name‐based cues (e.g. “dried,” “meal”), and broad feed/supplement rules—and then, where every measurable ingredient in a treatment is already known to be dry, assumes the lab used the same dry‐prep protocol for all feeds in that trial. By layering data‑driven thresholds, text mining, and a diet‑level consistency override, we ensure that no ingredient in a truly dried regimen slips through unflagged, while still preserving fresh‐vs.‐dry distinctions in mixed rations.

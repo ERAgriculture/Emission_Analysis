@@ -1543,8 +1543,8 @@ category dominance
 
 ```{r}
 write.csv(ingredients, "~/Emission_Analysis/data/ingredients_classified.csv")
-write.csv(classif_diet, "~/Emission_Analysis/data/classif_diet.csv")
-write.csv(unmatched_diet, "~/Emission_Analysis/data/unmatched_diet.csv")
+#write.csv(classif_diet, "~/Emission_Analysis/data/classif_diet.csv")
+#write.csv(unmatched_diet, "~/Emission_Analysis/data/unmatched_diet.csv")
 write.csv(classif_ing_simple, "~/Emission_Analysis/data/classif_ing_simple.csv")
 write.csv(diet_percentages, "~/Emission_Analysis/data/diet_percentages_classif.csv")
 
