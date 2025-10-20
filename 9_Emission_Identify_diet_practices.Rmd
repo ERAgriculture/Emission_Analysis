@@ -339,7 +339,257 @@ summary_unclassified
 summary_no_change_by_prod
 
 ```
+ ## comparing trt to trt as well 
+```{r}
+# --- Libraries ---------------------------------------------------------------
+suppressPackageStartupMessages({
+  library(dplyr); library(stringr); library(tidyr); library(purrr)
+})
 
+# --- Control key --------------------------------------------------------------
+ctrl_key <- merged_metadata$MT.Out[, .(
+  B.Code,
+  A.Level.Name,
+  T.Name,
+  T.Control
+)] %>%
+  inner_join(
+    diet_percentages %>% distinct(B.Code, A.Level.Name),
+    by = c("B.Code", "A.Level.Name")
+  )
+
+# --- Roman → friendly names ---------------------------------------------------
+roman_to_name <- function(x) dplyr::recode(
+  x,
+  "I"   = "High-starch",
+  "II"  = "High-fat",
+  "III" = "Protein",
+  "IV"  = "Good forage",
+  "V"   = "Poor forage",
+  "VI"  = "Mineral/Vitamin",
+  .default = x,
+  .missing = NA_character_
+)
+
+classif_ing_simple <- classif_ing_simple %>%
+  mutate(Ingredient_Category = roman_to_name(Ingredient_Category))
+
+# --- Pairwise classifier ------------------------------------------------------
+classify_diet_practice_pairwise <- function(
+  diet_percentages,
+  ctrl_key,
+  classif_ing_simple,
+  ING_TOL   = 1.0,   # min category change to count
+  MAG_TOL   = 5.0,   # total movement threshold for relevance
+  BAL_RATIO = 1.5,   # dominance ratio (add vs reduce)
+  BAL_TOL   = 3.0    # tolerance for balanced substitution
+){
+  # --- Helpers ----------------------------------------------------------------
+  ensure_col <- function(df, col, fill = NA_character_) {
+    if (!col %in% names(df)) df[[col]] <- fill
+    df
+  }
+  norm_item <- function(x){
+    x %>% stringr::str_to_lower() %>%
+      stringr::str_replace_all("[[:space:]]+", " ") %>%
+      stringr::str_trim()
+  }
+  summarize_types <- function(x) paste(sort(unique(na.omit(x))), collapse = ", ")
+
+  # --- Ingredient lookup ------------------------------------------------------
+  ing_lu <- classif_ing_simple %>%
+    transmute(D.Item_norm = norm_item(D.Item),
+              Ingredient_Category_lu = Ingredient_Category) %>%
+    filter(!is.na(D.Item_norm), D.Item_norm != "") %>%
+    group_by(D.Item_norm) %>%
+    summarise(Ingredient_Category_lu = first(na.omit(Ingredient_Category_lu)),
+              .groups = "drop")
+
+  # --- Control lookup ---------------------------------------------------------
+  ctrl_lu <- ctrl_key %>%
+    filter(tolower(T.Control) == "yes") %>%
+    arrange(B.Code, A.Level.Name) %>%
+    group_by(B.Code) %>%
+    summarise(Control = first(A.Level.Name), .groups = "drop")
+
+  # --- Prepare diet-level composition ----------------------------------------
+  dp <- ensure_col(diet_percentages, "Ingredient_Category")
+
+  pct_long <- dp %>%
+    select(B.Code, A.Level.Name, D.Item, Percentage_of_Diet, Ingredient_Category) %>%
+    mutate(D.Item_norm = norm_item(D.Item)) %>%
+    left_join(ing_lu, by = "D.Item_norm") %>%
+    mutate(Ingredient_Category = coalesce(Ingredient_Category, Ingredient_Category_lu, "Unclassified")) %>%
+    group_by(B.Code, A.Level.Name, Ingredient_Category, D.Item) %>%
+    summarise(Item_pct = sum(Percentage_of_Diet, na.rm = TRUE), .groups = "drop")
+
+  # --- Ordered pairs (row order) ---------------------------------------------
+  arms <- pct_long %>%
+    distinct(B.Code, A.Level.Name) %>%
+    group_by(B.Code) %>%
+    mutate(diet_order = row_number()) %>%
+    ungroup()
+
+  pairs_all <- arms %>%
+    rename(A = A.Level.Name, order_A = diet_order) %>%
+    inner_join(arms %>% rename(B = A.Level.Name, order_B = diet_order),
+               by = "B.Code") %>%
+    filter(order_A < order_B) %>%
+    select(B.Code, A, B) %>%
+    left_join(ctrl_lu, by = "B.Code") %>%
+    mutate(pair_type = if_else(!is.na(Control) & (A == Control | B == Control),
+                               "trt_vs_ctrl", "trt_vs_trt"))
+
+  # --- Compute ΔP per ingredient ---------------------------------------------
+  ingredient_list <- pct_long %>% distinct(B.Code, D.Item, Ingredient_Category)
+
+  A_tbl <- pct_long %>% rename(A = A.Level.Name, p_A = Item_pct)
+  B_tbl <- pct_long %>% rename(B = A.Level.Name, p_B = Item_pct)
+
+  A_vs_B <- pairs_all %>%
+    left_join(ingredient_list, by = "B.Code") %>%
+    left_join(A_tbl, by = c("B.Code", "A", "D.Item", "Ingredient_Category")) %>%
+    left_join(B_tbl, by = c("B.Code", "B", "D.Item", "Ingredient_Category")) %>%
+    mutate(
+      p_A = coalesce(p_A, 0),
+      p_B = coalesce(p_B, 0),
+      dP  = p_B - p_A,
+      dir = case_when(
+        dP >=  ING_TOL ~ "increase",
+        dP <= -ING_TOL ~ "decrease",
+        TRUE           ~ "nochange"
+      )
+    )
+
+  # --- Presence/absence changes ----------------------------------------------
+  presence <- A_vs_B %>%
+    group_by(B.Code, A, B) %>%
+    summarise(
+      added_items    = list(D.Item[p_A == 0 & p_B > 0]),
+      removed_items  = list(D.Item[p_A > 0 & p_B == 0]),
+      Types_added     = summarize_types(Ingredient_Category[p_A == 0 & p_B > 0]),
+      Types_decreased = summarize_types(Ingredient_Category[p_A > 0 & p_B == 0]),
+      .groups = "drop"
+    )
+
+  # --- Aggregate magnitude stats ---------------------------------------------
+  paired <- A_vs_B %>%
+    group_by(B.Code, A, B) %>%
+    summarise(
+      POS_sum = sum(pmax(dP, 0), na.rm = TRUE),
+      NEG_sum = sum(pmax(-dP, 0), na.rm = TRUE),
+      Magnitude_pct = sum(abs(dP), na.rm = TRUE),
+      .groups = "drop"
+    ) %>%
+    left_join(presence, by = c("B.Code", "A", "B")) %>%
+    mutate(
+      added_n   = lengths(added_items),
+      removed_n = lengths(removed_items)
+    )
+
+  # --- Classify practice type -------------------------------------------------
+  paired <- paired %>%
+    mutate(
+      Practice = case_when(
+        added_n > 0 & removed_n == 0 ~ "Addition",
+        removed_n > 0 & added_n == 0 ~ "Reduction",
+        added_n > 0 & removed_n > 0  ~ "Substitution",
+        Magnitude_pct < MAG_TOL ~ "No change",
+        POS_sum > NEG_sum * BAL_RATIO ~ "Addition",
+        NEG_sum > POS_sum * BAL_RATIO ~ "Reduction",
+        abs(POS_sum - NEG_sum) <= BAL_TOL ~ "Substitution",
+        TRUE ~ "No change"
+      )
+    )
+
+  # --- Generate substitution pairs (presence-based or magnitude-based) -------
+  paired <- paired %>%
+    rowwise() %>%
+    mutate(
+      Substitution_pairs = {
+        if (Practice != "Substitution") {
+          ""
+        } else if (added_n > 0 & removed_n > 0) {
+          paste0(Types_decreased, " → ", Types_added)
+        } else {
+          bc <- B.Code; a <- A; b <- B
+          pos_types <- A_vs_B %>%
+            filter(B.Code == bc, A == a, B == b, dP >= ING_TOL) %>%
+            distinct(Ingredient_Category)
+          neg_types <- A_vs_B %>%
+            filter(B.Code == bc, A == a, B == b, dP <= -ING_TOL) %>%
+            distinct(Ingredient_Category)
+          np <- min(nrow(pos_types), nrow(neg_types))
+          if (np == 0) "" else
+            paste(
+              paste0(neg_types$Ingredient_Category[seq_len(np)],
+                     " → ",
+                     pos_types$Ingredient_Category[seq_len(np)]),
+              collapse = "; "
+            )
+        }
+      },
+      Subpractice = case_when(
+        Practice == "Addition"     ~ Types_added,
+        Practice == "Reduction"    ~ Types_decreased,
+        Practice == "Substitution" ~ Substitution_pairs,
+        TRUE ~ ""
+      )
+    ) %>%
+    ungroup()
+
+  # --- Reorient Reductions as Additions --------------------------------------
+  paired <- paired %>%
+    mutate(original_Practice = Practice) %>%
+    mutate(flip = (original_Practice == "Reduction")) %>%
+    mutate(
+      A_new = if_else(flip, B, A),
+      B_new = if_else(flip, A, B),
+      POS_sum_new = if_else(flip, NEG_sum, POS_sum),
+      NEG_sum_new = if_else(flip, POS_sum, NEG_sum),
+      Types_added_new = if_else(flip, Types_decreased, Types_added),
+      Types_decreased_new = if_else(flip, Types_added, Types_decreased),
+      Subpractice_new = if_else(flip, Types_added_new, Subpractice),
+      Practice_new = if_else(flip, "Addition", Practice)
+    ) %>%
+    mutate(
+      A = A_new,
+      B = B_new,
+      POS_sum = POS_sum_new,
+      NEG_sum = NEG_sum_new,
+      Types_added = Types_added_new,
+      Types_decreased = Types_decreased_new,
+      Subpractice = Subpractice_new,
+      Practice = Practice_new
+    ) %>%
+    select(-ends_with("_new"), -flip, -original_Practice)
+
+  # --- Final tidy table ------------------------------------------------------
+  out <- paired %>%
+    left_join(pairs_all %>% select(B.Code, A, B, pair_type),
+              by = c("B.Code","A","B")) %>%
+    select(
+      B.Code, pair_type, A, B,
+      Practice, Subpractice, Magnitude_pct,
+      POS_sum, NEG_sum, added_n, removed_n,
+      Types_added, Types_decreased, Substitution_pairs
+    ) %>%
+    arrange(B.Code, pair_type, A, B)
+
+  out
+}
+
+# --- Run ---------------------------------------------------------------------
+practice_pairwise_tbl <- classify_diet_practice_pairwise(
+  diet_percentages   = diet_percentages,
+  ctrl_key           = ctrl_key,
+  classif_ing_simple = classif_ing_simple,
+  ING_TOL = 1.0, MAG_TOL = 5.0, BAL_RATIO = 1.5, BAL_TOL = 3.0
+)
+
+
+```
+ 
 ```{r}
 # B.Codes that appear in the practice table
 # practice_codes <- practice_tbl %>%
@@ -585,5 +835,7 @@ print(details, n = 50)
 
 ```{r}
 write.csv(practice_tbl,"data/practice_tbl.csv")
+write.csv(practice_pairwise_tbl,"data/practice_trt_tbl.csv")
+
 ```
 
