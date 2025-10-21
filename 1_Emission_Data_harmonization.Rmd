@@ -475,7 +475,9 @@ This step standardizes ingredient amount units (e.g., from mg, kg, %, etc.) to a
 ```{r,message=FALSE,warning=FALSE}
 # Diet ingredients: breakdown of all ingredients within each diet
 ingredients <- merged_metadata$Animals.Diet %>%
-  mutate(D.Amount = as.numeric(D.Amount))
+  mutate(D.Amount = as.numeric(D.Amount))%>% 
+  filter(D.Unit.Amount!="Unspecified")%>% # most of the time for basal diets
+  filter(!is.na(D.Item))  # those are for entire diets 
 
 # Function to harmonize diet ingredient units (only change: kg/t handling)
 harmonize_units <- function(df) {

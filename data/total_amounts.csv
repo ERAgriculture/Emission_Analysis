@@ -2454,81 +2454,82 @@
 "2453","EM1093","Treatment T3","g",3675
 "2454","EO0027","CBS","g/kg",2010
 "2455","EO0027","COC","g/kg",2010
-"2456","EO0057","T1","%",87
-"2457","EO0057","T2","g",283.968
+"2456","EO0057","T1","%",102
+"2457","EO0057","T2","%",102
 "2458","HK0033","0% Brewer's Grain","%",100
 "2459","HK0033","60% Brewer's Grain","g",913.156
 "2460","HK0086","Diet B","%",200
 "2461","HK0086","Diet C","%",200
 "2462","HK0086","Diet D","%",200
-"2463","JS0094.1","Con Experiment1","% Diet",60
-"2464","JS0094.1","SHC2 Experiment1","% Diet",60
-"2465","JS0094.1","SHC3 Experiment1","% Diet",60
-"2466","JS0094.1","SHC4 Experiment1","% Diet",60
-"2467","JS0192","H","g",108.2
-"2468","JS0192","HL1","g",158.5
-"2469","JS0192","HL2","g",215.7
-"2470","JS0192","HL3","g",198.9
-"2471","JS0201.1","MUM","%",86
-"2472","JS0201.1","NMMB","%",93
-"2473","JS0201.2","NMMB","%",93
-"2474","JS0231","After Rain S","%",99.4
-"2475","JS0231","Before Rain S","%",100
-"2476","JS0231","Continuous S","%",100
-"2477","JS0324.1","Acacia tortilis 1","g",3000
-"2478","JS0324.1","Acacia tortilis 2","g",3000
-"2479","JS0324.1","Acacia tortilis 3","g",3000
-"2480","JS0324.1","Con","g",3000
-"2481","JS0324.2","Con Bundle1","g",3000
-"2482","JS0324.2","Con Bundle2","g",3000
-"2483","JS0324.2","Faidherbia albida 1 Bundle1","g",3000
-"2484","JS0324.2","Faidherbia albida 2 Bundle1","g",3000
-"2485","JS0324.2","Faidherbia albida 3 Bundle2","g",3000
-"2486","JS0345","Pasture + Supplementation(PS)","%",101
-"2487","LM0101","T1 Sorghum treated B1","g",1050
-"2488","LM0101","T1 Sorghum treated B2","g",1000
-"2489","LM0101","T2 Poultry L B2","g",1000
-"2490","LM0101","T2 Poultry L B3","g",1000
-"2491","LM0101","T3 Untreated sorghum B1","g",1100
-"2492","LM0101","T3 Untreated sorghum B3","g",1100
-"2493","LM0122","Soy-1 Diet","% Diet",57
-"2494","LM0122","Soy-2 Diet","% Diet",60
-"2495","LM0124","Control","%",100
-"2496","LM0127","LC","%",200
-"2497","LM0127","MC","%",200
-"2498","NJ0016","Leucaena leucocephala Y1","g",1000
-"2499","NJ0016","Leucaena leucocephala Y2","g",1000
-"2500","NJ0016","Leucaena leucocephala Y3","g",1000
-"2501","NJ0016","Mixed forage meal Y1","%",99.99
-"2502","NJ0016","Mixed forage meal Y2","%",99.99
-"2503","NJ0016","Mixed forage meal Y3","%",99.99
-"2504","NJ0016","Urea-treated Maize strover Y1","g",1000
-"2505","NJ0016","Urea-treated Maize strover Y2","g",1000
-"2506","NJ0016","Urea-treated Maize strover Y3","g",1000
-"2507","NJ0025","Leucaena leucocephala","%",100
-"2508","NJ0025","Mixed forage meal","%",90
-"2509","NJ0025","Urea-treated Maize strover","%",100
-"2510","NN0092.2","C130","g",600
-"2511","NN0092.2","C260","g",300
-"2512","NN0207.1","25g Chopped Sorghum Stover","g",360
-"2513","NN0207.1","25g Unchopped Sorghum Stover","g",326.666666666667
-"2514","NN0207.1","50g Chopped Sorghum Stover","g",533.333333333333
-"2515","NN0207.1","50g Unchopped Sorghum Stover","g",413.333333333333
-"2516","NN0207.2","25g Chopped Sorghum Stover","g",3600
-"2517","NN0207.2","25g Unchopped Sorghum Stover","g",3700
-"2518","NN0207.2","50g Chopped Sorghum Stover","g",3900
-"2519","NN0207.2","50g Unchopped Sorghum Stover","g",4700
-"2520","NN0229","Dry Khat Farm","g",288
-"2521","NN0229","Fresh Khat Farm","g",274.5
-"2522","NN0229","Silage Khat Farm","g",283.5
-"2523","NN0341","HCH","g/kg",115
-"2524","NN0341","HCL","g/kg",60
-"2525","NN0341","HPH","g/kg",60
-"2526","NN0341","HPL","g/kg",30
-"2527","NN0369","D-0","g/kg",350
-"2528","NN0370","Con","g/kg",1000
-"2529","NN0370","Urea1","g/kg",1000
-"2530","NN0370","Urea2","g/kg",1000
-"2531","NN0374","High 450","g",459
-"2532","NN0374","Low 150","g",153
-"2533","NN0374","Med 300","g",306
+"2463","HK0287","Concentrate HM","g/kg",3000
+"2464","JS0047","SCB Bundle1","%",100
+"2465","JS0047","SCB Con Bundle2","%",100
+"2466","JS0047","SFM Bundle1","%",100
+"2467","JS0047","SFM Bundle2","%",100
+"2468","JS0094.1","Con Experiment1","% Diet",60
+"2469","JS0094.1","SHC2 Experiment1","% Diet",60
+"2470","JS0094.1","SHC3 Experiment1","% Diet",60
+"2471","JS0094.1","SHC4 Experiment1","% Diet",60
+"2472","JS0192","HL1","g",69.1
+"2473","JS0192","HL2","g",120.6
+"2474","JS0201.1","MUM","%",86
+"2475","JS0201.1","NMMB","%",93
+"2476","JS0201.2","NMMB","%",93
+"2477","JS0231","After Rain S","%",99.4
+"2478","JS0231","Before Rain S","%",100
+"2479","JS0231","Continuous S","%",100
+"2480","JS0324.1","Acacia tortilis 1","g",3000
+"2481","JS0324.1","Acacia tortilis 2","g",3000
+"2482","JS0324.1","Acacia tortilis 3","g",3000
+"2483","JS0324.1","Con","g",3000
+"2484","JS0324.2","Con Bundle1","g",3000
+"2485","JS0324.2","Con Bundle2","g",3000
+"2486","JS0324.2","Faidherbia albida 1 Bundle1","g",3000
+"2487","JS0324.2","Faidherbia albida 2 Bundle1","g",3000
+"2488","JS0324.2","Faidherbia albida 3 Bundle2","g",3000
+"2489","JS0345","Pasture + Supplementation(PS)","%",101
+"2490","LM0101","T1 Sorghum treated B1","g",1050
+"2491","LM0101","T1 Sorghum treated B2","g",1000
+"2492","LM0101","T2 Poultry L B2","g",1000
+"2493","LM0101","T2 Poultry L B3","g",1000
+"2494","LM0122","Soy-1 Diet","% Diet",57
+"2495","LM0122","Soy-2 Diet","% Diet",60
+"2496","LM0124","Control","%",100
+"2497","LM0127","LC","%",200
+"2498","LM0127","MC","%",200
+"2499","NJ0016","Leucaena leucocephala Y1","g",1000
+"2500","NJ0016","Leucaena leucocephala Y2","g",1000
+"2501","NJ0016","Leucaena leucocephala Y3","g",1000
+"2502","NJ0016","Mixed forage meal Y1","%",99.99
+"2503","NJ0016","Mixed forage meal Y2","%",99.99
+"2504","NJ0016","Mixed forage meal Y3","%",99.99
+"2505","NJ0016","Urea-treated Maize strover Y1","g",1000
+"2506","NJ0016","Urea-treated Maize strover Y2","g",1000
+"2507","NJ0016","Urea-treated Maize strover Y3","g",1000
+"2508","NJ0025","Leucaena leucocephala","%",100
+"2509","NJ0025","Mixed forage meal","%",90
+"2510","NJ0025","Urea-treated Maize strover","%",100
+"2511","NN0092.2","C130","g",600
+"2512","NN0092.2","C260","g",300
+"2513","NN0207.1","25g Chopped Sorghum Stover","g",360
+"2514","NN0207.1","25g Unchopped Sorghum Stover","g",326.666666666667
+"2515","NN0207.1","50g Chopped Sorghum Stover","g",533.333333333333
+"2516","NN0207.1","50g Unchopped Sorghum Stover","g",413.333333333333
+"2517","NN0207.2","25g Chopped Sorghum Stover","g",3600
+"2518","NN0207.2","25g Unchopped Sorghum Stover","g",3700
+"2519","NN0207.2","50g Chopped Sorghum Stover","g",3900
+"2520","NN0207.2","50g Unchopped Sorghum Stover","g",4700
+"2521","NN0229","Dry Khat Farm","g",288
+"2522","NN0229","Fresh Khat Farm","g",274.5
+"2523","NN0229","Silage Khat Farm","g",283.5
+"2524","NN0341","HCH","g/kg",115
+"2525","NN0341","HCL","g/kg",60
+"2526","NN0341","HPH","g/kg",60
+"2527","NN0341","HPL","g/kg",30
+"2528","NN0369","D-0","g/kg",350
+"2529","NN0370","Con","g/kg",1000
+"2530","NN0370","Urea1","g/kg",1000
+"2531","NN0370","Urea2","g/kg",1000
+"2532","NN0374","High 450","g",900
+"2533","NN0374","Low 150","g",300
+"2534","NN0374","Med 300","g",600

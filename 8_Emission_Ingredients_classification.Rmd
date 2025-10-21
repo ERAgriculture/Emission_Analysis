@@ -1468,3 +1468,80 @@ write.csv(diet_percentages, "~/Emission_Analysis/data/diet_percentages_classif.c
 
 ```
 
+## number of papers
+```{r}
+GE_combined <- read.csv("~/Emission_Analysis/data/GE_combined.csv")
+# ─────────────────────────────────────────────────────────────
+
+
+# Ensure species column name matches your GE data
+species_col <- "P.Product"
+
+# 1️⃣ Filter emission dataset to keep only papers with CH4 values
+ge_with_emissions <- GE_combined %>%
+  filter(!is.na(CH4_kg_year)) %>%             # keep rows with CH4 data
+  group_by(B.Code, !!sym(species_col)) %>%
+  summarise(has_CH4 = any(!is.na(CH4_kg_year)), .groups = "drop") %>%
+  rename(Species = !!sym(species_col)) %>%
+  filter(has_CH4) %>%
+  select(B.Code, Species) %>%
+  distinct()
+
+# 2️⃣ Status for ingredients (complete classification)
+ing_classified_status <- ingredients %>%
+  group_by(B.Code) %>%
+  summarise(
+    n_ing = n(),
+    n_ing_classified = sum(!is.na(Ingredient_Category)),
+    all_ing_classified = n_ing > 0 & (n_ing_classified == n_ing),
+    .groups = "drop"
+  )
+
+# 3️⃣ Status for diets (≥ 2 classified)
+diet_classified_status <- classif_diet_3rd %>%
+  group_by(B.Code) %>%
+  summarise(
+    n_diets_classified = sum(!is.na(M7_Category)),
+    two_or_more_diets = n_diets_classified >= 2,
+    .groups = "drop"
+  )
+
+# 4️⃣ Papers with all ingredients classified + CH4 data
+papers_all_ing <- ing_classified_status %>%
+  filter(all_ing_classified) %>%
+  inner_join(ge_with_emissions, by = "B.Code")
+
+summary_ing_by_species <- papers_all_ing %>%
+  group_by(Species) %>%
+  summarise(
+    N_Papers_All_Ingredients = n_distinct(B.Code),
+    .groups = "drop"
+  )
+
+# 5️⃣ Papers with ≥2 diets classified + CH4 data
+papers_two_diets <- diet_classified_status %>%
+  filter(two_or_more_diets) %>%
+  inner_join(ge_with_emissions, by = "B.Code")
+
+summary_diets_by_species <- papers_two_diets %>%
+  group_by(Species) %>%
+  summarise(
+    N_Papers_TwoPlus_Diets = n_distinct(B.Code),
+    .groups = "drop"
+  )
+
+# 6️⃣ Combine both summaries
+summary_by_species <- full_join(
+  summary_ing_by_species,
+  summary_diets_by_species,
+  by = "Species"
+) %>%
+  mutate(across(starts_with("N_"), ~ replace_na(., 0))) %>%
+  arrange(Species)
+
+# 7️⃣ Print as table
+knitr::kable(summary_by_species,
+             caption = "Papers with CH₄ data meeting classification criteria, by species")
+
+```
+

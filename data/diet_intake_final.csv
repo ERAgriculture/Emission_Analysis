@@ -2446,6 +2446,7 @@ AG0018,NP,0.042857142857142864,sum_ingredients
 AG0018,UTS,1.042857142857143,sum_ingredients
 AG0042,Base_60% F SOPM,0.190714285714286,sum_ingredients
 AG0042,Base_60% UF SOPM,0.183035714285714,sum_ingredients
+AG0042,Base_Con,0.19267857142857098,sum_ingredients
 AG0050,CPL,0.024,sum_ingredients
 AG0050,CSH,0.1,sum_ingredients
 AG0050,CST,0.024,sum_ingredients
@@ -2476,6 +2477,7 @@ AN0029,T3 2.5%,0.1,sum_ingredients
 AN0057,Base_0 PPL,0.411,sum_ingredients
 AN0057,Base_150 PPL,0.373,sum_ingredients
 AN0057,Base_300 PPL,0.37,sum_ingredients
+AN0057,Base_450 PPL,0.368,sum_ingredients
 AN0058,PJP 0,0.0125,sum_ingredients
 AN0058,PJP 10,0.008,sum_ingredients
 AN0058,PJP 20,0.008,sum_ingredients
@@ -2569,20 +2571,6 @@ CJ1009,DC60,3.996,sum_ingredients
 CJ1009,VE20,3.994,sum_ingredients
 CJ1009,VE40,3.994,sum_ingredients
 CJ1009,VE60,3.994,sum_ingredients
-CJ1010,A. africana,0,sum_ingredients
-CJ1010,A. finlbriata,0,sum_ingredients
-CJ1010,A. sessilis,0,sum_ingredients
-CJ1010,B. diffma,0,sum_ingredients
-CJ1010,E. heterophylus,0,sum_ingredients
-CJ1010,E. hirta,0,sum_ingredients
-CJ1010,I. triloba,0,sum_ingredients
-CJ1010,P. africana,0,sum_ingredients
-CJ1010,P. amarus,0,sum_ingredients
-CJ1010,S. acuta,0,sum_ingredients
-CJ1010,S. cordifolia,0,sum_ingredients
-CJ1010,T. diversifolia,0,sum_ingredients
-CJ1010,T. fruticosum,0,sum_ingredients
-CJ1010,T. prub,0,sum_ingredients
 CJ1011,T1,0.08,sum_ingredients
 CJ1011,T2,0.08,sum_ingredients
 CJ1011,T3,0.08,sum_ingredients
@@ -2602,7 +2590,6 @@ CJ1018,Searsia lanc,0,sum_ingredients
 CJ1018,Searsia pyroid,0,sum_ingredients
 DK0001,Forage Based,3.15,sum_ingredients
 DK0001,Silage Based,3.6603000000000003,sum_ingredients
-DK0001,commercial feed,0,sum_ingredients
 DK0037,MCC,4,sum_ingredients
 DK0037,MCM,4,sum_ingredients
 EM1010,MSM,0.004,sum_ingredients
@@ -2638,6 +2625,7 @@ EO0027,CBS,2.01,sum_ingredients
 EO0027,COC,2.01,sum_ingredients
 EO0027,Reference diet,3.6416666666666665e-8,sum_ingredients
 EO0032,Base_100% concentrate,0.07430636245807846,sum_ingredients
+EO0032,Base_25%concentrate+75% leaf meal,0.0896284503962428,sum_ingredients
 EO0032,Base_50%concentrate+50% leaf meal,0.08215941286322256,sum_ingredients
 EO0032,Base_75% concentrate+25% leaf meal,0.06548726363246182,sum_ingredients
 EO0041,Base_PL22,4.91,sum_ingredients
@@ -2646,10 +2634,12 @@ EO0041,Base_PL45,4.27,sum_ingredients
 EO0041,Base_PLO,4.35,sum_ingredients
 EO0057,Base_T0,0.3805,sum_ingredients
 EO0057,Base_T1,0.24230000000000002,sum_ingredients
+EO0057,Base_T2,0.18230000000000002,sum_ingredients
 EO0057,T1,0.102,sum_ingredients
-EO0057,T2,0.5152279999999999,sum_ingredients
+EO0057,T2,0.102,sum_ingredients
 EO0067,Supplements,2,sum_ingredients
 EO0074,Base_Hay,0.501,sum_ingredients
+EO0074,Base_Hay+Concentate+Tata,0.613,sum_ingredients
 EO0074,Base_Hay+Concentrate,0.611,sum_ingredients
 EO0074,Base_Hay+Tata,0.564,sum_ingredients
 EO0078,Base_10%PJP,0.31849,sum_ingredients
@@ -2721,14 +2711,13 @@ HK0210,Chicken M3,0.1,sum_ingredients
 HK0210,Diet Con,0.1,sum_ingredients
 HK0250,Supplementation - calves,2.275,sum_ingredients
 HK0250,Supplementation - dam,2.275,sum_ingredients
-HK0263,Rotational2,0,sum_ingredients
 HK0270,Supplement Diet,22,sum_ingredients
 HK0287,Conc Commercial,13.5,sum_ingredients
 HK0287,Concentrate HM,16.5,sum_ingredients
 HK0337,Base_NA,0.4598,sum_ingredients
 HK0337,Base_T0  Control...T100 Concentrate...T66 Concentrate,0.3241,sum_ingredients
+HK0337,Base_T100 Concentrate,0.078,sum_ingredients
 HK0337,Base_T66 Concentrate,0.1375,sum_ingredients
-HK0340,OH D1,0,sum_ingredients
 HK0340,OH D2,0.28,sum_ingredients
 HK0340,Pasture D3,0,sum_ingredients
 HK0340,Pasture D4,0.68,sum_ingredients
@@ -2743,6 +2732,7 @@ HK0346,HM Bundle3,0.21,sum_ingredients
 HK0350,Base_Con CSM,0.42,sum_ingredients
 HK0350,Base_Velvet BM 1,0.423,sum_ingredients
 HK0350,Base_Velvet BM 2,0.424,sum_ingredients
+HK0350,Base_Velvet BM 3,0.427,sum_ingredients
 JO1011,LL100,0.4,sum_ingredients
 JO1011,LL50,0.2,sum_ingredients
 JO1011,LL75,0.3,sum_ingredients
@@ -2751,7 +2741,6 @@ JO1011,MO60,0.24,sum_ingredients
 JO1011,MO80,0.32,sum_ingredients
 JO1014,DMC40,0.04,sum_ingredients
 JO1014,DMC80,0.18,sum_ingredients
-JO1018,Control,0,sum_ingredients
 JO1018,Feed 1,0.202,sum_ingredients
 JO1018,Feed 2,0.202,sum_ingredients
 JO1018,Feed 3,0.202,sum_ingredients
@@ -2761,7 +2750,6 @@ JO1021,Arachis hypogaea,0.2271,sum_ingredients
 JO1021,Ficus gnaphalocarpa,0.26489999999999997,sum_ingredients
 JO1021,Pericopsis laxiflo,0.2081,sum_ingredients
 JO1021,Pterocarpus erinace,0.1918,sum_ingredients
-JO1029,Feed 1,0,sum_ingredients
 JO1029,Feed 2,0.1,sum_ingredients
 JO1029,Feed 3,0.1,sum_ingredients
 JO1029,Feed 4,10.5,sum_ingredients
@@ -2812,13 +2800,14 @@ JO1099,Ration 15,0.05,sum_ingredients
 JO1099,Ration 20,0.05,sum_ingredients
 JO1099,Ration 25,0.05,sum_ingredients
 JO1099,Ration 30,0.1,sum_ingredients
-JS0046,Base_A. africana Diet,0.346,sum_ingredients
+JS0046,Base_A. africana Diet,0.648,sum_ingredients
 JS0046,Base_Cotton seed Cake Diet,0.386,sum_ingredients
-JS0046,Base_P. erinaceus Diet,0.364,sum_ingredients
+JS0046,Base_K. senegalensis Diet,0.152,sum_ingredients
+JS0046,Base_P. erinaceus Diet,0.573,sum_ingredients
 JS0047,SCB Bundle1,0.1,sum_ingredients
 JS0047,SCB Con Bundle2,0.1,sum_ingredients
 JS0047,SFM Bundle1,0.1,sum_ingredients
-JS0047,SFM Bundle2,0.05289999999999999,sum_ingredients
+JS0047,SFM Bundle2,0.1,sum_ingredients
 JS0048,Base_A. S. pods,0.18,sum_ingredients
 JS0048,Base_P.L leaves,0.181,sum_ingredients
 JS0048,Base_T Con,0.171,sum_ingredients
@@ -2838,16 +2827,17 @@ JS0094.2,SHC1 Experiment2,0.3,sum_ingredients
 JS0094.2,SHC2 Experiment2,0.3,sum_ingredients
 JS0094.2,SHC3 Experiment2,0.3,sum_ingredients
 JS0095,100% Straw,0.1,sum_ingredients
-JS0095,40% Straw + 40% molasses + 20% DPM,0.2551014285714291,sum_ingredients
+JS0095,40% Straw + 40% molasses + 20% DPM,0.1,sum_ingredients
 JS0095,50% Straw + 40% molasses + 10% DPM,0.1,sum_ingredients
 JS0095,60% Straw + 40% molasses,0.1,sum_ingredients
 JS0112,DY0,0.7,sum_ingredients
 JS0112,DY1,0.7,sum_ingredients
 JS0112,DY2,0.7,sum_ingredients
 JS0112,DY3,2,sum_ingredients
-JS0115,Acacia,0.64,sum_ingredients
-JS0115,Berseem,0.77,sum_ingredients
-JS0115,Rice Con,0.34,sum_ingredients
+JS0115,Base_Acacia,0.64,sum_ingredients
+JS0115,Base_Berseem,0.67,sum_ingredients
+JS0115,Base_Rice Con,0.34,sum_ingredients
+JS0115,Berseem,0.1,sum_ingredients
 JS0118,Con Cumin,0.02,sum_ingredients
 JS0118,Jatropha SM 1,0.02,sum_ingredients
 JS0118,Jatropha SM 2,0.02,sum_ingredients
@@ -2866,6 +2856,7 @@ JS0140,Base_PPW 25%,0,sum_ingredients
 JS0140,Base_PPW 50%,0,sum_ingredients
 JS0167,Base_Broiler Litter1,2.9,sum_ingredients
 JS0167,Base_Broiler Litter2,2.73,sum_ingredients
+JS0167,Base_Broiler Litter3,2.99,sum_ingredients
 JS0167,Base_Con,2.55,sum_ingredients
 JS0172,Base_AH + CC,0.721,sum_ingredients
 JS0172,Base_Concentrate + CC,0.508,sum_ingredients
@@ -2877,20 +2868,24 @@ JS0176,LLM 2.6,6.2,sum_ingredients
 JS0177,L3,0.1052,sum_ingredients
 JS0177,PP2,0.1262,sum_ingredients
 JS0177,S4,0.0994,sum_ingredients
-JS0192,H,0.1082,sum_ingredients
-JS0192,HL1,0.1585,sum_ingredients
-JS0192,HL2,0.21569999999999998,sum_ingredients
-JS0192,HL3,0.1989,sum_ingredients
+JS0192,Base_H,0.1082,sum_ingredients
+JS0192,Base_HL1,0.08940000000000001,sum_ingredients
+JS0192,Base_HL2,0.09509999999999999,sum_ingredients
+JS0192,Base_HL3,0.1989,sum_ingredients
+JS0192,HL1,0.0691,sum_ingredients
+JS0192,HL2,0.1206,sum_ingredients
 JS0193,Base_Trt 1,0.316,sum_ingredients
 JS0193,Base_Trt 2,0.4092,sum_ingredients
 JS0193,Base_Trt 3,0.0627,sum_ingredients
 JS0196,Base_Albizia BC,0.15059999999999998,sum_ingredients
+JS0196,Base_Cotton CSC Con,0.1608,sum_ingredients
 JS0196,Base_Gliricidia BC,0.15990000000000001,sum_ingredients
 JS0196,Base_Leucaena BC,0.14959999999999998,sum_ingredients
 JS0196,Base_Moringa BC,0.1536,sum_ingredients
 JS0197,Base_R1 0DLL,0.20936000000000002,sum_ingredients
 JS0197,Base_R2 15DLL,0.21828999999999998,sum_ingredients
 JS0197,Base_R3 30DLL,0.22771,sum_ingredients
+JS0197,Base_R4 45DLL,0.2225,sum_ingredients
 JS0201.1,Base_Con,14.6,sum_ingredients
 JS0201.1,Base_MUM,10.4,sum_ingredients
 JS0201.1,Base_NMMB,16.8,sum_ingredients
@@ -2901,20 +2896,22 @@ JS0205,Base_Hay Con,3.1,sum_ingredients
 JS0205,Base_Leucaena LLM 1,3.45,sum_ingredients
 JS0205,Base_Leucaena LLM 2,3.72,sum_ingredients
 JS0205,Base_Leucaena LLM 3,3.82,sum_ingredients
+JS0206,Base_LLM,0.2998,sum_ingredients
 JS0206,Base_NLM,0.3518,sum_ingredients
 JS0206,Base_NPH,0.3599,sum_ingredients
 JS0206,Base_PLM,0.3518,sum_ingredients
-JS0207,Base_Bundle 1  Treated Straw,0.219,sum_ingredients
-JS0207,Base_Bundle 1 Untreated Straw,0.211,sum_ingredients
-JS0207,Base_Bundle 2 Treated Staw +Hay,0.211,sum_ingredients
-JS0207,Base_Bundle 2 Untreated Staw +Hay,0.211,sum_ingredients
-JS0207,Base_Bundle 2 Untreated Straw,0.211,sum_ingredients
-JS0207,Base_Bundle 3 Treated Straw,0.219,sum_ingredients
-JS0207,Base_Bundle 3 Treated Straw + Hay,0.211,sum_ingredients
-JS0207,Base_Bundle 4 Untreated Straw + Hay,0.211,sum_ingredients
-JS0208,Base_Diet Con UTS Bundle1,0.21,sum_ingredients
-JS0208,Base_Diet Con UTS Bundle2,0.21,sum_ingredients
-JS0208,Base_UTS+Hay UTSH Bundle1,0.21030000000000001,sum_ingredients
+JS0207,Base_Bundle 1  Treated Straw,0.462,sum_ingredients
+JS0207,Base_Bundle 1 Untreated Straw,0.357,sum_ingredients
+JS0207,Base_Bundle 2 Treated Staw +Hay,0.495,sum_ingredients
+JS0207,Base_Bundle 2 Untreated Staw +Hay,0.426,sum_ingredients
+JS0207,Base_Bundle 2 Untreated Straw,0.357,sum_ingredients
+JS0207,Base_Bundle 3 Treated Straw,0.462,sum_ingredients
+JS0207,Base_Bundle 3 Treated Straw + Hay,0.495,sum_ingredients
+JS0207,Base_Bundle 4 Treated Straw + Hay,0.284,sum_ingredients
+JS0207,Base_Bundle 4 Untreated Straw + Hay,0.426,sum_ingredients
+JS0208,Base_Diet Con UTS Bundle1,0.3152,sum_ingredients
+JS0208,Base_Diet Con UTS Bundle2,0.3152,sum_ingredients
+JS0208,Base_UTS+Hay UTSH Bundle1,0.2855,sum_ingredients
 JS0208,Base_WS Treated TS Bundle2,0.43910000000000005,sum_ingredients
 JS0208,Base_WS Treated TS Bundle3,0.43910000000000005,sum_ingredients
 JS0208,Base_WS Treated+Hay TSH Bundle1,0.32389999999999997,sum_ingredients
@@ -2922,8 +2919,10 @@ JS0208,Base_WS Treated+Hay TSH Bundle3,0.32389999999999997,sum_ingredients
 JS0209,Base_Hay Con,0.1726,sum_ingredients
 JS0209,Base_Marejea 1,0.16040000000000001,sum_ingredients
 JS0209,Base_Marejea 2,0.1002,sum_ingredients
+JS0209,Base_Marejea 3,0.2535,sum_ingredients
 JS0210.2,Base_15% Marejea Hay,0.1439,sum_ingredients
 JS0210.2,Base_30% Marejea Hay,0.1264,sum_ingredients
+JS0210.2,Base_45% Marejea Hay,0.1243,sum_ingredients
 JS0210.2,Base_No Marejea Hay,0.1764,sum_ingredients
 JS0213.1,Base_A CC hay+Maize bran,7.4,sum_ingredients
 JS0213.1,Base_B WMS meal,7.12,sum_ingredients
@@ -2939,7 +2938,9 @@ JS0215.1,Base_Bundle 1 WN,2.4,sum_ingredients
 JS0215.1,Base_Bundle 2 MO,2.9,sum_ingredients
 JS0215.1,Base_Bundle 2 MO + FM,3.7,sum_ingredients
 JS0215.1,Base_Bundle 3 MB + FM,3.2,sum_ingredients
+JS0215.1,Base_Bundle 3 Mo + FM,3.7,sum_ingredients
 JS0215.2,Base_Bundle 1 WN + MB + FM,6.1,sum_ingredients
+JS0215.2,Base_Bundle 1 WN + Maize Bran,4.9,sum_ingredients
 JS0215.2,Base_Bundle 2 WN + MO,5.8,sum_ingredients
 JS0215.2,Base_Bundle 2 WN + MO + FM,7.4,sum_ingredients
 JS0215.2,Base_Bundle 3 WN + MB + FM,6.1,sum_ingredients
@@ -2962,21 +2963,26 @@ JS0243,Base_LSC,0.429844843314728,sum_ingredients
 JS0243,Base_NSC,0.47421077596995687,sum_ingredients
 JS0249,Base_200 g CM,0.4128,sum_ingredients
 JS0249,Base_300 g CM,0.4094,sum_ingredients
+JS0249,Base_400 g CM,0.3486,sum_ingredients
 JS0249,Base_Control Diet,0.44739999999999996,sum_ingredients
 JS0261,Base_Hay Diet,0,sum_ingredients
 JS0261,Base_Hay with 200g Suppliment,0,sum_ingredients
 JS0261,Base_Hay with 300g Suppliment,0,sum_ingredients
+JS0261,Base_Hay with 400g Suppliment,0,sum_ingredients
 JS0262,Base_Con hay,0.5405,sum_ingredients
 JS0262,Base_T2 Wheat Bran,0.488,sum_ingredients
 JS0262,Base_T3 2Wheat bran:1 NSM,0.3997,sum_ingredients
 JS0262,Base_T4 1Wheatbran:2NSM,0.3965,sum_ingredients
+JS0262,Base_T5 Noug Seed Meal,0.3658,sum_ingredients
 JS0263,Base_Con,0.516,sum_ingredients
 JS0263,Base_Leucaena 1,0.543,sum_ingredients
 JS0263,Base_Leucaena 2,0.525,sum_ingredients
+JS0263,Base_Leucaena 3,0.466,sum_ingredients
 JS0263,Base_Sesbania S 1,0.544,sum_ingredients
 JS0263,Base_Sesbania S 2,0.487,sum_ingredients
 JS0263,Base_Sesbania S 3,0.526,sum_ingredients
 JS0265,Base_Bundle 2 Dried Leucaena,0.522,sum_ingredients
+JS0265,Base_Bundle 2 Fresh Leucaena,0.44,sum_ingredients
 JS0265,Base_Cotton Seed Cake Diet Bundle 1,0.579,sum_ingredients
 JS0265,Base_Dry Leucaena Diet Bundle 1,0.522,sum_ingredients
 JS0265,Base_Dry Sesbania  Diet Bundle 1,0.506,sum_ingredients
@@ -3007,30 +3013,36 @@ JS0271,Base_Con,0.627,sum_ingredients
 JS0271,Base_Leucaena 1,0.974,sum_ingredients
 JS0271,Base_Leucaena 2,0.893,sum_ingredients
 JS0271,Base_Leucaena 3,0.899,sum_ingredients
+JS0271,Base_Mixture C,0.614,sum_ingredients
 JS0272,Base_CSC Diet,1.5288,sum_ingredients
 JS0272,Base_NSC Diet,1.0684,sum_ingredients
-JS0272,Base_PNC Diet,0.7112999999999999,sum_ingredients
+JS0272,Base_PNC Diet,1.2860999999999998,sum_ingredients
 JS0272,Base_Teff Straw + Cactus Diet,1.3135999999999999,sum_ingredients
 JS0273,Base_T1 Hay,0.569,sum_ingredients
 JS0273,Base_T2 Hay and 150 g DM,0.427,sum_ingredients
 JS0273,Base_T3 Hay and 250 g DM,0.4357,sum_ingredients
+JS0273,Base_T4 Hay and 350 g DM,0.3942,sum_ingredients
 JS0276,Base_Diet Con,0.36,sum_ingredients
 JS0276,Base_T1 Moringa Leaf,0.378,sum_ingredients
 JS0276,Base_T2 Moringa Leaf,0.352,sum_ingredients
+JS0281,Base_Diet Con,0.2957612418153956,sum_ingredients
 JS0281,Base_Diet1,0.08420979801688347,sum_ingredients
 JS0281,Base_Diet2,0.10885656816816644,sum_ingredients
 JS0281,Base_Diet3,0.09653318309252494,sum_ingredients
 JS0285,Base_Control Diet,0.5187,sum_ingredients
+JS0285,Base_High Conc.,0.38380000000000003,sum_ingredients
 JS0285,Base_Low Conc.,0.5137999999999999,sum_ingredients
 JS0285,Base_Medium Conc.,0.5052,sum_ingredients
 JS0289.1,Base_Teff + 150 g Wheat Bran,0.5161408482323718,sum_ingredients
 JS0289.1,Base_Teff + 200 g L. pallida,0.5236836163693793,sum_ingredients
 JS0289.1,Base_Teff + 200g S. Sesban,0.5165903132846629,sum_ingredients
 JS0289.1,Base_Teff + 400 g L. pallida,0.4870473139896285,sum_ingredients
+JS0289.1,Base_Teff + 400 g S. Sesban,0.4984013844897294,sum_ingredients
 JS0289.2,Base_Teff + 150 g Wheat Bran,0.35700287343634524,sum_ingredients
 JS0289.2,Base_Teff + 200 g L. pallida,0.35625235168200875,sum_ingredients
 JS0289.2,Base_Teff + 200g S. Sesban,0.36037956888906825,sum_ingredients
 JS0289.2,Base_Teff + 400 g L. pallida,0.3201335590512314,sum_ingredients
+JS0289.2,Base_Teff + 400 g S. Sesban,0.3385709208092732,sum_ingredients
 JS0290,Base_Diet Con,0.536,sum_ingredients
 JS0290,Base_Lablab,0.515,sum_ingredients
 JS0290,Base_Leucaena,0.521,sum_ingredients
@@ -3057,11 +3069,13 @@ JS0291,Base_Palmensis 4,0.43168621244112226,sum_ingredients
 JS0291,Base_Sesban 1,0.5130536531599383,sum_ingredients
 JS0291,Base_Sesban 2,0.4566445159441421,sum_ingredients
 JS0291,Base_Sesban 3,0.4314981235172055,sum_ingredients
+JS0291,Base_Sesban 4,0.4175788292101989,sum_ingredients
 JS0299,Control Diet Bundle 1,0.1,sum_ingredients
 JS0301,Base_100% FTL,0.42482,sum_ingredients
 JS0301,Base_25% FTL,0.45279,sum_ingredients
 JS0301,Base_50% FTL,0.44593,sum_ingredients
 JS0301,Base_75% FTL,0.42161000000000004,sum_ingredients
+JS0301,Base_No FTL,0.47262,sum_ingredients
 JS0311,L.leucocephala,0.35,sum_ingredients
 JS0311,Poultry waste-DPW,0.26,sum_ingredients
 JS0316,Base_Con Hay Bundle1,0.611,sum_ingredients
@@ -3091,12 +3105,16 @@ JS0324.2,Faidherbia albida 3 Bundle2,3,sum_ingredients
 JS0326,Calliandra 1,8e-4,sum_ingredients
 JS0326,Calliandra 2,0.0016,sum_ingredients
 JS0341,Deep Litter System + LP,0.1,sum_ingredients
-JS0341,Deep Litter System+ GP,0,sum_ingredients
 JS0344,Base_Con,0.18,sum_ingredients
 JS0344,Base_Rumen 1,0.205,sum_ingredients
 JS0344,Base_Rumen 2,0.215,sum_ingredients
+JS0344,Base_Rumen 3,0.22,sum_ingredients
 JS0345,Natural (NP),0.07504,sum_ingredients
 JS0345,Pasture + Supplementation(PS),0.101,sum_ingredients
+JS0350,Base_Diet Con Bundle1,0.882784,sum_ingredients
+JS0350,Base_Diet Con Bundle2,1.137821,sum_ingredients
+JS0350,Base_T2 Rosemay Oil Bundle1,1.0306780000000002,sum_ingredients
+JS0350,Base_T2 Rosemay Oil Bundle2,1.1501839999999999,sum_ingredients
 JS0393,Protein Supp. Dorper,0.1,sum_ingredients
 JS0393,Protein Supp. Merino,0.1,sum_ingredients
 JS0393,Salt/Phosphate Supp. Dorper,0.1,sum_ingredients
@@ -3119,6 +3137,7 @@ JS0419,Base_T3 CS Bundle2,0.262,sum_ingredients
 JS0419,Base_T3 CS Con Bundle5,0.262,sum_ingredients
 JS0419,Base_T4 CA Bundle3,0.207,sum_ingredients
 JS0419,Base_T4 CA Bundle4,0.207,sum_ingredients
+JS0419,Base_T4 CA Bundle5,0.207,sum_ingredients
 JS0421,Lupin One,0.2,sum_ingredients
 JS0421,Lupin Three,0.6,sum_ingredients
 JS0421,Lupin Two,0.4,sum_ingredients
@@ -3135,7 +3154,9 @@ JS0423,D8 0.8% Phosphorus,0.47,sum_ingredients
 JS0423,D9 0.9% Phosphorus,0.47,sum_ingredients
 JS0424,Base_Cassava leaf CLM,0.53,sum_ingredients
 JS0424,Base_Diet Con Lablab LLB,0.533,sum_ingredients
+JS0424,Base_Sunflower SFM,0.39,sum_ingredients
 JS0424,Base_Sweet potato SPV,0.538,sum_ingredients
+LM0018,Base_CPV diet,0.446,sum_ingredients
 LM0018,Base_CSC diet,0.5519999999999999,sum_ingredients
 LM0018,Base_Control,0.502,sum_ingredients
 LM0018,Base_GH diet,0.38,sum_ingredients
@@ -3155,14 +3176,12 @@ LM0101,Base_T1 Sorghum treated B1,3.5,sum_ingredients
 LM0101,Base_T1 Sorghum treated B2,3.5,sum_ingredients
 LM0101,Base_T2 Poultry L B2,4.25,sum_ingredients
 LM0101,Base_T2 Poultry L B3,4.25,sum_ingredients
-LM0101,Base_T3 Untreated sorghum B1,1.56,sum_ingredients
-LM0101,Base_T3 Untreated sorghum B3,1.56,sum_ingredients
+LM0101,Base_T3 Untreated sorghum B1,2.66,sum_ingredients
+LM0101,Base_T3 Untreated sorghum B3,2.66,sum_ingredients
 LM0101,T1 Sorghum treated B1,1.05,sum_ingredients
 LM0101,T1 Sorghum treated B2,1,sum_ingredients
 LM0101,T2 Poultry L B2,1.5,sum_ingredients
 LM0101,T2 Poultry L B3,1.5,sum_ingredients
-LM0101,T3 Untreated sorghum B1,1.1,sum_ingredients
-LM0101,T3 Untreated sorghum B3,1.1,sum_ingredients
 LM0104,0% A. sieberiana,0.072,sum_ingredients
 LM0104,15% A. sieberiana,0.202,sum_ingredients
 LM0104,30% A. sieberiana,0.348,sum_ingredients
@@ -3173,7 +3192,7 @@ LM0116,100 g/d CSM Sub 1,0.1,sum_ingredients
 LM0116,100 g/d Maize Diet,0.1,sum_ingredients
 LM0116,100 g/d Maize Diet Sub 1,0.1,sum_ingredients
 LM0116,200 g/d CSM,0.2,sum_ingredients
-LM0116,200 g/d CSM Sub 2,0.804714285714286,sum_ingredients
+LM0116,200 g/d CSM Sub 2,0.205,sum_ingredients
 LM0116,200 g/d Maize Diet,0.2,sum_ingredients
 LM0116,200 g/d Maize Diet Sub 2,0.2,sum_ingredients
 LM0116,Base_0 g/d CSM,0.493428571428571,sum_ingredients
@@ -3183,6 +3202,7 @@ LM0116,Base_100 g/d CSM Sub 1,0.589142857142857,sum_ingredients
 LM0116,Base_100 g/d Maize Diet,0.575142857142857,sum_ingredients
 LM0116,Base_100 g/d Maize Diet Sub 1,0.493428571428571,sum_ingredients
 LM0116,Base_200 g/d CSM,0.599714285714286,sum_ingredients
+LM0116,Base_200 g/d CSM Sub 2,0.599714285714286,sum_ingredients
 LM0116,Base_200 g/d Maize Diet,0.493428571428571,sum_ingredients
 LM0116,Base_200 g/d Maize Diet Sub 2,0.493428571428571,sum_ingredients
 LM0121,Diet 0,0.1,sum_ingredients
@@ -3219,18 +3239,25 @@ LM0136.2,20% Crude Protein,0.1012,sum_ingredients
 LM0151.1,Base_Gliricidia1,1.8,sum_ingredients
 LM0151.1,Base_Gliricidia2,1.7,sum_ingredients
 LM0151.1,Base_Gliricidia3,1.6,sum_ingredients
+LM0151.1,Base_Gliricidia4,1.3,sum_ingredients
 LM0151.1,Base_Stover Con,2.1,sum_ingredients
 LM0151.2,Base_Gliricidia1,2.5,sum_ingredients
 LM0151.2,Base_Gliricidia2,2.3,sum_ingredients
 LM0151.2,Base_Leucaena1,2.7,sum_ingredients
+LM0151.2,Base_Leucaena2,2.2,sum_ingredients
 LM0151.2,Base_Stover Con,2.3,sum_ingredients
 LM0163,Base_MT D1,1.97892,sum_ingredients
 LM0163,Base_MT D2,1.83438,sum_ingredients
 LM0163,Base_MT D3,1.81656,sum_ingredients
+LM0163,Base_MT D4,1.5408,sum_ingredients
 LM0163,Base_Napier Con,2.17917,sum_ingredients
+LM0227.1,Base_MNG + PLBC,12.2,sum_ingredients
 LM0227.1,Base_MNG + SFBC,12.2,sum_ingredients
+LM0227.1,Base_ONG +PLBC,11.1,sum_ingredients
+LM0227.1,Base_ONP + SFBC,11.2,sum_ingredients
 LM0227.2,Base_MNG,13.6,sum_ingredients
 LM0227.2,Base_MNG + 3.65 PLBC,11.5,sum_ingredients
+LM0227.2,Base_MNG + 6.35 PLBC,10,sum_ingredients
 LM0227.2,Base_MNG +0.91 PLBC,13.2,sum_ingredients
 LM0228.1,Base_Copra Cake (CC),7.3,sum_ingredients
 LM0228.1,Base_Fishmeal (FM),6.9,sum_ingredients
@@ -3238,6 +3265,7 @@ LM0228.1,Base_Napier Con,7.1,sum_ingredients
 LM0228.2,Base_Copra Cake,5.6,sum_ingredients
 LM0228.2,Base_Napier Con,5.5,sum_ingredients
 LM0229,Base_(LH) 2 kg leucaena,5.9,sum_ingredients
+LM0229,"Base_(LHM) 2 kg leucaena,1kg Maize Bran",5.7,sum_ingredients
 LM0229,Base_(LL) 1 kg leucaena,6.6,sum_ingredients
 LM0229,Base_Napier Grass Diet,6.3,sum_ingredients
 LM0238,Base_Commercial D Meal,10.5,sum_ingredients
@@ -3245,6 +3273,7 @@ LM0238,Base_Lablab hay,10.1,sum_ingredients
 LM0238,Base_Mucuna hay,9.72,sum_ingredients
 LM0238,Base_Napier Con,9.8,sum_ingredients
 LM0248,Base_HB,0.437,sum_ingredients
+LM0248,Base_HB2,0.437,sum_ingredients
 LM0248,Base_HG,0.504,sum_ingredients
 LM0248,Base_HG1,0.504,sum_ingredients
 LM0248,Base_HGB,0.455,sum_ingredients
@@ -3257,21 +3286,24 @@ LM0266,Base_brownii5,0.6078,sum_ingredients
 LM0266,Base_discolor6,0.6652,sum_ingredients
 LM0266,Base_nilotica3,0.6603,sum_ingredients
 LM0266,Base_tortilis2,0.5747000000000001,sum_ingredients
+LM0280,Base_CC Diet,0.782,sum_ingredients
 LM0280,Base_GBC Diet,0.834,sum_ingredients
 LM0280,Base_LBC Diet,0.789,sum_ingredients
-LM0289,Base_MP,0.262,sum_ingredients
-LM0289,Base_MP + MSK,0.208,sum_ingredients
-LM0289,Base_MP + MSK + UB,0.204,sum_ingredients
-LM0289,Base_MSK,0.323,sum_ingredients
-LM0294,Base,0,sum_ingredients
+LM0289,Base_Control,0.527,sum_ingredients
+LM0289,Base_MP,0.669,sum_ingredients
+LM0289,Base_MP + MSK,0.617,sum_ingredients
+LM0289,Base_MP + MSK + UB,0.733,sum_ingredients
+LM0289,Base_MSK,0.567,sum_ingredients
 LM0295,Base_1CSM:2Pjp,0.7307,sum_ingredients
 LM0295,Base_2CSM:1Pjp,0.7477999999999999,sum_ingredients
 LM0295,Base_CSM,0.49069999999999997,sum_ingredients
 LM0295,Base_Hay Con,0.5872999999999999,sum_ingredients
+LM0295,Base_Pjp,0.4021,sum_ingredients
 LM0298,Base_RGH Con,0.414,sum_ingredients
 LM0298,Base_WLG1,0.366,sum_ingredients
 LM0298,Base_WLG2,0.356,sum_ingredients
 LM0298,Base_WLG3,0.364,sum_ingredients
+LM0298,Base_WLG4,0.361,sum_ingredients
 LM0299,150g Concentrate Mix,0.4,sum_ingredients
 LM0299,350g Concentrate Mix,1.1332,sum_ingredients
 LM0311,MRB 25,0.025,sum_ingredients
@@ -3285,18 +3317,19 @@ LM0315,Diet 5,0.935,sum_ingredients
 LM0315,Diet 6,0.6427999999999999,sum_ingredients
 LM0320,D 10,0.01,sum_ingredients
 LM0320,D 20,0.02,sum_ingredients
-LM0320,D 30,0,sum_ingredients
 LM0320,D Con,0,sum_ingredients
 LM0351,Base_Diet CAAS,0.447,sum_ingredients
 LM0351,Base_Diet CCCS,0.479,sum_ingredients
 LM0351,Base_Diet CLLS,0.481,sum_ingredients
+LM0351,Base_Diet CMAS,0.3982,sum_ingredients
 LM0351,Base_PP Con,0.217,sum_ingredients
 NJ0008,Base_100% DGH,0.3,sum_ingredients
 NJ0008,Base_100% NPH,0.3,sum_ingredients
 NJ0008,Base_25% NPH +75% DGH,0.3,sum_ingredients
 NJ0008,Base_50% NPH + 50% DGH,0.3,sum_ingredients
 NJ0008,Base_75% NPH +25% DGH,0.3,sum_ingredients
-NJ0013,Base_Group C,0.305,sum_ingredients
+NJ0013,Base_Group C,0.489,sum_ingredients
+NJ0013,Base_Group GH,0.286,sum_ingredients
 NJ0013,Base_Group OL,0.305,sum_ingredients
 NJ0016,Beef survival meal Y1,1,sum_ingredients
 NJ0016,Beef survival meal Y2,1,sum_ingredients
@@ -3312,11 +3345,12 @@ NJ0016,Urea-treated Maize strover Y2,1,sum_ingredients
 NJ0016,Urea-treated Maize strover Y3,1,sum_ingredients
 NJ0025,Beef survival meal,1,sum_ingredients
 NJ0025,Leucaena leucocephala,0.1,sum_ingredients
-NJ0025,Mixed forage meal,0.1,sum_ingredients
+NJ0025,Mixed forage meal,0.09,sum_ingredients
 NJ0025,Urea-treated Maize strover,0.1,sum_ingredients
 NJ0032,Base_SB-0,0.25,sum_ingredients
 NJ0032,Base_SB-10,0.2516,sum_ingredients
 NJ0032,Base_SB-15,0.25439,sum_ingredients
+NJ0032,Base_SB-20,0.24763,sum_ingredients
 NJ0032,Base_SB-5,0.2484,sum_ingredients
 NJ0044,Base_Control,0.505555555555556,sum_ingredients
 NJ0044,Base_T2,0.538888888888889,sum_ingredients
@@ -3332,6 +3366,7 @@ NN0021,Base_GH200,0.566,sum_ingredients
 NN0021,Base_GH400,0.479,sum_ingredients
 NN0021,Base_GH600,0.435,sum_ingredients
 NN0021,Base_GHMB,0.411,sum_ingredients
+NN0021,Base_GHWB,0.499,sum_ingredients
 NN0022,150g/day,0.15,sum_ingredients
 NN0022,300g/day,0.3,sum_ingredients
 NN0022,450g/day,0.45,sum_ingredients
@@ -3341,6 +3376,7 @@ NN0061,Base_Ziziphus 120 min,0.3081759553120216,sum_ingredients
 NN0061,Base_Ziziphus 60 min,0.306020878701448,sum_ingredients
 NN0080,Base_T1,0.501066120972621,sum_ingredients
 NN0080,Base_T2,0.3448909113310464,sum_ingredients
+NN0080,Base_T3,0.16973688829904898,sum_ingredients
 NN0083,Base_Barley Concentrate CON,0.715,sum_ingredients
 NN0092.1,Cac-FL,0.9,sum_ingredients
 NN0092.2,C130,0.6,sum_ingredients
@@ -3386,6 +3422,7 @@ NN0179,Base_Diet 1,0.7469,sum_ingredients
 NN0179,Base_Diet 2,0.8019,sum_ingredients
 NN0179,Base_Diet 3,0.8694,sum_ingredients
 NN0179,Base_Diet 4,0.9076000000000001,sum_ingredients
+NN0179,Base_Diet 5,0.9087000000000001,sum_ingredients
 NN0188,Base_Diet 0,8.55,sum_ingredients
 NN0188,Base_Diet 33,8.25,sum_ingredients
 NN0188,Base_Diet 66,8.42,sum_ingredients
@@ -3398,6 +3435,7 @@ NN0189,Base_300g CC,0.398,sum_ingredients
 NN0189,Base_300g Dual purpose,0.767,sum_ingredients
 NN0189,Base_300g Forage type,0.428,sum_ingredients
 NN0189,Base_No supplement,0.315,sum_ingredients
+NN0191.2,Base_1000g Goat,0.19427888210963673,sum_ingredients
 NN0191.2,Base_1000g Sheep,0.1960977794053673,sum_ingredients
 NN0191.2,Base_500g Goat,0.208103971098712,sum_ingredients
 NN0191.2,Base_500g Sheep,0.23516413389628027,sum_ingredients
@@ -3411,6 +3449,8 @@ NN0196,Base_SS 1198 + AA 15132,0.4536,sum_ingredients
 NN0196,Base_SS 1198 + LP 14203,0.48369999999999996,sum_ingredients
 NN0196,Base_SS 15019 + AA 15132,0.4658,sum_ingredients
 NN0196,Base_SS 15019 + LP 14203,0.4593,sum_ingredients
+NN0196,Base_Wheat bran (control),0.4142,sum_ingredients
+NN0197,Base_LAB (10.5g DM/kg LW),0.38730000000000003,sum_ingredients
 NN0197,Base_LP1 (8.3g DM/kg LW),0.4525,sum_ingredients
 NN0197,Base_LP2 (11g DM/kg LW),0.4078,sum_ingredients
 NN0197,Base_LP3 (13.3g DM/kg LW),0.38430000000000003,sum_ingredients
@@ -3418,13 +3458,24 @@ NN0197,Base_SS1 (8.2g DM/kg LW),0.4322,sum_ingredients
 NN0197,Base_SS2 (10.9g DM/kg LW),0.4244,sum_ingredients
 NN0197,Base_SS3 (13.3g DM/kg LW),0.6372000000000001,sum_ingredients
 NN0200,Base_1RB:2NSM,0.3973,sum_ingredients
+NN0200,Base_2RB:1NSM,0.39030000000000004,sum_ingredients
 NN0200,Base_Control,0.6101,sum_ingredients
 NN0200,Base_NSM,0.402,sum_ingredients
 NN0200,Base_RB,0.4203,sum_ingredients
 NN0201,"Base_Lablab, no maize",0,sum_ingredients
 NN0201,"Base_Sesbania, no maize",0,sum_ingredients
+NN0204,Base_Treated high,0.269,sum_ingredients
 NN0204,Base_Treated low,0.298,sum_ingredients
+NN0204,Base_Treated med,0.22,sum_ingredients
 NN0204,Base_Untreated high,0.189,sum_ingredients
+NN0204,Base_Untreated low,0.261,sum_ingredients
+NN0204,Base_Untreated med,0.221,sum_ingredients
+NN0205,Base_T1,0.293,sum_ingredients
+NN0205,Base_T2,0.328,sum_ingredients
+NN0205,Base_T3,0.401,sum_ingredients
+NN0205,Base_T4,0.418,sum_ingredients
+NN0205,Base_T5,0.417,sum_ingredients
+NN0205,Base_T6,0.431,sum_ingredients
 NN0207.1,25g Chopped Sorghum Stover,0.36,sum_ingredients
 NN0207.1,25g Unchopped Sorghum Stover,0.32666666666666705,sum_ingredients
 NN0207.1,50g Chopped Sorghum Stover,0.6466666666666664,sum_ingredients
@@ -3440,6 +3491,7 @@ NN0212,Base_1LSC:2WB,0.0391,sum_ingredients
 NN0212,Base_2LSC:1WB,0.0385,sum_ingredients
 NN0212,Base_Control,0.055799999999999995,sum_ingredients
 NN0212,Base_LSC,0.0419,sum_ingredients
+NN0212,Base_WB,0.0399,sum_ingredients
 NN0214,Acacia albida Treatment,0.194,sum_ingredients
 NN0214,Acacia nilotica Treatment,0.204,sum_ingredients
 NN0214,Acacia sieberiana Treatment,0.531,sum_ingredients
@@ -3450,12 +3502,16 @@ NN0214,Base_Acacia tortilis Treatment,0.43,sum_ingredients
 NN0214,Base_Noug Meal Treatment,0.483,sum_ingredients
 NN0214,Noug Meal Treatment,0.08,sum_ingredients
 NN0216,supplemented,10,sum_ingredients
+NN0223,Base_Goats diet,0.33,sum_ingredients
+NN0223,Base_Sheeps diet,0.457,sum_ingredients
 NN0227,Base_T1 Teff Straw,3.1,sum_ingredients
 NN0227,Base_T2 TS + WM,3.4,sum_ingredients
-NN0227,"Base_T3 OV hay,  WT + CH, TS +CH",3.5,sum_ingredients
-NN0227,"Base_T4 OV hay,  ML + CH, TS + CH",4.6,sum_ingredients
-NN0229,Base_Dry Khat Station,0.235,sum_ingredients
-NN0229,Base_Silage Khat Station,0.271,sum_ingredients
+NN0227,"Base_T3 OV hay,  WT + CH, TS +CH",12.1,sum_ingredients
+NN0227,"Base_T4 OV hay,  ML + CH, TS + CH",11.7,sum_ingredients
+NN0229,Base_Control Station,0.528,sum_ingredients
+NN0229,Base_Dry Khat Station,0.622,sum_ingredients
+NN0229,Base_Fresh Khat Station,0.358,sum_ingredients
+NN0229,Base_Silage Khat Station,0.639,sum_ingredients
 NN0229,Dry Khat Farm,0.288,sum_ingredients
 NN0229,Fresh Khat Farm,0.2745,sum_ingredients
 NN0229,Silage Khat Farm,0.2835,sum_ingredients
@@ -3470,6 +3526,7 @@ NN0230,Base_Leucaena leucocephala diet,0.417,sum_ingredients
 NN0230,Base_Medicago sativa diet,0.369,sum_ingredients
 NN0230,Base_Medicago sativa maize diet,0.396,sum_ingredients
 NN0230,Base_Sesbania sesban diet,0.459,sum_ingredients
+NN0230,Base_Sesbania sesban maizediet,0.395,sum_ingredients
 NN0234,Base_T 1 CON,0.39,sum_ingredients
 NN0234,Base_T 2 74 LUPIN,0.42210000000000003,sum_ingredients
 NN0234,Base_T 3 147 LUPIN,0.4102,sum_ingredients
@@ -3478,6 +3535,7 @@ NN0236,Base_T1,0.424,sum_ingredients
 NN0236,Base_T2,0.289,sum_ingredients
 NN0236,Base_T3,0.299,sum_ingredients
 NN0236,Base_T4,0.294,sum_ingredients
+NN0236,Base_T5,0.302,sum_ingredients
 NN0244.1,NG + MB + L,0.006,sum_ingredients
 NN0244.1,NG+ MB,0.006,sum_ingredients
 NN0244.2,Bundle 1 Chopped Grass (CG),16.666666666666668,sum_ingredients
@@ -3492,40 +3550,40 @@ NN0251,Base_T1 10,0.3988,sum_ingredients
 NN0251,Base_T2 20,0.4373,sum_ingredients
 NN0251,Base_T3 30,0.3664,sum_ingredients
 NN0253,UMB,0.55,sum_ingredients
-NN0272.1,Base_Control,0.082,sum_ingredients
-NN0272.1,Base_SEP + SPV,0.093,sum_ingredients
-NN0272.1,Base_SEPD,0.087,sum_ingredients
-NN0272.1,Base_SPVD,0.112,sum_ingredients
-NN0272.1.2,Base_Control,0.082,sum_ingredients
-NN0272.1.2,Base_SEP + SPV,0.093,sum_ingredients
-NN0272.1.2,Base_SEPD,0.087,sum_ingredients
-NN0272.1.2,Base_SPVD,0.112,sum_ingredients
+NN0272.1,Base_Control,0.539,sum_ingredients
+NN0272.1,Base_SEP + SPV,0.534,sum_ingredients
+NN0272.1,Base_SEPD,0.226,sum_ingredients
+NN0272.1,Base_SPVD,0.755,sum_ingredients
+NN0272.1.2,Base_Control,0.539,sum_ingredients
+NN0272.1.2,Base_SEP + SPV,0.534,sum_ingredients
+NN0272.1.2,Base_SEPD,0.226,sum_ingredients
+NN0272.1.2,Base_SPVD,0.755,sum_ingredients
 NN0276.1,Base_BP,0.483,sum_ingredients
 NN0276.1,Base_CSC,0.511,sum_ingredients
 NN0276.1,Base_Control,0.404,sum_ingredients
-NN0276.1,Base_LL,0.119,sum_ingredients
+NN0276.1,Base_LL,0.454,sum_ingredients
 NN0276.1,Base_MB,0.533,sum_ingredients
-NN0276.1,LL,0.335,sum_ingredients
 NN0276.2,Banana peels T3,0.349,sum_ingredients
 NN0276.2,Base_Banana peels T3,0.307,sum_ingredients
+NN0276.2,Base_Cottonseed cake T4,0.334,sum_ingredients
 NN0276.2,Base_Elephant grass T5,0.349,sum_ingredients
 NN0276.2,Base_Leucana leaves T2,0.308,sum_ingredients
 NN0276.2,Base_Maize bran T2,0.285,sum_ingredients
-NN0276.2,Cottonseed cake T4,0.585,sum_ingredients
+NN0276.2,Cottonseed cake T4,0.251,sum_ingredients
 NN0276.2,Leucana leaves T2,0.103,sum_ingredients
 NN0276.2,Maize bran T2,0.366,sum_ingredients
+NN0279,Base_12g Gliricidia,0.6641,sum_ingredients
 NN0279,Base_4g Gliricidia,0.925,sum_ingredients
 NN0279,Base_8g Gliricidia,0.8373999999999999,sum_ingredients
 NN0279,Base_Og Gliricidia,1.107,sum_ingredients
-NN0293,Intensive System (IS),0,sum_ingredients
-NN0293,Semi-intensive system,0,sum_ingredients
 NN0299,Base_Control,30,sum_ingredients
 NN0299,Base_T1,24.88,sum_ingredients
 NN0299,Base_T2,19.28,sum_ingredients
+NN0299,Base_T3,17.38,sum_ingredients
 NN0299,Control,0,sum_ingredients
 NN0299,T1,0.3,sum_ingredients
 NN0299,T2,0.6,sum_ingredients
-NN0299,T3,18.28,sum_ingredients
+NN0299,T3,0.9,sum_ingredients
 NN0315,C2,0.1,sum_ingredients
 NN0315,GS2,0.099,sum_ingredients
 NN0315,L2,0.099,sum_ingredients
@@ -3535,6 +3593,7 @@ NN0329,Base_Control diet,0.4348,sum_ingredients
 NN0329,Base_Diet 1 Barley Bran,0.363,sum_ingredients
 NN0329,Base_Diet 2 (2BB:1LSM),0.44139999999999996,sum_ingredients
 NN0329,Base_Diet 3 (1BB:2LSM),0.45330000000000004,sum_ingredients
+NN0329,Base_Diet 4 (Linseed Meal),0.3952,sum_ingredients
 NN0331,T1 A,0.183,sum_ingredients
 NN0331,T2 B,0.183,sum_ingredients
 NN0331,T3 C,0.183,sum_ingredients
@@ -3552,6 +3611,9 @@ NN0341,SL,1,sum_ingredients
 NN0342,C,0.1,sum_ingredients
 NN0342,SO,1,sum_ingredients
 NN0356,improved,14.862,sum_ingredients
+NN0357,Base_Diet 1,0.214,sum_ingredients
+NN0357,Base_Diet 2,0.321,sum_ingredients
+NN0357,Base_Diet 3,0.232,sum_ingredients
 NN0361,Control,1,sum_ingredients
 NN0361,Fresh,0.2,sum_ingredients
 NN0361,Hay,0.2,sum_ingredients
@@ -3569,7 +3631,6 @@ NN0370,Base_Urea2,1.055,sum_ingredients
 NN0370,Con,1.6,sum_ingredients
 NN0370,Urea1,1.6,sum_ingredients
 NN0370,Urea2,1.6,sum_ingredients
-NN0371,Base,0,sum_ingredients
 NN0372,Base_Acacia S.,0.5679500000000001,sum_ingredients
 NN0372,Base_Hay Con,0.59736,sum_ingredients
 NN0372,Base_Neem tree,0.5890700000000001,sum_ingredients
@@ -3585,9 +3646,11 @@ NN0375,Base_T3 Feed Substitution,0.246,sum_ingredients
 NN0375,Base_T4 Feed Addition,0.185,sum_ingredients
 NN0375,Base_T4 Feed Substitution,0.185,sum_ingredients
 NN0375,Base_T5 Feed Addition,0.195,sum_ingredients
+NN0375,Base_T5 Feed Substitution,0.195,sum_ingredients
 NN0377,Base_T1 H Con Bundle2,0.49,sum_ingredients
 NN0377,Base_T1 H NC Bundle1,0.517,sum_ingredients
 NN0377,Base_T2 H NC Bundle1,0.467,sum_ingredients
+NN0377,Base_T2 H NC Bundle2,0.463,sum_ingredients
 NN0377,Base_T3 H NC Bundle1,0.452,sum_ingredients
 NN0377,Base_T4 H NC Con Bundle1,0.463,sum_ingredients
 NN0383,0 percent,0.055,sum_ingredients

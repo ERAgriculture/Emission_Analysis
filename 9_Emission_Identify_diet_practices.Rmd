@@ -864,3 +864,104 @@ write.csv(pairwise_diet_shift_tbl,"data/pairwise_diet_shift_tbl.csv")
 
 ```
 
+
+## number of papers
+```{r}
+
+
+# --- Reload key processed tables --------------------------------------------
+ingredients      <- read.csv("~/Emission_Analysis/data/ingredients_classified.csv")
+classif_diet      <- read.csv("~/Emission_Analysis/data/classif_diet.csv")
+GE_combined       <- read.csv("~/Emission_Analysis/data/GE_combined.csv")
+practice_tbl      <- read.csv("data/practice_tbl.csv")
+pairwise_diet_shift_tbl <- read.csv("data/pairwise_diet_shift_tbl.csv")
+
+# --- 1️⃣ Identify papers with valid CH₄ emissions ----------------------------
+ge_with_ch4 <- GE_combined %>%
+  filter(!is.na(CH4_kg_year)) %>%
+  group_by(B.Code, P.Product) %>%
+  summarise(has_CH4 = any(!is.na(CH4_kg_year)), .groups = "drop") %>%
+  filter(has_CH4) %>%
+  distinct(B.Code, P.Product)
+
+# --- 2️⃣ Ingredient completeness by paper ------------------------------------
+ing_status <- ingredients %>%
+  group_by(B.Code) %>%
+  summarise(
+    n_ing = n(),
+    n_ing_classified = sum(!is.na(Ingredient_Category)),
+    all_ing_classified = n_ing > 0 & (n_ing_classified == n_ing),
+    .groups = "drop"
+  )
+
+# --- 3️⃣ Diet classification coverage ----------------------------------------
+diet_status <- classif_diet %>%
+  group_by(B.Code) %>%
+  summarise(
+    n_diets_classified = sum(!is.na(M7_Category)),
+    has_any_classified = n_diets_classified > 0,
+    .groups = "drop"
+  )
+
+# --- 4️⃣ Papers with at least one ingredient-level practice ------------------
+paper_with_practice <- practice_tbl %>%
+  distinct(B.Code) %>%
+  mutate(has_practice = TRUE)
+
+# --- 5️⃣ Papers with at least one diet shift (pairwise) ----------------------
+paper_with_diet_shift <- pairwise_diet_shift_tbl %>%
+  filter(Practice == "Diet shift") %>%
+  distinct(B.Code) %>%
+  mutate(has_diet_shift = TRUE)
+
+# --- 6️⃣ Merge all metadata together -----------------------------------------
+meta <- ge_with_ch4 %>%
+  mutate(has_CH4 = TRUE) %>%     # 👈 add this line
+  left_join(ing_status,              by = "B.Code") %>%
+  left_join(diet_status,             by = "B.Code") %>%
+  left_join(paper_with_practice,     by = "B.Code") %>%
+  left_join(paper_with_diet_shift,   by = "B.Code") %>%
+  mutate(
+    has_practice       = coalesce(has_practice, FALSE),
+    has_diet_shift     = coalesce(has_diet_shift, FALSE),
+    all_ing_classified = coalesce(all_ing_classified, FALSE),
+    has_any_classified = coalesce(has_any_classified, FALSE)
+  )
+
+
+# --- 7️⃣ Filter combinations of interest -------------------------------------
+# 7a. Ingredient-level: emissions + all ingredients classified + ≥1 practice
+ing_practice_emiss <- meta %>%
+  filter(has_CH4, all_ing_classified, has_practice)
+
+# 7b. Diet-level: emissions + at least 1 classified diet + ≥1 diet shift
+diet_shift_emiss <- meta %>%
+  filter(has_CH4, has_any_classified, has_diet_shift)
+
+# --- 8️⃣ Summarise by product/species ----------------------------------------
+summary_by_species <- full_join(
+  ing_practice_emiss %>%
+    count(P.Product, name = "N_Papers_Ingredients_Practice"),
+  diet_shift_emiss %>%
+    count(P.Product, name = "N_Papers_DietShift"),
+  by = "P.Product"
+) %>%
+  mutate(across(starts_with("N_"), ~ replace_na(., 0))) %>%
+  arrange(P.Product)
+
+# --- 9️⃣ Display -------------------------------------------------------------
+knitr::kable(
+  summary_by_species,
+  caption = "Papers with emissions and classification completeness, by product"
+)
+
+cat("Total papers with ingredient practices + CH₄:", 
+    n_distinct(ing_practice_emiss$B.Code), "\n")
+cat("Total papers with diet shifts + CH₄:", 
+    n_distinct(diet_shift_emiss$B.Code), "\n")
+
+
+
+
+```
+

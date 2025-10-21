@@ -59,8 +59,8 @@
 "58","diet","EO0047","PP10-10%",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
 "59","diet","EO0047","PP20-20%",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
 "60","diet","EO0047","PP30-30%",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
-"61","diet","EO0057","T1",185,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Good forage","by_category_dominance",0.436781609195402,TRUE,FALSE,"Good forage"
-"62","diet","EO0057","T2",185,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Good forage","by_category_dominance",0.436781609195402,TRUE,FALSE,"Good forage"
+"61","diet","EO0057","T1",185,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Good forage","by_category_dominance",0.372549019607843,TRUE,FALSE,"Good forage"
+"62","diet","EO0057","T2",185,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Good forage","by_category_dominance",0.372549019607843,TRUE,FALSE,"Good forage"
 "63","diet","EO0078","0% PJP",169,NA,67,49.3,NA,NA,NA,NA,NA,NA,NA,"Good forage","nearest_window_diet",NA,FALSE,TRUE,"Good forage"
 "64","diet","EO0078","10%PJP",155.1,NA,NA,45.7,NA,NA,NA,NA,NA,NA,NA,"Good forage","nearest_window_diet",NA,FALSE,TRUE,"Good forage"
 "65","diet","EO0078","20%PJP",150.9,NA,57.6,42.8,NA,NA,NA,NA,NA,NA,NA,"Good forage","nearest_window_diet",NA,FALSE,TRUE,"Good forage"
@@ -454,7 +454,7 @@
 "453","diet","JS0301","25% FTL",57.49,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Good forage","by_category_dominance",0.275703803106441,TRUE,FALSE,"Good forage"
 "454","diet","JS0301","50% FTL",57.36,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Good forage","by_category_dominance",0.373269235919548,TRUE,FALSE,"Good forage"
 "455","diet","JS0301","75% FTL",57.23,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Good forage","by_category_dominance",0.470604569465432,TRUE,FALSE,"Good forage"
-"456","diet","JS0301","No FTL",57.62,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Good forage","by_category_dominance",0.160863124186332,TRUE,FALSE,"Good forage"
+"456","diet","JS0301","No FTL",57.62,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"High-fat","by_category_dominance",0.160863124186332,TRUE,FALSE,"High-fat"
 "457","diet","JS0305","Con Maize",117,NA,NA,20.6,NA,NA,NA,NA,NA,NA,NA,"High-starch","nearest_window_diet",NA,FALSE,TRUE,"High-starch"
 "458","diet","JS0305","Sugar BP 1",117,NA,NA,18.9,NA,NA,NA,NA,NA,NA,NA,"High-starch","nearest_window_diet",NA,FALSE,TRUE,"High-starch"
 "459","diet","JS0305","Sugar BP 2",117,NA,NA,15.4,NA,NA,NA,NA,NA,NA,NA,"High-starch","nearest_window_diet",NA,FALSE,TRUE,"High-starch"
@@ -1942,7 +1942,7 @@
 "1941","diet","EO0041","PL22",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Good forage","by_category_dominance",0.414532663316583,TRUE,FALSE,"Good forage"
 "1942","diet","EO0041","PL35",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Good forage","by_category_dominance",0.89,TRUE,FALSE,"Good forage"
 "1943","diet","EO0041","PL45",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Good forage","by_category_dominance",0.99,TRUE,FALSE,"Good forage"
-"1944","diet","EO0041","PLO",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Good forage","by_category_dominance",0.386728395061728,TRUE,FALSE,"Good forage"
+"1944","diet","EO0041","PLO",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Good forage","by_category_dominance",0.7,TRUE,FALSE,"Good forage"
 "1945","diet","EO0046","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
 "1946","diet","EO0047","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
 "1947","diet","EO0057","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
@@ -2182,9 +2182,9 @@
 "2181","diet","JO1100","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
 "2182","diet","JS0046","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
 "2183","diet","JS0047","Maize",80,155,43,45,18.8,NA,"High-starch","High-starch","High-starch","High-starch","High-starch","High-starch","M7_numeric",NA,FALSE,FALSE,"High-starch"
-"2184","diet","JS0047","SCB Bundle1",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
-"2185","diet","JS0047","SCB Con Bundle2",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
-"2186","diet","JS0047","SFM Bundle1",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
+"2184","diet","JS0047","SCB Bundle1",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"High-starch","by_category_dominance",0.435,TRUE,FALSE,"High-starch"
+"2185","diet","JS0047","SCB Con Bundle2",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"High-starch","by_category_dominance",0.435,TRUE,FALSE,"High-starch"
+"2186","diet","JS0047","SFM Bundle1",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"High-starch","by_category_dominance",0.84,TRUE,FALSE,"High-starch"
 "2187","diet","JS0047","SO Con Bundle1",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
 "2188","diet","JS0048","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
 "2189","diet","JS0060","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
@@ -2275,7 +2275,7 @@
 "2274","diet","JS0243","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
 "2275","diet","JS0249","200 g CM",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"High-fat","by_category_dominance",1,TRUE,FALSE,"High-fat"
 "2276","diet","JS0249","300 g CM",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"High-fat","by_category_dominance",1,TRUE,FALSE,"High-fat"
-"2277","diet","JS0249","400 g CM",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"High-fat","by_category_dominance",0.533617929562433,TRUE,FALSE,"High-fat"
+"2277","diet","JS0249","400 g CM",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"High-fat","by_category_dominance",1,TRUE,FALSE,"High-fat"
 "2278","diet","JS0249","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
 "2279","diet","JS0261","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
 "2280","diet","JS0261","Hay with 400g Suppliment",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Protein","by_category_dominance",0.75,TRUE,FALSE,"Protein"
@@ -2296,7 +2296,7 @@
 "2295","diet","JS0276","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
 "2296","diet","JS0281","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
 "2297","diet","JS0285","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
-"2298","diet","JS0285","High Conc.",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Good forage","by_category_dominance",0.239398084815322,TRUE,FALSE,"Good forage"
+"2298","diet","JS0285","High Conc.",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"High-fat","by_category_dominance",0.239398084815322,TRUE,FALSE,"High-fat"
 "2299","diet","JS0285","Low Conc.",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Good forage","by_category_dominance",0.113071008593397,TRUE,FALSE,"Good forage"
 "2300","diet","JS0285","Medium Conc.",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Good forage","by_category_dominance",0.166201303018216,TRUE,FALSE,"Good forage"
 "2301","diet","JS0289.1","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
@@ -2348,7 +2348,7 @@
 "2347","diet","JS0345","Pasture + Supplementation(PS)",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Good forage","by_category_dominance",0.693069306930693,TRUE,FALSE,"Good forage"
 "2348","diet","JS0349","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
 "2349","diet","JS0350","Diet Con Bundle1",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"High-starch","by_category_dominance",0.8,TRUE,FALSE,"High-starch"
-"2350","diet","JS0350","Diet Con Bundle2",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
+"2350","diet","JS0350","Diet Con Bundle2",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"High-starch","by_category_dominance",0.8,TRUE,FALSE,"High-starch"
 "2351","diet","JS0350","T2 Rosemay Oil Bundle1",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"High-fat","M7_numeric",NA,FALSE,FALSE,"High-fat"
 "2352","diet","JS0350","T2 Rosemay Oil Bundle2",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"High-fat","M7_numeric",NA,FALSE,FALSE,"High-fat"
 "2353","diet","JS0370","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
@@ -2406,13 +2406,13 @@
 "2405","diet","LM0151.1","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
 "2406","diet","LM0151.2","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
 "2407","diet","LM0163","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
-"2408","diet","LM0227.1","MNG + PLBC",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
+"2408","diet","LM0227.1","MNG + PLBC",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"High-fat","by_category_dominance",0.59,TRUE,FALSE,"High-fat"
 "2409","diet","LM0227.1","MNG + SFBC",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"High-fat","by_category_dominance",0.99,TRUE,FALSE,"High-fat"
-"2410","diet","LM0227.1","ONG +PLBC",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
-"2411","diet","LM0227.1","ONP + SFBC",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
+"2410","diet","LM0227.1","ONG +PLBC",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"High-fat","by_category_dominance",0.59,TRUE,FALSE,"High-fat"
+"2411","diet","LM0227.1","ONP + SFBC",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"High-fat","by_category_dominance",0.99,TRUE,FALSE,"High-fat"
 "2412","diet","LM0227.2","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
 "2413","diet","LM0227.2","MNG + 3.65 PLBC",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"High-fat","by_category_dominance",0.59,TRUE,FALSE,"High-fat"
-"2414","diet","LM0227.2","MNG + 6.35 PLBC",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
+"2414","diet","LM0227.2","MNG + 6.35 PLBC",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"High-fat","by_category_dominance",0.59,TRUE,FALSE,"High-fat"
 "2415","diet","LM0227.2","MNG +0.91 PLBC",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"High-fat","by_category_dominance",0.59,TRUE,FALSE,"High-fat"
 "2416","diet","LM0228.1","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
 "2417","diet","LM0228.2","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
@@ -2557,8 +2557,8 @@
 "2556","diet","NN0214","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
 "2557","diet","NN0216","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
 "2558","diet","NN0217","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
-"2559","diet","NN0223","Goats diet",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
-"2560","diet","NN0223","Sheeps diet",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
+"2559","diet","NN0223","Goats diet",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"High-fat","by_category_dominance",1.38,TRUE,FALSE,"High-fat"
+"2560","diet","NN0223","Sheeps diet",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"High-fat","by_category_dominance",1.38,TRUE,FALSE,"High-fat"
 "2561","diet","NN0224","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
 "2562","diet","NN0227","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
 "2563","diet","NN0227","T4 OV hay,  ML + CH, TS + CH",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
@@ -2647,7 +2647,7 @@
 "2646","diet","NN0375","T4 Feed Addition",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Good forage","by_category_dominance",0.783333333329,TRUE,FALSE,"Good forage"
 "2647","diet","NN0375","T4 Feed Substitution",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Good forage","by_category_dominance",0.783333333329,TRUE,FALSE,"Good forage"
 "2648","diet","NN0375","T5 Feed Addition",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Good forage","by_category_dominance",0.66666666666,TRUE,FALSE,"Good forage"
-"2649","diet","NN0375","T5 Feed Substitution",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Good forage","by_category_dominance",0.414239482196505,TRUE,FALSE,"Good forage"
+"2649","diet","NN0375","T5 Feed Substitution",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"Good forage","by_category_dominance",0.66666666666,TRUE,FALSE,"Good forage"
 "2650","diet","NN0377","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
 "2651","diet","NN0383","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
 "2652","diet","NN0384","8% inclusion",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA

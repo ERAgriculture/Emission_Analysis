@@ -1264,4 +1264,181 @@ ggplot(plot_delta_sub_diet,
 
 
 ```
+## number of papers 
+
+```{r}
+
+# ─────────────────────────────────────────────────────────────
+
+
+# Helper
+norm <- function(x) tolower(trimws(x))
+
+# 1️⃣ Papers with emissions (non-missing CH4)
+em_with_ch4 <- GE_combined %>%
+  filter(!is.na(CH4_kg_year)) %>%
+  distinct(B.Code, P.Product)
+
+cat("\n✅ Papers with CH4 emissions available:\n")
+print(head(em_with_ch4, 10))
+cat("Total =", n_distinct(em_with_ch4$B.Code), "papers\n")
+
+# 2️⃣ Papers with yield information
+yield_with_info <- yield_data %>%
+  filter(!is.na(ED.Mean.T)) %>%
+  distinct(B.Code, Out.Subind, Out.Unit)
+
+cat("\n✅ Papers with yield data available:\n")
+print(head(yield_with_info, 10))
+cat("Total =", n_distinct(yield_with_info$B.Code), "papers\n")
+
+# 3️⃣ Papers with ingredient classification (through diet_percentages)
+ingredient_papers <- diet_percentages %>%
+  mutate(D.Item_clean = norm(D.Item)) %>%
+  inner_join(
+    classif_ing_simple %>%
+      mutate(D.Item_clean = norm(D.Item)) %>%
+      distinct(D.Item_clean, Ingredient_Category),
+    by = "D.Item_clean"
+  ) %>%
+  distinct(B.Code, Ingredient_Category)
+
+cat("\n✅ Papers with at least one classified ingredient:\n")
+print(head(ingredient_papers, 10))
+cat("Total =", n_distinct(ingredient_papers$B.Code), "papers\n")
+
+# 4️⃣ Papers with any practice information
+ing_practice_papers <- practice_tbl %>%
+  distinct(B.Code, Practice)
+
+cat("\n✅ Papers with practice-level data:\n")
+print(head(ing_practice_papers, 10))
+cat("Total =", n_distinct(ing_practice_papers$B.Code), "papers\n")
+
+# 5️⃣ Combine all coverage conditions
+ingredient_with_yield <- ingredient_papers %>%
+  inner_join(ing_practice_papers, by = "B.Code") %>%
+  inner_join(em_with_ch4, by = "B.Code") %>%
+  inner_join(yield_with_info, by = "B.Code") %>%
+  distinct(B.Code, P.Product, Ingredient_Category, Practice)
+
+cat("\n✅ Combined dataset (ingredient + practice + emission + yield):\n")
+print(head(ingredient_with_yield, 15))
+cat("Total =", n_distinct(ingredient_with_yield$B.Code), "papers\n")
+
+# 6️⃣ Summarize by product
+ingredient_summary <- ingredient_with_yield %>%
+  filter(Practice!="No change")%>%
+  group_by(P.Product) %>%
+  summarise(n_papers = n_distinct(B.Code), .groups = "drop") %>%
+  arrange(desc(n_papers))
+
+cat("\n✅ Summary by livestock product:\n")
+print(ingredient_summary)
+
+
+# ─────────────────────────────────────────────────────────────
+# 3️⃣ Diet-based coverage
+# ─────────────────────────────────────────────────────────────
+# Use your current names: "diet_classif" (pairwise_diet_shift_tbl equivalent)
+# and it contains column "Practice"
+diet_classified_papers <- diet_classif %>%
+  filter(!is.na(Subpractice)) %>%     # or another reliable diet label column
+  distinct(B.Code)
+
+diet_shift_papers <- diet_classif %>%
+  filter(Practice == "Diet shift") %>%
+  distinct(B.Code)
+
+diet_with_yield <- GE_combined %>%
+  filter(!is.na(CH4_kg_year)) %>%
+  distinct(B.Code) %>%
+  inner_join(diet_classified_papers, by = "B.Code") %>%
+  inner_join(diet_shift_papers, by = "B.Code") %>%
+  inner_join(yield_with_info, by = "B.Code") %>%
+  distinct(B.Code)
+
+diet_summary <- summarize_by_product(diet_with_yield, "diet_yield")
+
+# ─────────────────────────────────────────────────────────────
+# 4️⃣ Combine & Print
+# ─────────────────────────────────────────────────────────────
+total_ingredient <- n_distinct(ingredient_with_yield$B.Code)
+total_diet <- n_distinct(diet_with_yield$B.Code)
+
+cat("Total papers with INGREDIENT classification + emission + yield + practice: ",
+    total_ingredient, "\n")
+cat("Total papers with DIET classification + emission + yield + diet shift: ",
+    total_diet, "\n")
+
+cat("\n--- Ingredient-level coverage ---\n")
+print(ingredient_summary)
+cat("\n--- Diet-level coverage ---\n")
+print(diet_summary)
+
+```
+
+## diag 
+
+```{r}
+library(dplyr)
+
+# papers in the broad ingredient summary universe
+papers_ingredient <- ingredient_with_yield %>% distinct(B.Code, P.Product)
+
+# papers that actually made it into ΔEI (pair-level)
+papers_delta <- final_with_deltas %>% distinct(B.Code, P.Product)
+
+cat("Ingredient universe (papers):", nrow(papers_ingredient), "\n")
+cat("ΔEI universe (papers):", nrow(papers_delta), "\n")
+
+# which ingredient-eligible papers failed to produce ΔEI rows?
+missing_in_delta <- anti_join(papers_ingredient, papers_delta, by = "B.Code")
+cat("\nPapers present in ingredient summary but missing from ΔEI:\n")
+print(missing_in_delta)
+
+# quick reason flags (best-effort)
+# 1) has at least one trt–ctrl pair in practice_tbl?
+has_pairs <- practice_tbl %>% distinct(B.Code) %>% mutate(has_pairs = TRUE)
+
+# 2) has CH4 per arm?
+ch4_arm <- GE_combined %>%
+  filter(!is.na(CH4_kg_year)) %>%
+  transmute(B.Code, A.Level.Name = D.Item) %>%
+  distinct() %>% mutate(has_ch4_arm = TRUE)
+
+# 3) has yield per arm?
+yield_arm <- yield_with_emissions %>%
+  transmute(B.Code, A.Level.Name) %>%
+  distinct() %>% mutate(has_yield_arm = TRUE)
+
+# Cross-check at arm level
+arm_diag <- full_join(ch4_arm, yield_arm, by = c("B.Code","A.Level.Name")) %>%
+  mutate(has_both_arm = coalesce(has_ch4_arm, FALSE) & coalesce(has_yield_arm, FALSE)) %>%
+  group_by(B.Code) %>%
+  summarise(
+    n_arms      = n(),
+    n_arms_both = sum(has_both_arm, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+reasons <- missing_in_delta %>%
+  left_join(has_pairs,  by = "B.Code") %>%
+  left_join(arm_diag,   by = "B.Code") %>%
+  mutate(
+    has_pairs   = coalesce(has_pairs, FALSE),
+    n_arms      = coalesce(n_arms, 0L),
+    n_arms_both = coalesce(n_arms_both, 0L),
+    likely_reason = dplyr::case_when(
+      !has_pairs ~ "No trt–control pairs in practice_tbl",
+      n_arms_both < 2 ~ "Missing aligned CH4+yield for at least two arms",
+      TRUE ~ "Filtered later (units, EI calc, 'No change', or outlier)"
+    )
+  ) %>%
+  arrange(likely_reason, P.Product, B.Code)
+
+cat("\nLikely reasons for drops:\n")
+print(reasons)
+
+```
 
