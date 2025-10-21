@@ -663,6 +663,23 @@ missing_GE_items <- Gross_energy %>%   # replace with your dataframe name
   filter(DC.Variable == "GE", is.na(DC.Value)) %>%
   count(D.Item, sort = TRUE, name = "n_missing")
 
+GE_data <- Gross_energy %>%
+  filter(DC.Variable == "GE", !is.na(DC.Value) & DC.Value != "") %>%
+  distinct(B.Code)
+
+# 3. Papers with GE and species (intersection)
+GE_species <- merged_metadata$`Prod.Out` %>%
+  filter(P.Product %in% c("Cattle", "Sheep", "Goat")) %>%
+  semi_join(GE_data, by = "B.Code") %>%
+  distinct(B.Code, P.Product) %>%
+  count(P.Product, name = "Studies_with_GE")
+
+summary_table <- species_counts %>%
+  full_join(GE_species, by = "P.Product") %>%
+  mutate(across(everything(), ~replace_na(., 0)))
+
+kable(summary_table, caption = "Summary of Data Availability for Enteric CH₄ Emissions (Tier 2)")
+
 ```
 
 

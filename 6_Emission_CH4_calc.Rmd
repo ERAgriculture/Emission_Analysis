@@ -11,8 +11,6 @@ ingredients <- readRDS("~/Emission_Analysis/data/ingredients_harmonized_subset.r
 total_amounts <- read.csv("~/Emission_Analysis/data/total_amounts.csv")
 feed_intake_ingredients <- read.csv("~/Emission_Analysis/data/feed_intake_ingredients_harmonized.csv")
 feed_intake_diet <- read.csv("~/Emission_Analysis/data/feed_intake_diet_harmonized.csv")
-
-
 ```
 
 
@@ -27,15 +25,6 @@ ctrl_key <- merged_metadata$MT.Out[, .(
   T.Control
 )]
 
-##— example join back onto your ingredient table
-# (assuming your ingredients DT has B.Code + A.Level.Name)
-ingredients <- merge(
-  x = ingredients, 
-  y = ctrl_key, 
-  by = c("B.Code","A.Level.Name"), 
-  all.x = TRUE, 
-  sort = FALSE
-)
 
 ```
 
@@ -178,20 +167,6 @@ forage_proportions <- diet_valid_units %>%
 
 ```
 
-```{r}
-
-# 
-# ingredients <- ingredients %>%                       # your table
-#   # 1 ── throw away the old “source‑based” label -----------------------------
-#   select(-D.Type) %>%                                       # drop the column
-# 
-#   # 2 ── remove any diet that still has an NA in D.Type_Nutri ----------------
-#   group_by(B.Code, T.Name) %>%       # <<– keys that identify a single diet
-#   filter( all(!is.na(D.Type_Nutri)) ) %>%  # keep diet only if none are NA
-#   ungroup()
-
-```
-
 
 ### 17.2) Reconstruct Gross Energy at the diet level from ingredient data 
 Reconstructs the gross energy of the entire diet from the weighted average of GE values of individual ingredients, when diet-level GE is not reported.
@@ -221,7 +196,8 @@ ingredients_with_GE <- ingredients %>%
       D.Unit.Amount == "kg" ~ D.Amount,
       TRUE ~ NA_real_
     )
-  )
+  )%>%
+  distinct()
 
 
 # 2. Count ingredients with/without GE
