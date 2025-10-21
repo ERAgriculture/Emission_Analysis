@@ -36,6 +36,7 @@ practice_pairwise_tbl     <- read.csv("~/Emission_Analysis/data/practice_trt_tbl
 merged_metadata <- readRDS("~/Emission_Analysis/data/merged_metadata_nutrition_inference.rds")
 classif_ing_simple <- read.csv("~/Emission_Analysis/data/classif_ing_simple.csv")
 diet_percentages <- read.csv("~/Emission_Analysis/data/diet_percentages_classif.csv")
+diet_classif <- read.csv("~/Emission_Analysis/data/pairwise_diet_shift_tbl.csv")
 
 
 roman_to_name <- function(x) dplyr::recode(
@@ -991,3 +992,276 @@ ggplot(ei_prod, aes(x = P.Product, y = EI_CH4_prod,
 
 
 ```
+
+## diet shift analysis
+
+```{r}
+
+# =====================================================================
+#   DIET SHIFT × EMISSION × YIELD ANALYSIS
+#   Goal: combine emission + yield + diet shift classifications
+# =====================================================================
+
+suppressPackageStartupMessages({
+  library(dplyr); library(stringr); library(tidyr); library(forcats); library(ggplot2)
+})
+
+# ---------------------------------------------------------------------
+# 0️⃣ Helper functions
+# ---------------------------------------------------------------------
+str_clean <- function(x) stringr::str_squish(as.character(x))
+has <- function(x, pat) stringr::str_detect(stringr::str_to_lower(coalesce(x, "")),
+                                            stringr::str_to_lower(pat))
+first_non_na <- function(x){ x <- x[!is.na(x)]; if (length(x)==0) NA else x[1] }
+
+# =====================================================================
+# 1️⃣ EMISSION DATA PER ARM
+# =====================================================================
+em_dat <- emission_ing_classif %>%
+  mutate(B.Code = str_clean(B.Code), A.Level.Name = str_clean(A.Level.Name)) %>%
+  group_by(B.Code, A.Level.Name) %>%
+  summarise(
+    CH4_kg_year = mean(CH4_kg_year, na.rm = TRUE),
+    P.Product   = first_non_na(P.Product),
+    .groups = "drop"
+  )
+
+# =====================================================================
+# 2️⃣ DIET SHIFT CLASSIFICATION MAP
+# =====================================================================
+diet_shift_tbl <- diet_classif %>%
+  mutate(
+    B.Code = str_clean(B.Code),
+    A = str_clean(A),
+    B = str_clean(B),
+    Subpractice = if_else(
+      Practice == "Diet shift" & str_detect(Subpractice, ","),
+      "Mixed",
+      Subpractice
+    )
+  )
+
+# Create long arm-level version (A and B)
+map_A <- diet_shift_tbl %>%
+  transmute(
+    B.Code,
+    A.Level.Name = A,
+    Practice,
+    Subpractice,
+    pair_label = paste(A, "vs", B),
+    arm_role = "A"
+  )
+
+map_B <- diet_shift_tbl %>%
+  transmute(
+    B.Code,
+    A.Level.Name = B,
+    Practice,
+    Subpractice,
+    pair_label = paste(A, "vs", B),
+    arm_role = "B"
+  )
+
+
+diet_map <- bind_rows(map_A, map_B) %>%
+  distinct(B.Code, A.Level.Name, pair_label, arm_role, .keep_all = TRUE)
+
+# =====================================================================
+# 3️⃣ YIELD DATA PER ARM
+# =====================================================================
+yld <- yield_with_emissions %>%
+  mutate(B.Code = str_clean(B.Code), A.Level.Name = str_clean(A.Level.Name)) %>%
+  group_by(B.Code, A.Level.Name) %>%
+  mutate(is_yield = str_detect(str_to_lower(coalesce(Out.Subind, "")), "yield")) %>%
+  arrange(B.Code, A.Level.Name, desc(is_yield), desc(!is.na(ED.Mean.T))) %>%
+  summarise(
+    Yield   = first_non_na(ED.Mean.T),
+    Product = first_non_na(Out.Subind),
+    Units   = first_non_na(Out.Unit),
+    .groups = "drop"
+  )
+
+str_clean <- function(x) {
+  x <- tolower(as.character(x))       # lower case
+  x <- gsub("\\s+", " ", x)           # collapse multiple spaces
+  trimws(x)                           # trim leading/trailing spaces
+}
+
+# --- Apply consistent cleaning to join keys ---
+em_dat <- em_dat %>%
+  mutate(
+    B.Code = str_clean(B.Code),
+    A.Level.Name = str_clean(A.Level.Name)
+  )
+
+yld <- yld %>%
+  mutate(
+    B.Code = str_clean(B.Code),
+    A.Level.Name = str_clean(A.Level.Name)
+  )
+
+diet_map <- diet_map %>%
+  mutate(
+    B.Code = str_clean(B.Code),
+    A.Level.Name = str_clean(A.Level.Name)
+  )
+
+
+# =====================================================================
+# 4️⃣ Merge emissions + yield + diet shift map
+# =====================================================================
+final_df <- em_dat %>%
+  left_join(diet_map, by = c("B.Code", "A.Level.Name")) %>%
+  left_join(yld, by = c("B.Code", "A.Level.Name")) %>%
+  transmute(
+    B.Code, A.Level.Name,
+    Practice    = coalesce(Practice, "Unknown"),
+    Subpractice = coalesce(Subpractice, ""),
+    CH4_kg_year, Yield, Product, Units, P.Product,
+    pair_label, arm_role
+  ) %>%
+  filter(Practice != "Unknown") %>%
+  drop_na(CH4_kg_year, Yield, Units, P.Product) %>%
+  arrange(B.Code, A.Level.Name)
+
+# =====================================================================
+# 5️⃣ Compute Emission Intensity (EI)
+# =====================================================================
+final_with_ei_all_diet <- final_df %>%
+  mutate(
+    days_per_year = case_when(
+      has(Units, "/day")  ~ 365,
+      has(Units, "/year") ~ 1,
+      TRUE ~ NA_real_
+    ),
+    yield_kg = case_when(
+      has(Units, "kg") ~ Yield,
+      has(Units, "g")  ~ Yield / 1000,
+      has(Units, "l") & has(Product, "milk") ~ Yield * 1.03,
+      TRUE ~ NA_real_
+    ),
+    annual_yield_kg = yield_kg * days_per_year,
+    EI_g_per_kg     = (CH4_kg_year * 1000) / annual_yield_kg
+  ) %>%
+  filter(is.finite(EI_g_per_kg), EI_g_per_kg > 0, is.finite(annual_yield_kg))
+
+# =====================================================================
+# 6️⃣ Compute pairwise deltas (A vs B) for each B.Code
+# =====================================================================
+A_info <- final_with_ei_all_diet %>%
+  filter(arm_role == "A") %>%
+  rename(
+    CH4_A = CH4_kg_year,
+    EI_A = EI_g_per_kg,
+    Y_A = annual_yield_kg,
+    Product_A = Product
+  ) %>%
+  select(B.Code, pair_label, Practice, Subpractice, CH4_A, EI_A, Y_A, Product_A)
+
+B_info <- final_with_ei_all_diet %>%
+  filter(arm_role == "B") %>%
+  rename(
+    CH4_B = CH4_kg_year,
+    EI_B = EI_g_per_kg,
+    Y_B = annual_yield_kg,
+    Product_B = Product
+  ) %>%
+  select(B.Code, pair_label, Practice, Subpractice, CH4_B, EI_B, Y_B, Product_B)
+
+final_with_deltas_diet <- inner_join(A_info, B_info, by = c("B.Code", "pair_label", "Practice", "Subpractice")) %>%
+  mutate(
+    Delta_EI_pct       = 100 * (EI_B / EI_A - 1),
+    Delta_EI_g_per_kg  = EI_B - EI_A,
+    Delta_CH4_pct      = 100 * (CH4_B / CH4_A - 1),
+    Delta_Y_pct        = 100 * (Y_B / Y_A - 1)
+  ) %>%
+  filter(is.finite(Delta_EI_pct))
+
+# =====================================================================
+# 7️⃣ Visualizations
+# =====================================================================
+
+# ---- A) EI by Practice (Diet shift vs No change) ----
+ggplot(final_with_ei_all_diet %>% filter(arm_role == "B"),
+       aes(x = Practice, y = EI_g_per_kg, fill = Practice)) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
+  stat_summary(fun = median, geom = "point",
+               shape = 23, size = 2.8, fill = "white", color = "black") +
+  geom_jitter(width = 0.15, alpha = 0.55, size = 1.4, show.legend = FALSE) +
+  labs(x = NULL, y = expression("Emission intensity (g CH"[4]*"/ kg product)"),
+       title = "Emission intensity by diet shift vs no change") +
+  theme_minimal(base_size = 12) + theme(legend.position = "none")
+
+# ---- B) ΔEI (%) by Practice ----
+ggplot(final_with_deltas_diet, aes(x = Practice, y = Delta_EI_pct, fill = Practice)) +
+  geom_hline(yintercept = 0, linetype = 2, color = "gray50") +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
+  stat_summary(fun = median, geom = "point",
+               shape = 23, size = 2.6, fill = "white", color = "black") +
+  geom_jitter(width = 0.15, alpha = 0.55, size = 1.3, show.legend = FALSE) +
+  labs(x = NULL, y = expression(Delta*" Emission intensity (% vs paired arm)"),
+       title = "Δ Emission intensity by diet shift practice") +
+  theme_minimal(base_size = 12) + theme(legend.position = "none")
+
+# ---- C) EI by Subpractice (Diet shift only) ----
+labs_sub_diet <- final_with_ei_all_diet %>%
+  filter(Practice == "Diet shift") %>%
+  count(Subpractice, name = "n") %>%
+  mutate(Subpractice_lab = paste0(Subpractice, " (n=", n, ")"))
+
+plot_ei_sub_diet <- final_with_ei_all_diet %>%
+  filter(Practice == "Diet shift") %>%
+  left_join(labs_sub_diet, by = "Subpractice") %>%
+  mutate(Subpractice_lab = fct_reorder(Subpractice_lab, EI_g_per_kg, median, na.rm = TRUE))
+
+ggplot(plot_ei_sub_diet,
+       aes(x = Subpractice_lab, y = EI_g_per_kg, fill = Subpractice)) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
+  stat_summary(fun = median, geom = "point",
+               shape = 23, size = 2.6, fill = "white", color = "black") +
+  geom_jitter(width = 0.15, alpha = 0.55, size = 1.2, show.legend = FALSE) +
+  coord_flip() +
+  labs(x = NULL, y = expression("Emission intensity (g CH"[4]*"/ kg product)"),
+       title = "Emission intensity by subpractice (diet shift only)") +
+  theme_minimal(12) + theme(legend.position = "none")
+
+# ---- D) ΔEI (%) by Subpractice ----
+labs_sub_delta_diet <- final_with_deltas_diet %>%
+  filter(Practice == "Diet shift") %>%
+  count(Subpractice, name = "n") %>%
+  mutate(Subpractice_lab = paste0(Subpractice, " (n=", n, ")"))
+
+plot_delta_sub_diet <- final_with_deltas_diet %>%
+  filter(Practice == "Diet shift") %>%
+  left_join(labs_sub_delta_diet, by = "Subpractice") %>%
+  mutate(Subpractice_lab = fct_reorder(Subpractice_lab, Delta_EI_pct, median, na.rm = TRUE))
+
+ggplot(plot_delta_sub_diet,
+       aes(x = Subpractice_lab, y = Delta_EI_pct, fill = Subpractice)) +
+  geom_hline(yintercept = 0, linetype = 2, color = "gray50") +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
+  stat_summary(fun = median, geom = "point",
+               shape = 23, size = 2.6, fill = "white", color = "black") +
+  geom_jitter(width = 0.15, height = 0, alpha = 0.55, size = 1.3, show.legend = FALSE) +
+  coord_flip() +
+  labs(x = NULL, y = "Δ Emission intensity (% vs paired arm)",
+       title = "Δ Emission intensity by subpractice (diet shift only)") +
+  theme_minimal(12) + theme(legend.position = "none")
+
+# ---- E) ΔYield (%) by Subpractice ----
+ggplot(plot_delta_sub_diet,
+       aes(x = Subpractice_lab, y = Delta_Y_pct, fill = Subpractice)) +
+  geom_hline(yintercept = 0, linetype = 2, color = "gray50") +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
+  stat_summary(fun = median, geom = "point",
+               shape = 23, size = 2.6, fill = "white", color = "black") +
+  geom_jitter(width = 0.15, height = 0, alpha = 0.55, size = 1.4, show.legend = FALSE) +
+  coord_flip() +
+  labs(x = NULL, y = "Δ Yield (% vs paired arm)",
+       title = "Δ Yield by subpractice (diet shift only)") +
+  theme_minimal(12) + theme(legend.position = "none")
+
+
+
+```
+

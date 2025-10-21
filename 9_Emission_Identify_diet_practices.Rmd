@@ -7,10 +7,10 @@ date: "2025-09-26"
 ```{r}
 diet_percentages <- read.csv("~/Emission_Analysis/data/diet_percentages_classif.csv")
 total_amounts <- read.csv("~/Emission_Analysis/data/total_amounts.csv")
-
 classif_ing_simple <- read.csv("~/Emission_Analysis/data/classif_ing_simple.csv")
 merged_metadata <- readRDS("~/Emission_Analysis/data/merged_metadata_nutrition_inference.rds")
 GE_combined<-read.csv("~/Emission_Analysis/data/GE_combined.csv")
+classif_diet<-read.csv("~/Emission_Analysis/data/classif_diet.csv")
 
 ctrl_key <- merged_metadata$MT.Out[, .(
   B.Code,
@@ -590,44 +590,7 @@ practice_pairwise_tbl <- classify_diet_practice_pairwise(
 
 ```
  
-```{r}
-# B.Codes that appear in the practice table
-# practice_codes <- practice_tbl %>%
-#   distinct(B.Code)
-# 
-# # Intersect with your ≥2-diets papers
-# practice_in_2plus <- practice_codes %>%
-#   semi_join(papers_2plus %>% select(B.Code), by = "B.Code")
-# 
-# # Attach species and count by product
-# practice_in_2plus_by_product <- practice_in_2plus %>%
-#   left_join(
-#     merged_metadata$`Prod.Out` %>%
-#       filter(P.Product %in% c("Cattle","Sheep","Goat")) %>%
-#       distinct(B.Code, P.Product),
-#     by = "B.Code"
-#   ) %>%
-#   count(P.Product, name = "Papers_with_practice_and_≥2_classified_diets")
-# 
-# # Show the summary
-# knitr::kable(
-#   practice_in_2plus_by_product,
-#   caption = "Papers per product that are in practice_tbl AND have ≥2 fully classified diets"
-# )
-# 
-# # (Optional) list the actual codes
-# knitr::kable(
-#   practice_in_2plus %>%
-#     left_join(
-#       merged_metadata$`Prod.Out` %>%
-#         distinct(B.Code, P.Product),
-#       by = "B.Code"
-#     ) %>%
-#     arrange(P.Product, B.Code),
-#   caption = "B.Codes with ≥2 fully classified diets that also have a practice"
-# )
 
-```
 
 
 ## diet clasffication practice 
@@ -832,10 +795,72 @@ cat("Total unique papers with a category switch and CH4 for both arms:", total_p
 print(details, n = 50)
 
 ```
+## diet classification practice 
+
+```{r}
+
+
+suppressPackageStartupMessages({
+  library(dplyr)
+  library(tidyr)
+  library(stringr)
+  library(purrr)
+})
+
+# --- 1) Clean and prepare both datasets -------------------------------------
+classif_diet_clean <- classif_diet %>%
+  mutate(
+    A.Level.Name = str_squish(str_to_lower(D.Item)),
+    M7_Category  = str_squish(M7_Category)
+  ) %>%
+  select(B.Code, A.Level.Name, M7_Category) %>%
+  distinct()
+
+diet_meta <- merged_metadata$Animals.Diet %>%
+  mutate(
+    A.Level.Name = str_squish(str_to_lower(A.Level.Name))
+  ) %>%
+  distinct(B.Code, A.Level.Name)
+
+# --- 2) Merge classification onto metadata ----------------------------------
+diet_final <- diet_meta %>%
+  left_join(classif_diet_clean, by = c("B.Code", "A.Level.Name")) %>%
+  mutate(M7_Category = coalesce(M7_Category, "Unclassified"))
+
+# --- 3) Generate all possible pairs within each B.Code ----------------------
+diet_pairs <- diet_final %>%
+  group_by(B.Code) %>%
+  summarise(all_arms = list(A.Level.Name), .groups = "drop") %>%
+  filter(lengths(all_arms) >= 2) %>%       # <— filter out single-diet codes
+  mutate(pairs = map(all_arms, ~ t(combn(.x, 2)) %>% as.data.frame())) %>%
+  unnest(pairs) %>%
+  rename(A = V1, B = V2)
+
+# --- 4) Attach category info for each diet in the pair ----------------------
+pairwise_diets <- diet_pairs %>%
+  left_join(diet_final %>% rename(Diet_A = M7_Category), by = c("B.Code", "A" = "A.Level.Name")) %>%
+  left_join(diet_final %>% rename(Diet_B = M7_Category), by = c("B.Code", "B" = "A.Level.Name")) %>%
+  mutate(
+    Practice = if_else(Diet_A != Diet_B, "Diet shift", "No change"),
+    Subpractice = if_else(Diet_A != Diet_B, paste0(Diet_A, " → ", Diet_B), "")
+  )
+
+# --- 5) Final clean output ---------------------------------------------------
+pairwise_diet_shift_tbl <- pairwise_diets %>%
+  select(B.Code, A, B, Practice, Subpractice, Diet_A, Diet_B) %>%
+  arrange(B.Code, A, B)
+
+
+
+
+```
 
 ```{r}
 write.csv(practice_tbl,"data/practice_tbl.csv")
 write.csv(practice_pairwise_tbl,"data/practice_trt_tbl.csv")
+write.csv(pairwise_diet_shift_tbl,"data/pairwise_diet_shift_tbl.csv")
+
+
 
 ```
 
