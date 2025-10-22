@@ -7,8 +7,6 @@ date: "2025-09-26"
 
 merged_metadata <- readRDS("~/Emission_Analysis/data/merged_metadata_harmonized_subset.rds")
 
-
-
 ```
 
 ## 6) Complete the nutrition and digestibility papers

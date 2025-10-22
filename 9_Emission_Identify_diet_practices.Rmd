@@ -12,6 +12,20 @@ merged_metadata <- readRDS("~/Emission_Analysis/data/merged_metadata_nutrition_i
 GE_combined<-read.csv("~/Emission_Analysis/data/GE_combined.csv")
 classif_diet<-read.csv("~/Emission_Analysis/data/classif_diet.csv")
 
+library(ERAg)
+library(stringr)
+library(knitr)
+library(dplyr)
+library(DT)
+library(readxl)
+library(tidyr)
+library(arrow)
+library(ggplot2)
+library(data.table)
+library(purrr)
+library(janitor)
+library(ggalt)
+
 ctrl_key <- merged_metadata$MT.Out[, .(
   B.Code,
   A.Level.Name,
@@ -61,47 +75,53 @@ classify_diet_practice <- function(
   total_amounts,
   ctrl_key,
   classif_ing_simple,
-  TOTAL_TOL = 0.05,
-  ING_TOL   = 1.0,
-  BAL_TOL   = 3.0
+  TOTAL_TOL = 0.05,   # ±5% change in total diet mass
+  ING_TOL   = 1.0,    # ≥1% change to count at item/category level
+  BAL_TOL   = 3.0     # “balanced” window for substitutions
 ){
+
+  # ---------------- Helpers ----------------
   ensure_col <- function(df, col, fill = NA_character_) {
     if (!col %in% names(df)) df[[col]] <- fill
     df
   }
   norm_item <- function(x){
-    x %>% stringr::str_to_lower() %>%
+    x %>%
+      stringr::str_to_lower() %>%
       stringr::str_replace_all("[[:space:]]+", " ") %>%
       stringr::str_trim()
   }
+  summarize_types <- function(x) paste(sort(unique(na.omit(x))), collapse = ", ")
 
-  # ---- Ingredient lookup ----
+  # ---------------- Ingredient lookup ----------------
   ing_lu <- classif_ing_simple %>%
     transmute(D.Item_norm = norm_item(D.Item),
               Ingredient_Category_lu = Ingredient_Category) %>%
     filter(!is.na(D.Item_norm), D.Item_norm != "") %>%
     group_by(D.Item_norm) %>%
-    summarise(Ingredient_Category_lu = dplyr::first(na.omit(Ingredient_Category_lu)),
-              .groups = "drop")
+    summarise(
+      Ingredient_Category_lu = dplyr::first(na.omit(Ingredient_Category_lu)),
+      .groups = "drop"
+    )
 
-  # ---- Control per study ----
+  # ---------------- Control key ----------------
   ctrl_lu <- ctrl_key %>%
     filter(tolower(T.Control) == "yes") %>%
     arrange(B.Code, A.Level.Name) %>%
     group_by(B.Code) %>%
     summarise(Control = first(A.Level.Name), .groups = "drop")
 
-  # ---- Totals (kg) ----
+  # ---------------- Totals (kg) ----------------
   totals_kg <- total_amounts %>%
     mutate(Total_kg = case_when(
-      D.Unit.Amount == "g"  ~ Total_Amount/1000,
+      D.Unit.Amount == "g"  ~ Total_Amount / 1000,
       D.Unit.Amount == "kg" ~ Total_Amount,
       TRUE ~ NA_real_
     )) %>%
     group_by(B.Code, A.Level.Name) %>%
     summarise(Total_kg = sum(Total_kg, na.rm = TRUE), .groups = "drop")
 
-  # ---- Percentages + category fill ----
+  # ---------------- Percentages + category fill ----------------
   dp <- ensure_col(diet_percentages, "Ingredient_Category")
 
   pct_long <- dp %>%
@@ -113,7 +133,7 @@ classify_diet_practice <- function(
     mutate(Ingredient_Category = coalesce(Ingredient_Category, Ingredient_Category_lu, "Unclassified")) %>%
     select(-D.Item_norm, -Ingredient_Category_lu)
 
-  # ---- Pairs ----
+  # ---------------- Build control–treatment pairs ----------------
   pairs <- pct_long %>%
     distinct(B.Code, A.Level.Name) %>%
     inner_join(ctrl_lu, by = "B.Code") %>%
@@ -129,6 +149,7 @@ classify_diet_practice <- function(
     rename(Control = A.Level.Name, p_ctrl = Percentage_of_Diet) %>%
     select(B.Code, Control, D.Item, p_ctrl)
 
+  # ---------------- Item-level deltas (Trt vs Ctrl) ----------------
   trt_vs_ctrl <- pairs %>%
     left_join(trt_tbl,  by = c("B.Code","Trt")) %>%
     left_join(ctrl_tbl, by = c("B.Code","Control","D.Item")) %>%
@@ -140,9 +161,33 @@ classify_diet_practice <- function(
         dP >=  ING_TOL ~ "increase",
         dP <= -ING_TOL ~ "decrease",
         TRUE           ~ "nochange"
-      )
+      ),
+      in_trt  = p_trt  > 0,
+      in_ctrl = p_ctrl > 0
     )
 
+  # ---------------- Category-level deltas (per pair) ----------------
+  cat_delta <- trt_vs_ctrl %>%
+    group_by(B.Code, Control, Trt, Ingredient_Category) %>%
+    summarise(
+      cat_pos = sum(pmax(dP, 0), na.rm = TRUE),
+      cat_neg = sum(pmax(-dP, 0), na.rm = TRUE),
+      .groups = "drop"
+    )
+
+  cat_summ <- cat_delta %>%
+    group_by(B.Code, Control, Trt) %>%
+    summarise(
+      cat_pos_total = sum(cat_pos, na.rm = TRUE),
+      cat_neg_total = sum(cat_neg, na.rm = TRUE),
+      n_cats_pos    = sum(cat_pos > 0),
+      n_cats_neg    = sum(cat_neg > 0),
+      cats_added    = summarize_types(Ingredient_Category[cat_pos > 0]),
+      cats_dropped  = summarize_types(Ingredient_Category[cat_neg > 0]),
+      .groups = "drop"
+    )
+
+  # ---------------- Total diet mass change ----------------
   delta_totals <- pairs %>%
     left_join(totals_kg %>% rename(Total_trt_kg  = Total_kg),
               by = c("B.Code","Trt" = "A.Level.Name")) %>%
@@ -150,6 +195,7 @@ classify_diet_practice <- function(
               by = c("B.Code","Control" = "A.Level.Name")) %>%
     mutate(ΔTOTAL = (Total_trt_kg - Total_ctrl_kg)/Total_ctrl_kg)
 
+  # ---------------- Top ingredient changes (context) ----------------
   top_changes <- trt_vs_ctrl %>%
     group_by(B.Code, Control, Trt) %>%
     arrange(desc(abs(dP)), .by_group = TRUE) %>%
@@ -161,8 +207,7 @@ classify_diet_practice <- function(
       .groups = "drop"
     )
 
-  summarize_types <- function(x) paste(sort(unique(na.omit(x))), collapse = ", ")
-
+  # ---------------- Summarise per pair + classify ----------------
   paired <- trt_vs_ctrl %>%
     left_join(delta_totals %>% select(B.Code, Trt, ΔTOTAL), by = c("B.Code","Trt")) %>%
     group_by(B.Code, Control, Trt, ΔTOTAL) %>%
@@ -171,21 +216,26 @@ classify_diet_practice <- function(
       NEG_sum   = sum(pmax(-dP,0), na.rm = TRUE),
       n_pos     = sum(dir=="increase",  na.rm = TRUE),
       n_neg     = sum(dir=="decrease",  na.rm = TRUE),
-      Types_added     = summarize_types(Ingredient_Category[dir=="increase"]),
-      Types_decreased = summarize_types(Ingredient_Category[dir=="decrease"]),
+      ing_set_trt  = list(sort(unique(D.Item[in_trt]))),
+      ing_set_ctrl = list(sort(unique(D.Item[in_ctrl]))),
+      same_ingredient_set = setequal(ing_set_trt[[1]], ing_set_ctrl[[1]]),
       .groups = "drop"
     ) %>%
+    left_join(cat_summ,   by = c("B.Code","Control","Trt")) %>%
     left_join(top_changes, by = c("B.Code","Control","Trt")) %>%
     mutate(
+      # ---------- Classification ----------
       Practice = case_when(
         is.finite(ΔTOTAL) & abs(ΔTOTAL) >  TOTAL_TOL & POS_sum >= ING_TOL ~ "Addition",
+        abs(ΔTOTAL) <= TOTAL_TOL & same_ingredient_set &
+          cat_pos_total >= ING_TOL & cat_neg_total >= ING_TOL ~ "Addition",
         is.finite(ΔTOTAL) & abs(ΔTOTAL) <= TOTAL_TOL &
-          POS_sum >= ING_TOL & NEG_sum >= ING_TOL &
-          abs(POS_sum - NEG_sum) <= BAL_TOL                               ~ "Substitution",
+          cat_pos_total >= ING_TOL & cat_neg_total >= ING_TOL &
+          abs(POS_sum - NEG_sum) <= BAL_TOL ~ "Substitution",
         is.finite(ΔTOTAL) & abs(ΔTOTAL) <= TOTAL_TOL &
-          POS_sum >= ING_TOL & NEG_sum <  ING_TOL                         ~ "Addition",
-        (POS_sum + NEG_sum) < ING_TOL                                     ~ "No change",
-        TRUE                                                               ~ "Substitution"
+          cat_pos_total >= ING_TOL & cat_neg_total <  ING_TOL ~ "Addition",
+        (POS_sum + NEG_sum) < ING_TOL ~ "No change",
+        TRUE ~ "Substitution"
       ),
       Magnitude_pct = case_when(
         Practice == "Addition"     ~ POS_sum,
@@ -195,57 +245,64 @@ classify_diet_practice <- function(
     ) %>%
     rowwise() %>%
     mutate(
-      Substitution_pairs = {
+      # ---------- Build local substitution pairs safely ----------
+      Substitution_pairs_detail = {
         if (Practice != "Substitution") {
           ""
         } else {
-          b <- B.Code; t <- Trt
-          pos_type <- trt_vs_ctrl %>%
-            filter(B.Code == b, Trt == t) %>%
-            group_by(Ingredient_Category) %>%
-            summarise(pos = sum(pmax(dP,0),  na.rm=TRUE), .groups="drop") %>%
-            filter(pos > 0) %>% arrange(desc(pos))
-          neg_type <- trt_vs_ctrl %>%
-            filter(B.Code == b, Trt == t) %>%
-            group_by(Ingredient_Category) %>%
-            summarise(neg = sum(pmax(-dP,0), na.rm=TRUE), .groups="drop") %>%
-            filter(neg > 0) %>% arrange(desc(neg))
+          this_code <- cur_data()$B.Code
+          this_ctrl <- cur_data()$Control
+          this_trt  <- cur_data()$Trt
+
+          local <- cat_delta %>%
+            filter(B.Code == this_code, Control == this_ctrl, Trt == this_trt)
+
+          pos_type <- local %>% filter(cat_pos > 0) %>% arrange(desc(cat_pos))
+          neg_type <- local %>% filter(cat_neg > 0) %>% arrange(desc(cat_neg))
           np <- min(nrow(pos_type), nrow(neg_type))
           if (np == 0) "" else
             paste(paste0(neg_type$Ingredient_Category[seq_len(np)],
                          " → ",
                          pos_type$Ingredient_Category[seq_len(np)]),
-                  collapse="; ")
+                  collapse = "; ")
         }
       }
     ) %>%
     ungroup() %>%
-    # NEW: add Subpractice but KEEP the detailed columns
+    # ---------- Subpractice label ----------
     mutate(
       Subpractice = dplyr::case_when(
-        Practice == "Addition"     ~ Types_added,
-        Practice == "Substitution" ~ Substitution_pairs,
-        TRUE                       ~ ""
+        Practice == "Addition" & n_cats_pos > 1 ~ "Mixed",
+        Practice == "Addition" & n_cats_pos == 1 ~ cats_added,
+        Practice == "Substitution" & stringr::str_detect(Substitution_pairs_detail, ";") ~ "Substitution (Mixed)",
+        Practice == "Substitution" ~ Substitution_pairs_detail,
+        TRUE ~ ""
       )
     ) %>%
     select(
       B.Code, Control, Trt,
       Practice, Subpractice, Magnitude_pct,
       ΔTOTAL, POS_sum, NEG_sum, n_pos, n_neg,
-      Types_added, Types_decreased, Substitution_pairs, Top_changes
+      same_ingredient_set,
+      Types_added = cats_added,
+      Types_decreased = cats_dropped,
+      Substitution_pairs_detail,
+      Top_changes
     ) %>%
     arrange(B.Code, Control, Trt)
 
-  paired
+  return(paired)
 }
 
-# Run
+# ---- Run ----
 practice_tbl <- classify_diet_practice(
   diet_percentages   = diet_percentages,
   total_amounts      = total_amounts,
   ctrl_key           = ctrl_key,
   classif_ing_simple = classif_ing_simple,
-  TOTAL_TOL = 0.05, ING_TOL = 1.0, BAL_TOL = 3.0
+  TOTAL_TOL = 0.05,  # ±5%
+  ING_TOL   = 1.0,   # ≥1%
+  BAL_TOL   = 3.0    # balanced window
 )
 
 ```

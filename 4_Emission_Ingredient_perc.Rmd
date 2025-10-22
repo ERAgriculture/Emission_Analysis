@@ -19,7 +19,6 @@ This table presents the relative percentage of each ingredient within a diet. To
 # ────────────────────────────────────────────────────────────────────────────
 # (a) Ingredient-based totals  ----------------------------------------------
 consistent_diets <- ingredients %>%                       # ignore “Entire Diet” rows
-  filter(D.Type != "Entire Diet") %>%
   group_by(B.Code, A.Level.Name) %>%
   mutate(Unit_Count = n_distinct(D.Unit.Amount)) %>%      # always 1 after conversion
   filter(Unit_Count == 1) %>%                             # keep only single-unit diets
@@ -92,7 +91,6 @@ totals_clean <- total_amounts %>%
 # ────────────────────────────────────────────────────────────────────────────
 # 3.  Percentage contribution of each ingredient -----------------------------
 diet_percentages <- ingredients_clean %>% 
-  filter(D.Type != "Entire Diet") %>%
   left_join(totals_clean,
             by = c("B.Code", "A.Level.Name", "D.Unit.Amount")) %>% 
   mutate(

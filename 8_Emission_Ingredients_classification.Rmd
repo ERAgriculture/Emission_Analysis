@@ -129,6 +129,7 @@ Ing_classif <- merged_metadata$Animals.Diet.Comp %>%
   filter(!D.Item %in% c("Salt", "Water")) %>%      # remove trivial items
   mutate(D.Item_lc = canonicalize_item(D.Item))    # add normalized column for matching
 
+
 # ─────────────────────────────────────────────────────────────
 # STEP 2: Define and normalize nutrient donor map (variant → donor)
 # ─────────────────────────────────────────────────────────────
@@ -171,6 +172,7 @@ replacement_rows <- nutrient_donor_map %>%
     D.Item    = stringr::str_to_title(variant_lc), # pretty capitalization
     Donor_Used_From = stringr::str_to_title(donor_lc)  # optional traceability column
   )
+
 
 # ─────────────────────────────────────────────────────────────
 # STEP 5: Only drop variants we have replacements for
@@ -369,9 +371,7 @@ nutr_ing <- build_nutr_table(Ing_ingredients_long, type_lookup, backfill_by_item
   relocate(scope, .before = B.Code)
 
 
-# Diagnostics: items without a mapped D.Type
-unmatched_ing  <- anti_join(nutr_ing,  type_lookup, by = "D.Item")
-# unmatched_diet <- anti_join(nutr_diet, type_lookup, by = "D.Item")
+
 
 # ── Canonical mean per ingredient (collapse to one row per D.Item) ──────────
 canon_ing <- nutr_ing %>%
@@ -628,85 +628,7 @@ ingredients <- ingredients %>%
 ```
 
 
-```{r}
-# ----------------------------
-# Completeness within selected papers
-# ----------------------------
 
-# # Selected papers (already built above)
-# selected_bcodes <- GE_data   # a data.frame with B.Code from your earlier step
-# 
-# # Ensure per-row INGREDIENT classifications exist (ingredients, by B.Code)
-# classif_ing_rows <- nutr_ing %>%
-#   method1() %>% method2() %>% method3() %>% method4() %>%
-#   method5() %>% method6() %>% method7()
-# 
-# # Choose which method’s category to test for completeness
-# method_col <- "M7_Category"
-# 
-# # --- Diet completeness (all diet rows classified for a paper) ---
-# diet_status <- classif_diet %>%
-#   semi_join(selected_bcodes, by = "B.Code") %>%
-#   group_by(B.Code) %>%
-#   summarise(
-#     diet_n             = n(),
-#     diet_n_classified  = sum(!is.na(.data[[method_col]])),
-#     diets_all_classified = diet_n > 0 & (diet_n_classified == diet_n),
-#     .groups = "drop"
-#   )
-# 
-# # --- Ingredient completeness (all ingredient rows classified for a paper) ---
-# ing_status <- classif_ing_rows %>%
-#   semi_join(selected_bcodes, by = "B.Code") %>%
-#   group_by(B.Code) %>%
-#   summarise(
-#     ing_n                = n(),
-#     ing_n_classified     = sum(!is.na(.data[[method_col]])),
-#     ingredients_all_classified = ing_n > 0 & (ing_n_classified == ing_n),
-#     .groups = "drop"
-#   )
-# 
-# # Combine statuses; treat missing as FALSE (paper may have diets but no ingredients, or vice versa)
-# paper_status <- full_join(diet_status, ing_status, by = "B.Code") %>%
-#   mutate(
-#     diets_all_classified       = replace_na(diets_all_classified, FALSE),
-#     ingredients_all_classified = replace_na(ingredients_all_classified, FALSE),
-#     either_complete            = diets_all_classified | ingredients_all_classified
-#   )
-# 
-# # Attach species for those selected papers (Cattle/Sheep/Goat)
-# paper_status <- paper_status %>%
-#   left_join(
-#     merged_metadata$`Prod.Out` %>%
-#       filter(P.Product %in% c("Cattle", "Sheep", "Goat")) %>%
-#       distinct(B.Code, P.Product),
-#     by = "B.Code"
-#   )
-# 
-# # ---------- Totals ----------
-# n_papers_diets_all        <- sum(paper_status$diets_all_classified)
-# n_papers_ingredients_all  <- sum(paper_status$ingredients_all_classified)
-# n_papers_either           <- sum(paper_status$either_complete)
-# 
-# n_papers_diets_all
-# n_papers_ingredients_all
-# n_papers_either
-# 
-# # ---------- By species ----------
-# summary_by_product <- paper_status %>%
-#   group_by(P.Product) %>%
-#   summarise(
-#     Papers_total            = n_distinct(B.Code),
-#     Papers_diets_all        = sum(diets_all_classified),
-#     Papers_ingredients_all  = sum(ingredients_all_classified),
-#     Papers_either           = sum(either_complete),
-#     .groups = "drop"
-#   )
-# 
-# # View as a table
-# kable(summary_by_product, caption = "Papers with complete diet/ingredient classification (within selected papers)")
-
-```
 
 ```{r}
 ingredients <-ingredients%>%
@@ -965,6 +887,12 @@ ingredients <- ingredients %>%
   mutate(
     Ingredient_Category = roman_to_name(Ingredient_Category)
   )
+
+unmatched_ing<- ingredients %>%
+  filter(is.na(Ingredient_Category)) %>%
+  distinct(D.Item) %>%
+  left_join(canon_ing, by = "D.Item") %>%
+  arrange(D.Item)
 
 
 ```

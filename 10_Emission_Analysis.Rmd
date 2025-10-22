@@ -1366,10 +1366,7 @@ diet_summary <- summarize_by_product(diet_with_yield, "diet_yield")
 total_ingredient <- n_distinct(ingredient_with_yield$B.Code)
 total_diet <- n_distinct(diet_with_yield$B.Code)
 
-cat("Total papers with INGREDIENT classification + emission + yield + practice: ",
-    total_ingredient, "\n")
-cat("Total papers with DIET classification + emission + yield + diet shift: ",
-    total_diet, "\n")
+
 
 cat("\n--- Ingredient-level coverage ---\n")
 print(ingredient_summary)

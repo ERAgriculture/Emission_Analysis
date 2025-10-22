@@ -11,6 +11,8 @@ merged_metadata <- readRDS("~/Emission_Analysis/data/merged_metadata_harmonized.
 ingredients <- readRDS("~/Emission_Analysis/data/ingredients_harmonized.rds")
 
 
+
+
 ```
 
 ## 1.4 Take out grazing experiments 
@@ -147,5 +149,25 @@ if (exists("ingredients")) {
   saveRDS(ingredients, file.path("data","ingredients_harmonized_subset.rds"))
   
 }
+```
+
+## number of papers 
+```{r}
+
+GE_combined <- read.csv("~/Emission_Analysis/data/GE_Combined.csv")
+
+GE_combined<-GE_combined%>%
+  filter(!is.na(CH4_kg_year))
+
+GE_combined<- GE_combined%>%
+  filter(B.Code %in% ingredients$B.Code)
+
+n_CH4_codes_by_product <- GE_combined %>%
+  filter(!is.na(CH4_kg_year)) %>%
+  distinct(B.Code, P.Product) %>%
+  count(P.Product, name = "n_CH4_codes")
+
+n_CH4_codes_by_product
+
 ```
 
