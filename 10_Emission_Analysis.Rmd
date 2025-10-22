@@ -404,7 +404,7 @@ final_with_deltas <- practice_tbl %>%
     Delta_EI_g_per_kg  = EI_g_per_kg - EI_ctrl,
     Delta_CH4_pct      = 100 * (CH4_kg_year / CH4_ctrl - 1),
     Delta_Y_pct        = 100 * (annual_yield_kg / Y_ctrl - 1))%>%
-  filter(Delta_EI_pct<1000)
+  filter(Delta_EI_pct<200)
 
 
     
@@ -759,94 +759,197 @@ ggplot(plot_delta_sub,
        title = "Δ yield  by subpractice (dominant diet lever)") +
   theme_minimal(12) + theme(legend.position = "none")
 ```
- interpretation : 
- 
- Across the compiled dataset, emission intensity (EI) responses to dietary interventions showed consistent but nuanced patterns reflecting the interaction between productivity gains and methane output. When expressed in absolute terms (g CH₄ kg⁻¹ product), diets dominated by high-quality forages and moderate lipid inclusion exhibited the lowest emission intensities (Figure X). These diets typically enhanced feed digestibility and nutrient use efficiency, leading to reduced methane loss per unit of product. In contrast, interventions based on high-starch or protein supplementation displayed wider variability, indicating that improvements in productivity did not always translate proportionally into lower emissions. Substitution practices combining changes in multiple diet components also showed large dispersion, highlighting the heterogeneous nature of feeding experiments across African livestock systems.
 
-When examined as relative change compared to control diets (Δ EI, %), most dietary practices clustered around zero or below (Figure X). Values near zero are particularly meaningful in this context: they can represent either a true lack of response—where methane emissions and yield changed in similar proportions—or a compensatory effect, in which productivity improvements offset higher methane output, resulting in no net change in EI. This neutral outcome does not necessarily imply inefficacy but rather that interventions increased both feed intake and animal performance proportionally. Indeed, several “Good forage” and “Protein” treatments produced modest methane increases alongside higher yields, leading to stable emission intensities relative to controls. Conversely, negative Δ EI values (reductions) occurred where nutrient density or digestibility improvements led to greater productivity gains than methane increases.
 
-The number of data points varied substantially among subpractices, influencing the strength and interpretation of observed trends. For instance, Good forage additions (n = 18) and Protein supplementation (n = 6) were well represented and yielded consistent reductions or neutral changes in EI, while categories such as High-starch (n = 2) and Poor forage (n = 1) were based on few observations and should be interpreted cautiously. Mixed interventions (n = 5), often involving multiple nutrient adjustments, produced the largest spread in Δ EI, reflecting both synergistic and antagonistic effects among combined practices. The broad variability across categories underscores the diversity of study conditions, ranging from controlled feeding trials to field-based studies with variable diet formulation accuracy.
+## separating small and big ruminants 
 
-Productivity responses followed a generally positive trend across interventions (Figure X). Most practices increased yield relative to controls, with mixed or multi-component strategies producing the largest median improvements, often exceeding 50%. High-fat and protein supplementation resulted in more moderate gains, typically 5–15%. These results confirm that interventions improving diet quality tend to enhance animal performance while either reducing or maintaining emission intensity per unit of product.
-
-Overall, the data indicate that dietary interventions targeting improved feed quality and nutrient balance yield dual benefits for productivity and methane mitigation in African livestock systems. The results also highlight that stable or “zero-change” emission intensity outcomes can represent balanced improvements in both emissions and yield—an important nuance in interpreting mitigation efficacy. Despite the inherent variability and uneven data coverage across practices, the overall direction of change supports feed quality enhancement—through improved forages, protein supplementation, and moderate fat inclusion—as a robust strategy for reducing methane emission intensity and increasing productivity across diverse African ruminant production systems.
-### for pairwise tbl 
 ```{r}
-# ---- C) EI by Subpractice & Practice (pairwise) ----
-labs_sub_pw <- final_with_ei_all_pairwise %>%
-  count(Practice, Subpractice, name = "n") %>%
+# ---- Emission Intensity (EI) and Yield plots by Subpractice, colored by Product ----
+
+suppressPackageStartupMessages({
+  library(dplyr); library(tidyr); library(stringr); library(forcats); library(ggplot2)
+})
+
+# ---- A) Define species/product groups ----
+final_with_deltas <- final_with_deltas %>%
+  mutate(Species_group = case_when(
+    str_detect(P.Product, regex("cattle|cow|bull", ignore_case = TRUE)) ~ "Cattle",
+    str_detect(P.Product, regex("sheep|goat", ignore_case = TRUE)) ~ "Small ruminants",
+    str_detect(P.Product, regex("buffalo", ignore_case = TRUE)) ~ "Buffalo",
+    str_detect(P.Product, regex("camel", ignore_case = TRUE)) ~ "Camelids",
+    TRUE ~ "Other"
+  ))
+
+final_with_ei_all <- final_with_ei_all %>%
+  mutate(Species_group = case_when(
+    str_detect(P.Product, regex("cattle|cow|bull", ignore_case = TRUE)) ~ "Cattle",
+    str_detect(P.Product, regex("sheep|goat", ignore_case = TRUE)) ~ "Small ruminants",
+    str_detect(P.Product, regex("buffalo", ignore_case = TRUE)) ~ "Buffalo",
+    str_detect(P.Product, regex("camel", ignore_case = TRUE)) ~ "Camelids",
+    TRUE ~ "Other"
+  ))
+
+# ---- B) Build Subpractice labels with Ns ----
+labs_sub_delta <- final_with_deltas %>%
+  count(Subpractice, name = "n") %>%
   mutate(Subpractice_lab = paste0(Subpractice, " (n=", n, ")"))
 
-plot_ei_sub_pw <- final_with_ei_all_pairwise %>%
-  left_join(labs_sub_pw, by = c("Practice", "Subpractice")) %>%
+# -------------------------------------------------------------------------
+# ---- 1) Absolute EI (g CH4/kg product) by Subpractice ----
+# -------------------------------------------------------------------------
+labs_sub <- final_with_ei_all %>%
+  count(Subpractice, name = "n") %>%
+  mutate(Subpractice_lab = paste0(Subpractice, " (n=", n, ")"))
+
+plot_ei_sub <- final_with_ei_all %>%
+  left_join(labs_sub, by = "Subpractice") %>%
   mutate(Subpractice_lab = fct_reorder(Subpractice_lab, EI_g_per_kg, median, na.rm = TRUE))
 
-ggplot(plot_ei_sub_pw,
-       aes(x = Subpractice_lab, y = EI_g_per_kg, fill = Practice)) +
-  geom_boxplot(alpha = 0.65, outlier.alpha = 0.3, color = "gray35") +
+ggplot(plot_ei_sub,
+       aes(x = Subpractice_lab, y = EI_g_per_kg, fill = Species_group)) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.3, position = position_dodge(width = 0.8)) +
   stat_summary(fun = median, geom = "point",
-               shape = 23, size = 2.4, fill = "white", color = "black") +
-  geom_jitter(width = 0.15, alpha = 0.5, size = 1.2, show.legend = FALSE) +
+               shape = 23, size = 2.4, fill = "white", color = "black",
+               position = position_dodge(width = 0.8)) +
+  geom_jitter(aes(color = Species_group),
+              width = 0.15, alpha = 0.5, size = 1.2, show.legend = FALSE) +
   coord_flip() +
   labs(x = NULL, y = expression("Emission intensity (g CH"[4]*"/ kg product)"),
-       title = "Emission intensity by Subpractice (pairwise data)") +
-  theme_minimal(base_size = 13) +
-  scale_fill_manual(values = c("Addition" = "#1b9e77",
-                               "Substitution" = "#7570b3",
-                               "Reduction" = "#d95f02",
-                               "No change" = "gray70")) +
-  theme(legend.title = element_blank(),
-        legend.position = "top")
+       title = "Emission intensity by subpractice (colored by product)") +
+  scale_fill_brewer(palette = "Set2", name = "Product") +
+  scale_color_brewer(palette = "Set2", guide = "none") +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "right",
+        axis.text.y = element_text(size = 10),
+        plot.title = element_text(face = "bold"))
 
-# ---- D) ΔEI (%) by Subpractice & Practice (pairwise) ----
-labs_sub_delta_pw <- final_with_deltas_pairwise %>%
-  count(Practice, Subpractice, name = "n") %>%
-  mutate(Subpractice_lab = paste0(Subpractice, " (n=", n, ")"))
-
-plot_delta_sub_pw <- final_with_deltas_pairwise %>%
-  left_join(labs_sub_delta_pw, by = c("Practice", "Subpractice")) %>%
+# -------------------------------------------------------------------------
+# ---- 2) ΔEI (%) by Subpractice (all) ----
+# -------------------------------------------------------------------------
+plot_delta_all <- final_with_deltas %>%
+  left_join(labs_sub_delta, by = "Subpractice") %>%
   mutate(Subpractice_lab = fct_reorder(Subpractice_lab, Delta_EI_pct, median, na.rm = TRUE))
 
-ggplot(plot_delta_sub_pw,
-       aes(x = Subpractice_lab, y = Delta_EI_pct, fill = Practice)) +
-  geom_hline(yintercept = 0, linetype = 2, color = "gray50") +
-  geom_boxplot(alpha = 0.65, outlier.alpha = 0.3, color = "gray35") +
+ggplot(plot_delta_all,
+       aes(x = Subpractice_lab, y = Delta_EI_pct, fill = Species_group)) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.3, position = position_dodge(width = 0.8)) +
   stat_summary(fun = median, geom = "point",
-               shape = 23, size = 2.4, fill = "white", color = "black") +
-  geom_jitter(width = 0.15, height = 0, alpha = 0.55, size = 1.3, show.legend = FALSE) +
+               shape = 23, size = 2.4, fill = "white", color = "black",
+               position = position_dodge(width = 0.8)) +
+  geom_jitter(aes(color = Species_group),
+              width = 0.15, alpha = 0.5, size = 1.2, show.legend = FALSE) +
   coord_flip() +
-  labs(x = NULL, y = "Δ Emission intensity (% vs paired arm)",
-       title = "Δ Emission intensity by Subpractice (pairwise data)") +
-  theme_minimal(base_size = 13) +
-  scale_fill_manual(values = c("Addition" = "#1b9e77",
-                               "Substitution" = "#7570b3",
-                               "Reduction" = "#d95f02",
-                               "No change" = "gray70")) +
-  theme(legend.title = element_blank(),
-        legend.position = "top")
+  labs(x = NULL, y = "Δ Emission intensity (% vs control)",
+       title = "Δ Emission intensity by subpractice (colored by product)") +
+  scale_fill_brewer(palette = "Set2", name = "Product") +
+  scale_color_brewer(palette = "Set2", guide = "none") +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "right",
+        axis.text.y = element_text(size = 10),
+        plot.title = element_text(face = "bold"))
 
-# ---- E) ΔYield (%) by Subpractice & Practice (pairwise) ----
-plot_delta_yield_pw <- final_with_deltas_pairwise %>%
-  left_join(labs_sub_delta_pw, by = c("Practice", "Subpractice")) %>%
-  mutate(Subpractice_lab = fct_reorder(Subpractice_lab, Delta_Y_pct, median, na.rm = TRUE))
+# -------------------------------------------------------------------------
+# ---- 3) ΔEI (%) by Subpractice (Addition only) ----
+# -------------------------------------------------------------------------
+plot_delta_add <- final_with_deltas %>%
+  filter(Practice == "Addition") %>%
+  left_join(labs_sub_delta, by = "Subpractice") %>%
+  mutate(Subpractice_lab = fct_reorder(Subpractice_lab, Delta_EI_pct, median, na.rm = TRUE))
 
-ggplot(plot_delta_yield_pw,
-       aes(x = Subpractice_lab, y = Delta_Y_pct, fill = Practice)) +
-  geom_hline(yintercept = 0, linetype = 2, color = "gray50") +
-  geom_boxplot(alpha = 0.65, outlier.alpha = 0.3, color = "gray35") +
+ggplot(plot_delta_add,
+       aes(x = Subpractice_lab, y = Delta_EI_pct, fill = Species_group)) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.3, position = position_dodge(width = 0.8)) +
   stat_summary(fun = median, geom = "point",
-               shape = 23, size = 2.4, fill = "white", color = "black") +
-  geom_jitter(width = 0.15, height = 0, alpha = 0.55, size = 1.3, show.legend = FALSE) +
+               shape = 23, size = 2.4, fill = "white", color = "black",
+               position = position_dodge(width = 0.8)) +
+  geom_jitter(aes(color = Species_group),
+              width = 0.15, alpha = 0.5, size = 1.2, show.legend = FALSE) +
   coord_flip() +
-  labs(x = NULL, y = "Δ Yield (% vs paired arm)",
-       title = "Δ Yield by Subpractice (pairwise data)") +
-  theme_minimal(base_size = 13) +
-  scale_fill_manual(values = c("Addition" = "#1b9e77",
-                               "Substitution" = "#7570b3")) +
-  theme(legend.title = element_blank(),
-        legend.position = "top")
+  labs(x = NULL, y = "Δ Emission intensity (% vs control)",
+       title = "Δ Emission intensity (Addition only) by subpractice") +
+  scale_fill_brewer(palette = "Set2", name = "Product") +
+  scale_color_brewer(palette = "Set2", guide = "none") +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "right",
+        axis.text.y = element_text(size = 10),
+        plot.title = element_text(face = "bold"))
+
+# -------------------------------------------------------------------------
+# ---- 4) ΔYield (%) by Subpractice (Addition only) ----
+# -------------------------------------------------------------------------
+ggplot(plot_delta_add,
+       aes(x = Subpractice_lab, y = Delta_Y_pct, fill = Species_group)) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.3, position = position_dodge(width = 0.8)) +
+  stat_summary(fun = median, geom = "point",
+               shape = 23, size = 2.4, fill = "white", color = "black",
+               position = position_dodge(width = 0.8)) +
+  geom_jitter(aes(color = Species_group),
+              width = 0.15, alpha = 0.5, size = 1.2, show.legend = FALSE) +
+  coord_flip() +
+  labs(x = NULL, y = "Δ Yield (% vs control)",
+       title = "Δ Yield by subpractice (Addition only)") +
+  scale_fill_brewer(palette = "Set2", name = "Product") +
+  scale_color_brewer(palette = "Set2", guide = "none") +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "right",
+        axis.text.y = element_text(size = 10),
+        plot.title = element_text(face = "bold"))
+
+# -------------------------------------------------------------------------
+# ---- 5) ΔEI (%) by Subpractice (Substitution only) ----
+# -------------------------------------------------------------------------
+plot_delta_subs <- final_with_deltas %>%
+  filter(Practice == "Substitution") %>%
+  left_join(labs_sub_delta, by = "Subpractice") %>%
+  mutate(Subpractice_lab = fct_reorder(Subpractice_lab, Delta_EI_pct, median, na.rm = TRUE))
+
+ggplot(plot_delta_subs,
+       aes(x = Subpractice_lab, y = Delta_EI_pct, fill = Species_group)) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.3, position = position_dodge(width = 0.8)) +
+  stat_summary(fun = median, geom = "point",
+               shape = 23, size = 2.4, fill = "white", color = "black",
+               position = position_dodge(width = 0.8)) +
+  geom_jitter(aes(color = Species_group),
+              width = 0.15, alpha = 0.5, size = 1.2, show.legend = FALSE) +
+  coord_flip() +
+  labs(x = NULL, y = "Δ Emission intensity (% vs control)",
+       title = "Δ Emission intensity (Substitution only) by subpractice") +
+  scale_fill_brewer(palette = "Set2", name = "Product") +
+  scale_color_brewer(palette = "Set2", guide = "none") +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "right",
+        axis.text.y = element_text(size = 10),
+        plot.title = element_text(face = "bold"))
+
+# -------------------------------------------------------------------------
+# ---- 6) ΔYield (%) by Subpractice (Substitution only) ----
+# -------------------------------------------------------------------------
+ggplot(plot_delta_subs,
+       aes(x = Subpractice_lab, y = Delta_Y_pct, fill = Species_group)) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.3, position = position_dodge(width = 0.8)) +
+  stat_summary(fun = median, geom = "point",
+               shape = 23, size = 2.4, fill = "white", color = "black",
+               position = position_dodge(width = 0.8)) +
+  geom_jitter(aes(color = Species_group),
+              width = 0.15, alpha = 0.5, size = 1.2, show.legend = FALSE) +
+  coord_flip() +
+  labs(x = NULL, y = "Δ Yield (% vs control)",
+       title = "Δ Yield by subpractice (Substitution only)") +
+  scale_fill_brewer(palette = "Set2", name = "Product") +
+  scale_color_brewer(palette = "Set2", guide = "none") +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "right",
+        axis.text.y = element_text(size = 10),
+        plot.title = element_text(face = "bold"))
 
 ```
+
+
 
 
 ### 18.2) Plot the data
