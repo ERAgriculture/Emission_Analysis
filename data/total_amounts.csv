@@ -595,10 +595,10 @@
 "594","EM1056","Treatment T2","g",541.17
 "595","EM1056","Treatment T3","g",561.4
 "596","EM1056","Treatment T4","g",565.7
-"597","EM1057","Diet R1","g",NA
-"598","EM1057","Diet R2","g",NA
-"599","EM1057","Diet R3","g",NA
-"600","EM1057","Diet R4","g",NA
+"597","EM1057","Diet R1","g",174399
+"598","EM1057","Diet R2","g",167506
+"599","EM1057","Diet R3","g",168543
+"600","EM1057","Diet R4","g",170861
 "601","EM1058","Treatment T1","g",544.14
 "602","EM1058","Treatment T2","g",497.21
 "603","EM1058","Treatment T3","g",507.46
@@ -2060,12 +2060,12 @@
 "2059","NN0101","B","g",126.5
 "2060","NN0101","B-PEG","g",126.5
 "2061","NN0106","B0","g",NA
-"2062","NN0106","B1","g",NA
-"2063","NN0106","B2","g",NA
+"2062","NN0106","B1","g",77180
+"2063","NN0106","B2","g",77504.63
 "2064","NN0106","B2","g",664.63
-"2065","NN0106","B3","g",NA
+"2065","NN0106","B3","g",76953.17
 "2066","NN0106","B3","g",653.17
-"2067","NN0106","B4","g",NA
+"2067","NN0106","B4","g",72421.17
 "2068","NN0106","B4","g",591.17
 "2069","NN0107.1","Green panic","g",7200
 "2070","NN0107.1","TIS-2532.OP.1.13","g",9000
@@ -2439,97 +2439,484 @@
 "2438","NN0400","50% BSG","g",4140
 "2439","NN0400","75% BSG","g",3840
 "2440","NN0400","Control Diet","g",2310
-"2441","AN0029","T2 1.5%","%",100
-"2442","AN0029","T3 2.5%","%",100
-"2443","BO1041","T1G (Forage)","g/kg",1000
-"2444","BO1041","T2G (Concentrate)","g/kg",1000
-"2445","BO1098","20 CRSCLM","%",95.5
-"2446","BO1098","40 CRSCLM","%",95.5
-"2447","BO1098","60 CRSCLM","%",95.5
-"2448","DK0001","Silage Based","g/kg",3660.3
-"2449","DK0037","MCC","g/kg",4000
-"2450","DK0037","MCM","g/kg",4000
-"2451","EM1093","Treatment T1","g",3675
-"2452","EM1093","Treatment T2","g",3675
-"2453","EM1093","Treatment T3","g",3675
-"2454","EO0027","CBS","g/kg",2010
-"2455","EO0027","COC","g/kg",2010
-"2456","EO0057","T1","%",102
-"2457","EO0057","T2","%",102
-"2458","HK0033","0% Brewer's Grain","%",100
-"2459","HK0033","60% Brewer's Grain","g",913.156
-"2460","HK0086","Diet B","%",200
-"2461","HK0086","Diet C","%",200
-"2462","HK0086","Diet D","%",200
-"2463","HK0287","Concentrate HM","g/kg",3000
-"2464","JS0047","SCB Bundle1","%",100
-"2465","JS0047","SCB Con Bundle2","%",100
-"2466","JS0047","SFM Bundle1","%",100
-"2467","JS0047","SFM Bundle2","%",100
-"2468","JS0094.1","Con Experiment1","% Diet",60
-"2469","JS0094.1","SHC2 Experiment1","% Diet",60
-"2470","JS0094.1","SHC3 Experiment1","% Diet",60
-"2471","JS0094.1","SHC4 Experiment1","% Diet",60
-"2472","JS0192","HL1","g",69.1
-"2473","JS0192","HL2","g",120.6
-"2474","JS0201.1","MUM","%",86
-"2475","JS0201.1","NMMB","%",93
-"2476","JS0201.2","NMMB","%",93
-"2477","JS0231","After Rain S","%",99.4
-"2478","JS0231","Before Rain S","%",100
-"2479","JS0231","Continuous S","%",100
-"2480","JS0324.1","Acacia tortilis 1","g",3000
-"2481","JS0324.1","Acacia tortilis 2","g",3000
-"2482","JS0324.1","Acacia tortilis 3","g",3000
-"2483","JS0324.1","Con","g",3000
-"2484","JS0324.2","Con Bundle1","g",3000
-"2485","JS0324.2","Con Bundle2","g",3000
-"2486","JS0324.2","Faidherbia albida 1 Bundle1","g",3000
-"2487","JS0324.2","Faidherbia albida 2 Bundle1","g",3000
-"2488","JS0324.2","Faidherbia albida 3 Bundle2","g",3000
-"2489","JS0345","Pasture + Supplementation(PS)","%",101
-"2490","LM0101","T1 Sorghum treated B1","g",1050
-"2491","LM0101","T1 Sorghum treated B2","g",1000
-"2492","LM0101","T2 Poultry L B2","g",1000
-"2493","LM0101","T2 Poultry L B3","g",1000
-"2494","LM0122","Soy-1 Diet","% Diet",57
-"2495","LM0122","Soy-2 Diet","% Diet",60
-"2496","LM0124","Control","%",100
-"2497","LM0127","LC","%",200
-"2498","LM0127","MC","%",200
-"2499","NJ0016","Leucaena leucocephala Y1","g",1000
-"2500","NJ0016","Leucaena leucocephala Y2","g",1000
-"2501","NJ0016","Leucaena leucocephala Y3","g",1000
-"2502","NJ0016","Mixed forage meal Y1","%",99.99
-"2503","NJ0016","Mixed forage meal Y2","%",99.99
-"2504","NJ0016","Mixed forage meal Y3","%",99.99
-"2505","NJ0016","Urea-treated Maize strover Y1","g",1000
-"2506","NJ0016","Urea-treated Maize strover Y2","g",1000
-"2507","NJ0016","Urea-treated Maize strover Y3","g",1000
-"2508","NJ0025","Leucaena leucocephala","%",100
-"2509","NJ0025","Mixed forage meal","%",90
-"2510","NJ0025","Urea-treated Maize strover","%",100
-"2511","NN0092.2","C130","g",600
-"2512","NN0092.2","C260","g",300
-"2513","NN0207.1","25g Chopped Sorghum Stover","g",360
-"2514","NN0207.1","25g Unchopped Sorghum Stover","g",326.666666666667
-"2515","NN0207.1","50g Chopped Sorghum Stover","g",533.333333333333
-"2516","NN0207.1","50g Unchopped Sorghum Stover","g",413.333333333333
-"2517","NN0207.2","25g Chopped Sorghum Stover","g",3600
-"2518","NN0207.2","25g Unchopped Sorghum Stover","g",3700
-"2519","NN0207.2","50g Chopped Sorghum Stover","g",3900
-"2520","NN0207.2","50g Unchopped Sorghum Stover","g",4700
-"2521","NN0229","Dry Khat Farm","g",288
-"2522","NN0229","Fresh Khat Farm","g",274.5
-"2523","NN0229","Silage Khat Farm","g",283.5
-"2524","NN0341","HCH","g/kg",115
-"2525","NN0341","HCL","g/kg",60
-"2526","NN0341","HPH","g/kg",60
-"2527","NN0341","HPL","g/kg",30
-"2528","NN0369","D-0","g/kg",350
-"2529","NN0370","Con","g/kg",1000
-"2530","NN0370","Urea1","g/kg",1000
-"2531","NN0370","Urea2","g/kg",1000
-"2532","NN0374","High 450","g",900
-"2533","NN0374","Low 150","g",300
-"2534","NN0374","Med 300","g",600
+"2441","AG0018","BSM","g",1042.85714285714
+"2442","AG0018","LLM","g",1042.85714285714
+"2443","AG0018","MFM","g",43.8571428571429
+"2444","AG0018","NP","g",42.8571428571429
+"2445","AG0018","UTS","g",1042.85714285714
+"2446","AG0050","CPL","g",24
+"2447","AG0050","CST","g",24
+"2448","AG0087","Control","% Diet",71.01
+"2449","AG0087","Direct boiling DF 1.5%","% Diet",67.51
+"2450","AG0087","Direct boiling DF 3.5%","% Diet",71.01
+"2451","AG0087","Direct boiling DF 5%","% Diet",74.51
+"2452","AG0087","Indirect boiling DF 1.5%","% Diet",67.51
+"2453","AG0087","Indirect boiling DF 3.5%","% Diet",70.98
+"2454","AG0087","Indirect boiling DF 5%","% Diet",74.51
+"2455","AG0087","Roasted DF 1.5%","% Diet",71.01
+"2456","AG0087","Roasted DF 3.5%","% Diet",71.01
+"2457","AG0087","Roasted DF 5%","% Diet",71.01
+"2458","AG0087","Sun dried DF 1.5%","% Diet",71.01
+"2459","AG0087","Sun dried DF 3.5%","% Diet",71.01
+"2460","AG0087","Sun dried DF 5%","% Diet",71.01
+"2461","AN0027","Control PDS","% Diet",25
+"2462","AN0027","R1","% Diet",37.5
+"2463","AN0029","T2 1.5%","%",100
+"2464","AN0029","T3 2.5%","%",100
+"2465","AN0058","PJP 0","% Diet",8
+"2466","AN0058","PJP 10","% Diet",8
+"2467","AN0058","PJP 20","% Diet",8
+"2468","AN0058","PJP 30","% Diet",8
+"2469","BO1016","InHay","% Diet",100
+"2470","BO1020","Control group","% Diet",7.14285714285714
+"2471","BO1020","Moringa leaves group","% Diet",7.14285714285714
+"2472","BO1021","0% Nigella sativa","%",96.5
+"2473","BO1021","100% Nigella sativa","%",96.5
+"2474","BO1021","50% Nigella sativa","%",96.5
+"2475","BO1036","100% (MLM +VLM)","g",317
+"2476","BO1036","100% concentrate mix","g",148.5
+"2477","BO1036","25% NSC + 75% (MLM +VLM)","g",287.3
+"2478","BO1036","50% NSC+ 50% (MLM +VLM)","g",207.5
+"2479","BO1036","75% NSC+25% (MLM +VLM)","g",178.3
+"2480","BO1040","Control  group","% Diet",85.6
+"2481","BO1047","EM treated RH","% Diet",50
+"2482","BO1047","EM treated SCB","% Diet",50
+"2483","BO1047","Tv treated RH","% Diet",50
+"2484","BO1047","Tv treated SCB","% Diet",50
+"2485","BO1047","Untreated RH","% Diet",50
+"2486","BO1047","Untreated SCB","% Diet",50
+"2487","BO1059","Control Diet","g",205
+"2488","BO1066","Control","g",570
+"2489","BO1066","RRF","g",552
+"2490","BO1066","RRS","g",582
+"2491","BO1072","HPF","g",1000
+"2492","BO1072","LPF","g",1000
+"2493","BO1072","MPF","g",1000
+"2494","BO1073","100% BH","% Diet",40
+"2495","BO1073","25% CMH","% Diet",40
+"2496","BO1073","50% CMH","% Diet",40
+"2497","BO1073","75% CMH","% Diet",40
+"2498","BO1077","0 Groundnut haulms","%",100
+"2499","BO1078","30R:70C","%",100
+"2500","BO1078","40R:60C","%",100
+"2501","BO1078","50R:50C","%",100
+"2502","BO1078","60R:40C","%",75.9
+"2503","BO1083","0 CPLM","%",38
+"2504","BO1083","10 CPLM","%",38
+"2505","BO1083","20 CPLM","%",38
+"2506","BO1083","30 CPLM","%",38
+"2507","BO1086","10g coffee leaves","g/kg",30
+"2508","BO1086","15g coffee leaves","g/kg",45
+"2509","BO1086","20g coffee leaves","g/kg",60
+"2510","BO1086","5g coffee leaves","g/kg",15
+"2511","BO1090","Diet 1","%",100
+"2512","BO1090","Diet 2","%",100
+"2513","BO1090","Diet 3","%",100
+"2514","BO1090","Diet 4","%",100
+"2515","BO1091","Diet 184 g/d","g",184
+"2516","BO1091","Diet 368 g/d","g",368
+"2517","BO1091","Diet 552 g/d","g",552
+"2518","BO1097","0% Alfafa","% Diet",49
+"2519","BO1097","100% Alfafa","% Diet",49
+"2520","BO1097","25% Alfafa","% Diet",49
+"2521","BO1097","50% Alfafa","% Diet",49
+"2522","BO1097","75% Alfafa","% Diet",49
+"2523","BO1098","20 CRSCLM","%",95.5
+"2524","BO1098","40 CRSCLM","%",95.5
+"2525","BO1098","60 CRSCLM","%",95.5
+"2526","CJ1002","Leucaena hay","%",100
+"2527","CJ1002","OSCM","%",100
+"2528","CJ1005","0AMF","%",100
+"2529","CJ1005","15AMF","%",100
+"2530","CJ1005","25AMF","%",100
+"2531","CJ1005","5AMF","%",100
+"2532","CJ1008","T1","% Diet",100
+"2533","CJ1008","T2","% Diet",100
+"2534","CJ1008","T3","% Diet",100
+"2535","CJ1008","T4","% Diet",100
+"2536","CJ1008","T5","% Diet",100
+"2537","CJ1009","Commercial fed","g/kg",998.5
+"2538","CJ1009","DC20","g/kg",998.5
+"2539","CJ1009","DC40","g/kg",998.5
+"2540","CJ1009","DC60","g/kg",999
+"2541","CJ1009","VE20","g/kg",998.5
+"2542","CJ1009","VE40","g/kg",998.5
+"2543","CJ1009","VE60","g/kg",998.5
+"2544","CJ1011","T1","%",80
+"2545","CJ1011","T2","%",80
+"2546","CJ1011","T3","%",80
+"2547","CJ1011","T4","%",80
+"2548","CJ1012","B","g",7720
+"2549","CJ1012","C","g",9369
+"2550","CJ1012","Control","g",4662.5
+"2551","CJ1013","1","g",1200
+"2552","CJ1013","2","g",1600
+"2553","CJ1013","3","g",1800
+"2554","CJ1014","Daniellia oliveri Leaf Meal 0","% Diet",32.1666666666667
+"2555","CJ1014","Daniellia oliveri Leaf Meal 20","% Diet",32.1666666666667
+"2556","CJ1014","Daniellia oliveri Leaf Meal 30","% Diet",32.1666666666667
+"2557","CJ1014","Daniellia oliveri Leaf Meal 40","% Diet",32.1666666666667
+"2558","DK0001","Silage Based","g/kg",3660.3
+"2559","DK0037","MCC","g/kg",4000
+"2560","DK0037","MCM","g/kg",4000
+"2561","EM1010","MSM","g",4
+"2562","EM1019","Ration 1","g",400
+"2563","EM1019","Ration 2","g",600
+"2564","EM1049","Treatment T2","g",150
+"2565","EM1049","Treatment T3","g",200
+"2566","EM1049","Treatment T4","g",250
+"2567","EM1075","Control","g/kg",1000
+"2568","EM1075","MSO","g/kg",1000
+"2569","EM1078","Group T4","g",200
+"2570","EM1086","Dried","g/kg",200
+"2571","EM1086","Ensiled","g/kg",200
+"2572","EM1088","Group T2","ml",10
+"2573","EM1088","Group T3","ml",20
+"2574","EM1088","Group T4","ml",30
+"2575","EM1093","Treatment T1","g",3675
+"2576","EM1093","Treatment T2","g",3675
+"2577","EM1093","Treatment T3","g",3675
+"2578","EM1094","Treatment T2","ml/kg",10
+"2579","EM1094","Treatment T3","g/kg",5
+"2580","EM1106","BCD","%",100
+"2581","EM1106","ED","%",100
+"2582","EM1106","FPD","%",100
+"2583","EM1108","Treatment  T1","% Diet",1.25
+"2584","EM1108","Treatment  T2","% Diet",1.25
+"2585","EM1108","Treatment  T3","% Diet",1.25
+"2586","EO0027","CBS","g/kg",2010
+"2587","EO0027","COC","g/kg",2010
+"2588","EO0027","Reference diet","g",3.64166666666667e-05
+"2589","EO0057","T1","%",102
+"2590","EO0057","T2","%",102
+"2591","EO0067","Supplements","g",2000
+"2592","EO0102","TD12","g",7.74
+"2593","EO0102","TD6","g",5.44
+"2594","EO0102","TD9","g",6.87
+"2595","HK0033","0% Brewer's Grain","%",100
+"2596","HK0086","Diet B","%",200
+"2597","HK0086","Diet C","%",200
+"2598","HK0086","Diet D","%",200
+"2599","HK0098","10% Mango Diet","%",59.5
+"2600","HK0098","10% Palm Kernel Diet","%",59.5
+"2601","HK0098","20% Mango Diet","%",59.5
+"2602","HK0098","20% Palm Kernel Diet","%",59.5
+"2603","HK0098","30% Mango Diet","%",89.5
+"2604","HK0098","30% Palm Kernel Diet","%",99.5
+"2605","HK0098","Control Diet","%",59.5
+"2606","HK0102.1","Diet Con","% Diet",98.95
+"2607","HK0102.1","PKM1","% Diet",98.95
+"2608","HK0102.1","PKM2","% Diet",98.95
+"2609","HK0102.1","PKM3","% Diet",98.95
+"2610","HK0102.1","PKM4","% Diet",98.45
+"2611","HK0102.1","PKM5","% Diet",97.95
+"2612","HK0118","TM 4","g/kg",830
+"2613","HK0160","MC","g/kg",300
+"2614","HK0160","YM Con","g/kg",300
+"2615","HK0210","Chicken M1","% Diet",100
+"2616","HK0210","Chicken M2","% Diet",100
+"2617","HK0210","Chicken M3","% Diet",100
+"2618","HK0210","Diet Con","% Diet",100
+"2619","HK0250","Supplementation - calves","g",2275
+"2620","HK0250","Supplementation - dam","g",2275
+"2621","HK0270","Supplement Diet","g",22000
+"2622","HK0287","Conc Commercial","g",13500
+"2623","HK0346","CM Bundle1","g",25
+"2624","HK0346","CM Bundle2","g",25
+"2625","JO1005","AA","% Body Mass",3
+"2626","JO1005","AC","% Body Mass",3
+"2627","JO1005","AT","% Body Mass",3
+"2628","JO1005","BV","% Body Mass",3
+"2629","JO1005","GA","% Body Mass",3
+"2630","JO1005","PM","% Body Mass",3
+"2631","JO1011","LL100","g",100
+"2632","JO1011","LL50","g",50
+"2633","JO1011","LL75","g",75
+"2634","JO1011","MO40","g",40
+"2635","JO1011","MO60","g",60
+"2636","JO1011","MO80","g",80
+"2637","JO1012","M0","ml",4000
+"2638","JO1014","DMC40","g",40
+"2639","JO1014","DMC80","g",80
+"2640","JO1018","Feed 1","%",202
+"2641","JO1018","Feed 2","%",202
+"2642","JO1018","Feed 3","%",202
+"2643","JO1021","Afzelia africa","g",242
+"2644","JO1021","Annona senegalensis","g",238.8
+"2645","JO1021","Arachis hypogaea","g",227.1
+"2646","JO1021","Ficus gnaphalocarpa","g",264.9
+"2647","JO1021","Pericopsis laxiflo","g",208.1
+"2648","JO1021","Pterocarpus erinace","g",191.8
+"2649","JO1029","Feed 2","%",100
+"2650","JO1029","Feed 3","%",100
+"2651","JO1029","Feed 4","%",100
+"2652","JO1035","Fattening Ac Feed","g",500
+"2653","JO1035","Fattening Ba Feed","g",500
+"2654","JO1035","Suckling Ac Feed","g",300
+"2655","JO1035","Suckling Ba Feed","g",400
+"2656","JO1039.1","IQR Feed","g",1550
+"2657","JO1049","P0M100 T5","%",100
+"2658","JO1066","BC","g",140
+"2659","JO1066","BC2A","g",2140
+"2660","JO1066","BC4A","g",4140
+"2661","JO1076","MSC MSM 1.25OMSS f","g/kg",1000
+"2662","JO1076","MSC MSM 1.25OMSS g","g/kg",1000.3
+"2663","JO1076","MSC MSM 2.5OMSS f","g/kg",900.02
+"2664","JO1076","MSC MSM 2.5OMSS g","g/kg",1000.15
+"2665","JO1076","MSC MSM 5OMSS f","g/kg",1000.3
+"2666","JO1076","MSC MSM 5OMSS g","g/kg",1019.95
+"2667","JO1076","MSC MSM f","g/kg",1000.1
+"2668","JO1076","MSC MSM g","g/kg",1000.2
+"2669","JO1076","SBM f","g/kg",1000
+"2670","JO1076","SBM g","g/kg",1000.4
+"2671","JO1079","Block A","% Diet",55
+"2672","JO1079","Block B","% Diet",50
+"2673","JO1079","Block C","% Diet",50
+"2674","JO1079","Block D","% Diet",50
+"2675","JO1081","Diet 1","g",165
+"2676","JO1081","Diet 2","g",165
+"2677","JO1081","Diet 3","g",165
+"2678","JO1081","Diet 4","g",165
+"2679","JO1083","Diet 1","g",400
+"2680","JO1083","Diet 2","g",400
+"2681","JO1083","Diet 3","g",400
+"2682","JO1083","Diet 4","g",400
+"2683","JO1083","Diet 5","g",400
+"2684","JO1084","Diet 3","g",500
+"2685","JO1086","G1","%",20
+"2686","JO1086","G2","%",20
+"2687","JO1086","G3","%",20
+"2688","JO1090","SIL100 BAM0","g",12500
+"2689","JO1099","Ration 0","% Diet",50
+"2690","JO1099","Ration 10","% Diet",50
+"2691","JO1099","Ration 15","% Diet",50
+"2692","JO1099","Ration 20","% Diet",50
+"2693","JO1099","Ration 25","% Diet",50
+"2694","JO1099","Ration 30","% Diet",50
+"2695","JS0047","SCB Bundle1","%",100
+"2696","JS0047","SCB Con Bundle2","%",100
+"2697","JS0047","SFM Bundle1","%",100
+"2698","JS0047","SFM Bundle2","%",100
+"2699","JS0094.1","Con Experiment1","% Diet",360
+"2700","JS0094.1","SHC1 Experiment1","% Diet",240
+"2701","JS0094.1","SHC2 Experiment1","% Diet",300
+"2702","JS0094.1","SHC3 Experiment1","% Diet",300
+"2703","JS0094.1","SHC4 Experiment1","% Diet",300
+"2704","JS0094.2","Con Experiment2","% Diet",300
+"2705","JS0094.2","SHC1 Experiment2","% Diet",300
+"2706","JS0094.2","SHC2 Experiment2","% Diet",300
+"2707","JS0094.2","SHC3 Experiment2","% Diet",300
+"2708","JS0118","Con Cumin","% Diet",20
+"2709","JS0118","Jatropha SM 1","% Diet",20
+"2710","JS0118","Jatropha SM 2","% Diet",20
+"2711","JS0118","Jatropha SM 3","% Diet",20
+"2712","JS0137","Diet Con","% Diet",96
+"2713","JS0137","FH10","% Diet",96
+"2714","JS0137","FH20","% Diet",96
+"2715","JS0137","MF10","% Diet",96
+"2716","JS0137","MF20","% Diet",96
+"2717","JS0137","RF10","% Diet",96
+"2718","JS0137","RF20","% Diet",96
+"2719","JS0137","YF10","% Diet",96
+"2720","JS0137","YF20","% Diet",96
+"2721","JS0176","LLM 1.2","g",1200
+"2722","JS0176","LLM 2","g",2000
+"2723","JS0176","LLM 2.6","g",2600
+"2724","JS0177","L3","g",105.2
+"2725","JS0177","PP2","g",126.2
+"2726","JS0177","S4","g",99.4
+"2727","JS0192","HL1","g",69.1
+"2728","JS0192","HL2","g",120.6
+"2729","JS0201.1","MUM","%",86
+"2730","JS0201.1","NMMB","%",93
+"2731","JS0201.2","NMMB","%",93
+"2732","JS0231","After Rain S","%",99.4
+"2733","JS0231","Before Rain S","%",100
+"2734","JS0231","Continuous S","%",100
+"2735","JS0269.2","T2 Grazing and 567 g Alfafa hay","g",438
+"2736","JS0269.2","T3 Grazing and 662 g Cowpea hay","g",423
+"2737","JS0269.2","T4 Grazing and 473 g A.brevispica Leaves.","g",300
+"2738","JS0269.2","T5 Grazing and 616 g A.tortilis Fruits","g",463
+"2739","JS0270","Zero Hay Y1 No Water","g/kg metabolic weight",1300
+"2740","JS0270","Zero Hay Y1 Water Available","g/kg metabolic weight",900
+"2741","JS0270","Zero Hay Y2 No water","g/kg metabolic weight",1300
+"2742","JS0270","Zero Hay Y2 Water available","g/kg metabolic weight",900
+"2743","JS0299","Control Diet Bundle 1","% Diet",100
+"2744","JS0311","L.leucocephala","g",350
+"2745","JS0311","Poultry waste-DPW","g",260
+"2746","JS0324.1","Acacia tortilis 1","g",3000
+"2747","JS0324.1","Acacia tortilis 2","g",3000
+"2748","JS0324.1","Acacia tortilis 3","g",3000
+"2749","JS0324.1","Con","g",3000
+"2750","JS0324.2","Con Bundle1","g",3000
+"2751","JS0324.2","Con Bundle2","g",3000
+"2752","JS0324.2","Faidherbia albida 1 Bundle1","g",3000
+"2753","JS0324.2","Faidherbia albida 2 Bundle1","g",3000
+"2754","JS0324.2","Faidherbia albida 3 Bundle2","g",3000
+"2755","JS0326","Calliandra 1","% Body Mass",0.8
+"2756","JS0326","Calliandra 2","% Body Mass",1.6
+"2757","JS0345","Pasture + Supplementation(PS)","%",101
+"2758","JS0418","Brewers DG1 Bundle1","% Diet",15
+"2759","JS0418","Brewers DG2 Bundle1","% Diet",30
+"2760","JS0418","Brewers DG3 Bundle1","% Diet",45
+"2761","JS0418","Brewers DG4 Bundle 2","% Diet",60
+"2762","JS0418","Brewers DG4 Bundle1","% Diet",60
+"2763","JS0418","Brewers DG5 Bundle 3","% Diet",75
+"2764","JS0418","Brewers DG5 Bundle1","% Diet",75
+"2765","JS0418","Brewers DG6 Bundle2","% Diet",61.5
+"2766","JS0418","Brewers DG7 Bundle 3","% Diet",76.5
+"2767","JS0421","Lupin One","g",200
+"2768","JS0421","Lupin Three","g",600
+"2769","JS0421","Lupin Two","g",400
+"2770","JS0423","D no Phosphorus","g/kg",470.02
+"2771","JS0423","D1 0.1 % Phosphorus","g/kg",470
+"2772","JS0423","D10 1% Phosphorus","g/kg",470
+"2773","JS0423","D2 0.2% Phosphorus","g/kg",470
+"2774","JS0423","D3 0.3% Phosphorus","g/kg",470
+"2775","JS0423","D4 0.4% Phosphorus","g/kg",470
+"2776","JS0423","D5 0.5% Phosphorus","g/kg",470
+"2777","JS0423","D6 0.6% Phosphorus","g/kg",470
+"2778","JS0423","D7 0.7% Phosphorus","g/kg",470
+"2779","JS0423","D8 0.8% Phosphorus","g/kg",470
+"2780","JS0423","D9 0.9% Phosphorus","g/kg",470
+"2781","LM0020","Supplementation","g",600
+"2782","LM0101","T1 Sorghum treated B1","g",1050
+"2783","LM0101","T1 Sorghum treated B2","g",1000
+"2784","LM0101","T2 Poultry L B2","g",1500
+"2785","LM0101","T2 Poultry L B3","g",1500
+"2786","LM0104","0% A. sieberiana","% Concentrate",72
+"2787","LM0122","Fish Meal Diet","% Diet",97
+"2788","LM0122","Mix Diet","% Diet",97
+"2789","LM0122","Soy-1 Diet","% Diet",97
+"2790","LM0122","Soy-2 Diet","% Diet",97
+"2791","LM0122","Tomato Diet","% Diet",97
+"2792","LM0122","Yeast Diet","% Diet",97
+"2793","LM0124","Control","%",100
+"2794","LM0126","A. karroo Diet","g",1800
+"2795","LM0126","Sunflower Cake Diet","g",650
+"2796","LM0127","LC","%",200
+"2797","LM0127","MC","%",200
+"2798","LM0260","Calliandra","g",3000
+"2799","LM0299","150g Concentrate Mix","g",400
+"2800","LM0299","350g Concentrate Mix","g",1133.2
+"2801","LM0311","MRB 25","g/kg",25
+"2802","LM0311","MRB 50","g/kg",50
+"2803","LM0315","Control","g/kg",935
+"2804","LM0315","Diet 1","g/kg",935
+"2805","LM0315","Diet 2","g/kg",935
+"2806","LM0315","Diet 3","g/kg",935
+"2807","LM0315","Diet 4","g/kg",1870
+"2808","LM0315","Diet 5","g/kg",935
+"2809","LM0315","Diet 6","g/kg",577.8
+"2810","LM0320","D 10","%",10
+"2811","LM0320","D 20","%",20
+"2812","NJ0016","Beef survival meal Y1","g",1000
+"2813","NJ0016","Beef survival meal Y2","g",1000
+"2814","NJ0016","Beef survival meal Y3","g",1000
+"2815","NJ0016","Leucaena leucocephala Y1","g",1000
+"2816","NJ0016","Leucaena leucocephala Y2","g",1000
+"2817","NJ0016","Leucaena leucocephala Y3","g",1000
+"2818","NJ0016","Mixed forage meal Y1","%",99.99
+"2819","NJ0016","Mixed forage meal Y2","%",99.99
+"2820","NJ0016","Mixed forage meal Y3","%",99.99
+"2821","NJ0016","Urea-treated Maize strover Y1","g",1000
+"2822","NJ0016","Urea-treated Maize strover Y2","g",1000
+"2823","NJ0016","Urea-treated Maize strover Y3","g",1000
+"2824","NJ0025","Beef survival meal","g",1000
+"2825","NJ0025","Leucaena leucocephala","%",100
+"2826","NJ0025","Mixed forage meal","%",90
+"2827","NJ0025","Urea-treated Maize strover","%",100
+"2828","NN0005","0 M","g/kg",2220
+"2829","NN0005","20 M","g/kg",2220
+"2830","NN0005","40 M","g/kg",2220
+"2831","NN0005","60 M","g/kg",2220
+"2832","NN0022","150g/day","g",150
+"2833","NN0022","300g/day","g",300
+"2834","NN0022","450g/day","g",450
+"2835","NN0092.2","C130","g",600
+"2836","NN0092.2","C260","g",300
+"2837","NN0109.1","C-0","g/kg",450
+"2838","NN0109.1","C-15","g/kg",450
+"2839","NN0109.1","C-30","g/kg",450
+"2840","NN0109.1","C-45","g/kg",450
+"2841","NN0109.2","P-25","g/kg",920
+"2842","NN0109.2","P-30","g/kg",920
+"2843","NN0109.2","P-35","g/kg",920
+"2844","NN0109.2","P-40","g/kg",920
+"2845","NN0110.2","Diet 1","g/kg",780
+"2846","NN0110.2","Diet 2","g/kg",780
+"2847","NN0110.2","Diet 3","g/kg",780
+"2848","NN0110.2","Diet 4","g/kg",780
+"2849","NN0110.2","Diet 5","g/kg",780
+"2850","NN0113","T1","%",30
+"2851","NN0113","T2","%",30
+"2852","NN0113","T3","%",60
+"2853","NN0113","T4","%",30
+"2854","NN0137.3","DGSM 1.5 Grower","%",100.035
+"2855","NN0154","Lupins Supplimentation","% Body Mass",1.07142857142857
+"2856","NN0189","150g Dual purpose","g",155
+"2857","NN0189","150g Forage type","g",155
+"2858","NN0189","300g Forage type","g",311
+"2859","NN0207.1","25g Chopped Sorghum Stover","g",360
+"2860","NN0207.1","25g Unchopped Sorghum Stover","g",326.666666666667
+"2861","NN0207.1","50g Chopped Sorghum Stover","g",533.333333333333
+"2862","NN0207.1","50g Unchopped Sorghum Stover","g",413.333333333333
+"2863","NN0207.2","25g Chopped Sorghum Stover","g",3600
+"2864","NN0207.2","25g Unchopped Sorghum Stover","g",3700
+"2865","NN0207.2","50g Chopped Sorghum Stover","g",3900
+"2866","NN0207.2","50g Unchopped Sorghum Stover","g",4700
+"2867","NN0214","Acacia albida Treatment","g",194
+"2868","NN0214","Acacia nilotica Treatment","g",204
+"2869","NN0214","Acacia sieberiana Treatment","g",211
+"2870","NN0214","Acacia tortilis Treatment","g",206
+"2871","NN0214","Noug Meal Treatment","g",80
+"2872","NN0216","supplemented","g",10000
+"2873","NN0229","Dry Khat Farm","g",288
+"2874","NN0229","Fresh Khat Farm","g",274.5
+"2875","NN0229","Silage Khat Farm","g",283.5
+"2876","NN0244.1","NG + MB + L","% Body Mass",6
+"2877","NN0244.1","NG+ MB","% Body Mass",6
+"2878","NN0244.2","Bundle 1 Chopped Grass (CG)","g",16666.6666666667
+"2879","NN0244.2","Bundle 1 Ground Grass (GG)","g",16666.6666666667
+"2880","NN0244.2","Bundle 1 Whole Grass (WG)","g",16666.6666666667
+"2881","NN0244.2","Bundle 2 WG + Maize  Bran (MB)","g",16666.7536666667
+"2882","NN0244.2","Bundle 2 Whole Grass (WG)","g",16666.6666666667
+"2883","NN0244.2","Bundle 3  CG + MB","g",16666.7455166667
+"2884","NN0244.2","Bundle 3 Chopped Grass (CG)","g",16666.6666666667
+"2885","NN0253","UMB","g",550
+"2886","NN0315","C2","%",99
+"2887","NN0315","GS2","%",99
+"2888","NN0315","L2","%",99
+"2889","NN0315","M2","%",99
+"2890","NN0315","PL2","%",99
+"2891","NN0331","T1 A","% Diet",183
+"2892","NN0331","T2 B","% Diet",183
+"2893","NN0331","T3 C","% Diet",183
+"2894","NN0331","T4 D","% Diet",183
+"2895","NN0331","T5 E","% Diet",183
+"2896","NN0341","C","g/kg",1000
+"2897","NN0341","HCH","g/kg",1000
+"2898","NN0341","HCL","g/kg",1000
+"2899","NN0341","HPH","g/kg",1000
+"2900","NN0341","HPL","g/kg",1000
+"2901","NN0342","C","g/kg",100
+"2902","NN0342","SO","g/kg",100
+"2903","NN0356","improved","g",14862
+"2904","NN0361","Control","g/kg",200
+"2905","NN0361","Hay","g/kg",200
+"2906","NN0365","F-group","g",50
+"2907","NN0365","M-group","g",140
+"2908","NN0366","Flax Treatment Diet","ml",20
+"2909","NN0366","Soy Treatment Diet","ml",20
+"2910","NN0369","D-0","g/kg",1000
+"2911","NN0370","Con","g/kg",1600
+"2912","NN0370","Urea1","g/kg",1600
+"2913","NN0370","Urea2","g/kg",1600
+"2914","NN0374","High 450","g",900
+"2915","NN0374","Low 150","g",300
+"2916","NN0374","Med 300","g",600
+"2917","NN0384","1% inclusion","g/kg",85
+"2918","NN0384","2% inclusion","g/kg",85
+"2919","NN0384","5% inclusion","g/kg",85
+"2920","NN0384","8% inclusion","g/kg",85
+"2921","NN0384","Control","g/kg",85

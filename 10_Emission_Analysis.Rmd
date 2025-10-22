@@ -381,7 +381,8 @@ final_with_ei_all <- final_df %>%
     annual_yield_kg = yield_kg * days_per_year,
     EI_g_per_kg     = (CH4_kg_year * 1000) / annual_yield_kg
   ) %>%
-  filter(is.finite(EI_g_per_kg), EI_g_per_kg > 0, is.finite(annual_yield_kg))
+  filter(is.finite(EI_g_per_kg), EI_g_per_kg > 0, is.finite(annual_yield_kg))%>%
+  filter(EI_g_per_kg<110)
 
 # ---------- 6) Deltas vs control (treatment–control within B.Code) ----------
 ctrl_map <- practice_tbl %>% distinct(B.Code, Control) %>% rename(Control_Arm = Control)
@@ -402,7 +403,8 @@ final_with_deltas <- practice_tbl %>%
     Delta_EI_pct       = 100 * (EI_g_per_kg / EI_ctrl - 1),
     Delta_EI_g_per_kg  = EI_g_per_kg - EI_ctrl,
     Delta_CH4_pct      = 100 * (CH4_kg_year / CH4_ctrl - 1),
-    Delta_Y_pct        = 100 * (annual_yield_kg / Y_ctrl - 1))
+    Delta_Y_pct        = 100 * (annual_yield_kg / Y_ctrl - 1))%>%
+  filter(Delta_EI_pct<1000)
 
 
     
@@ -715,6 +717,7 @@ ggplot(plot_delta_sub,
   theme_minimal(12) + theme(legend.position = "none")
 
 
+
 ggplot(plot_delta_sub,
        aes(x = Subpractice_lab, y = Delta_Y_pct, fill = Subpractice)) +
   geom_hline(yintercept = 0, linetype = 2) +
@@ -727,6 +730,34 @@ ggplot(plot_delta_sub,
        title = "Δ yield  by subpractice (dominant diet lever)") +
   theme_minimal(12) + theme(legend.position = "none")
 
+plot_delta_sub <- final_with_deltas %>%
+  filter(Practice=="Substitution")%>%
+  left_join(labs_sub_delta, by = "Subpractice") %>%
+  mutate(Subpractice_lab = fct_reorder(Subpractice_lab, Delta_EI_pct, median, na.rm = TRUE))
+
+ggplot(plot_delta_sub,
+       aes(x = Subpractice_lab, y = Delta_EI_pct, fill = Subpractice)) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
+  stat_summary(fun = median, geom = "point",
+               shape = 23, size = 2.6, fill = "white", color = "black") +
+  geom_jitter(width = 0.15, height = 0, alpha = 0.55, size = 1.4, show.legend = FALSE) +
+  coord_flip() +
+  labs(x = NULL, y = "Δ Emission intensity (% vs control)",
+       title = "Δ Emission intensity by subpractice (dominant diet lever)") +
+  theme_minimal(12) + theme(legend.position = "none")
+
+ggplot(plot_delta_sub,
+       aes(x = Subpractice_lab, y = Delta_Y_pct, fill = Subpractice)) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
+  stat_summary(fun = median, geom = "point",
+               shape = 23, size = 2.6, fill = "white", color = "black") +
+  geom_jitter(width = 0.15, height = 0, alpha = 0.55, size = 1.4, show.legend = FALSE) +
+  coord_flip() +
+  labs(x = NULL, y = "Δ yield intensity (% vs control)",
+       title = "Δ yield  by subpractice (dominant diet lever)") +
+  theme_minimal(12) + theme(legend.position = "none")
 ```
  interpretation : 
  
@@ -1372,70 +1403,6 @@ cat("\n--- Ingredient-level coverage ---\n")
 print(ingredient_summary)
 cat("\n--- Diet-level coverage ---\n")
 print(diet_summary)
-
-```
-
-## diag 
-
-```{r}
-library(dplyr)
-
-# papers in the broad ingredient summary universe
-papers_ingredient <- ingredient_with_yield %>% distinct(B.Code, P.Product)
-
-# papers that actually made it into ΔEI (pair-level)
-papers_delta <- final_with_deltas %>% distinct(B.Code, P.Product)
-
-cat("Ingredient universe (papers):", nrow(papers_ingredient), "\n")
-cat("ΔEI universe (papers):", nrow(papers_delta), "\n")
-
-# which ingredient-eligible papers failed to produce ΔEI rows?
-missing_in_delta <- anti_join(papers_ingredient, papers_delta, by = "B.Code")
-cat("\nPapers present in ingredient summary but missing from ΔEI:\n")
-print(missing_in_delta)
-
-# quick reason flags (best-effort)
-# 1) has at least one trt–ctrl pair in practice_tbl?
-has_pairs <- practice_tbl %>% distinct(B.Code) %>% mutate(has_pairs = TRUE)
-
-# 2) has CH4 per arm?
-ch4_arm <- GE_combined %>%
-  filter(!is.na(CH4_kg_year)) %>%
-  transmute(B.Code, A.Level.Name = D.Item) %>%
-  distinct() %>% mutate(has_ch4_arm = TRUE)
-
-# 3) has yield per arm?
-yield_arm <- yield_with_emissions %>%
-  transmute(B.Code, A.Level.Name) %>%
-  distinct() %>% mutate(has_yield_arm = TRUE)
-
-# Cross-check at arm level
-arm_diag <- full_join(ch4_arm, yield_arm, by = c("B.Code","A.Level.Name")) %>%
-  mutate(has_both_arm = coalesce(has_ch4_arm, FALSE) & coalesce(has_yield_arm, FALSE)) %>%
-  group_by(B.Code) %>%
-  summarise(
-    n_arms      = n(),
-    n_arms_both = sum(has_both_arm, na.rm = TRUE),
-    .groups = "drop"
-  )
-
-reasons <- missing_in_delta %>%
-  left_join(has_pairs,  by = "B.Code") %>%
-  left_join(arm_diag,   by = "B.Code") %>%
-  mutate(
-    has_pairs   = coalesce(has_pairs, FALSE),
-    n_arms      = coalesce(n_arms, 0L),
-    n_arms_both = coalesce(n_arms_both, 0L),
-    likely_reason = dplyr::case_when(
-      !has_pairs ~ "No trt–control pairs in practice_tbl",
-      n_arms_both < 2 ~ "Missing aligned CH4+yield for at least two arms",
-      TRUE ~ "Filtered later (units, EI calc, 'No change', or outlier)"
-    )
-  ) %>%
-  arrange(likely_reason, P.Product, B.Code)
-
-cat("\nLikely reasons for drops:\n")
-print(reasons)
 
 ```
 
