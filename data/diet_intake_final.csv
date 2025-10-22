@@ -2483,18 +2483,18 @@ AN0058,PJP 10,0.008,sum_ingredients
 AN0058,PJP 20,0.008,sum_ingredients
 AN0058,PJP 30,0.008,sum_ingredients
 BO1016,InHay,0.1,sum_ingredients
-BO1018,FAY +ve,0.02,sum_ingredients
+BO1018,FAY +ve,0.005,sum_ingredients
 BO1020,Control group,0.0071428571428571435,sum_ingredients
 BO1020,Moringa leaves group,0.014285714285714287,sum_ingredients
-BO1021,0% Nigella sativa,0.386,sum_ingredients
-BO1021,100% Nigella sativa,0.4,sum_ingredients
-BO1021,50% Nigella sativa,0.386,sum_ingredients
+BO1021,0% Nigella sativa,0.0965,sum_ingredients
+BO1021,100% Nigella sativa,0.1,sum_ingredients
+BO1021,50% Nigella sativa,0.0965,sum_ingredients
 BO1036,100% (MLM +VLM),0.519,sum_ingredients
 BO1036,100% concentrate mix,0.1485,sum_ingredients
 BO1036,25% NSC + 75% (MLM +VLM),0.2873,sum_ingredients
 BO1036,50% NSC+ 50% (MLM +VLM),0.2075,sum_ingredients
 BO1036,75% NSC+25% (MLM +VLM),0.17830000000000001,sum_ingredients
-BO1040,Control  group,0.3424,sum_ingredients
+BO1040,Control  group,0.0856,sum_ingredients
 BO1041,T1G (Forage),1.0857142857142859,sum_ingredients
 BO1041,T2G (Concentrate),1.0857142857142859,sum_ingredients
 BO1041,T3G (Urea Molasses),1.0857142857142859,sum_ingredients
@@ -2510,13 +2510,13 @@ BO1059,SBLS with 0.6% urea,0.0134,sum_ingredients
 BO1066,Control,1.188,sum_ingredients
 BO1066,RRF,0.552,sum_ingredients
 BO1066,RRS,0.582,sum_ingredients
-BO1072,HPF,16,sum_ingredients
-BO1072,LPF,44.8,sum_ingredients
-BO1072,MPF,16,sum_ingredients
-BO1073,100% BH,0.36,sum_ingredients
-BO1073,25% CMH,0.36,sum_ingredients
-BO1073,50% CMH,0.36,sum_ingredients
-BO1073,75% CMH,0.9,sum_ingredients
+BO1072,HPF,1,sum_ingredients
+BO1072,LPF,2.8,sum_ingredients
+BO1072,MPF,1,sum_ingredients
+BO1073,100% BH,0.04,sum_ingredients
+BO1073,25% CMH,0.04,sum_ingredients
+BO1073,50% CMH,0.04,sum_ingredients
+BO1073,75% CMH,0.1,sum_ingredients
 BO1077,0 Groundnut haulms,0.1,sum_ingredients
 BO1077,25 Groundnut haulms,0.102,sum_ingredients
 BO1077,50 Groundnut haulms,0.104,sum_ingredients
@@ -2541,9 +2541,9 @@ BO1090,Diet 1,0.1,sum_ingredients
 BO1090,Diet 2,0.1,sum_ingredients
 BO1090,Diet 3,0.1,sum_ingredients
 BO1090,Diet 4,0.1,sum_ingredients
-BO1091,Diet 184 g/d,0.736,sum_ingredients
-BO1091,Diet 368 g/d,1.472,sum_ingredients
-BO1091,Diet 552 g/d,2.208,sum_ingredients
+BO1091,Diet 184 g/d,0.184,sum_ingredients
+BO1091,Diet 368 g/d,0.368,sum_ingredients
+BO1091,Diet 552 g/d,0.552,sum_ingredients
 BO1097,0% Alfafa,0.1,sum_ingredients
 BO1097,100% Alfafa,0.049,sum_ingredients
 BO1097,25% Alfafa,0.049,sum_ingredients
@@ -2564,13 +2564,13 @@ CJ1008,T2,0.1,sum_ingredients
 CJ1008,T3,0.1,sum_ingredients
 CJ1008,T4,0.1,sum_ingredients
 CJ1008,T5,0.1,sum_ingredients
-CJ1009,Commercial fed,3.994,sum_ingredients
-CJ1009,DC20,3.994,sum_ingredients
-CJ1009,DC40,3.994,sum_ingredients
-CJ1009,DC60,3.996,sum_ingredients
-CJ1009,VE20,3.994,sum_ingredients
-CJ1009,VE40,3.994,sum_ingredients
-CJ1009,VE60,3.994,sum_ingredients
+CJ1009,Commercial fed,0.9985,sum_ingredients
+CJ1009,DC20,0.9985,sum_ingredients
+CJ1009,DC40,0.9985,sum_ingredients
+CJ1009,DC60,0.999,sum_ingredients
+CJ1009,VE20,0.9985,sum_ingredients
+CJ1009,VE40,0.9985,sum_ingredients
+CJ1009,VE60,0.9985,sum_ingredients
 CJ1011,T1,0.08,sum_ingredients
 CJ1011,T2,0.08,sum_ingredients
 CJ1011,T3,0.08,sum_ingredients
@@ -2578,9 +2578,9 @@ CJ1011,T4,0.1,sum_ingredients
 CJ1012,B,7.72,sum_ingredients
 CJ1012,C,9.371,sum_ingredients
 CJ1012,Control,4.6625,sum_ingredients
-CJ1013,1,4.8,sum_ingredients
-CJ1013,2,6.4,sum_ingredients
-CJ1013,3,7.2,sum_ingredients
+CJ1013,1,1.2,sum_ingredients
+CJ1013,2,1.6,sum_ingredients
+CJ1013,3,1.8,sum_ingredients
 CJ1014,Daniellia oliveri Leaf Meal 0,0.03216666666666666,sum_ingredients
 CJ1014,Daniellia oliveri Leaf Meal 20,0.03216666666666667,sum_ingredients
 CJ1014,Daniellia oliveri Leaf Meal 30,0.03216666666666666,sum_ingredients
@@ -2618,9 +2618,9 @@ EM1094,Treatment T3,0.005,sum_ingredients
 EM1106,BCD,0.1,sum_ingredients
 EM1106,ED,0.1,sum_ingredients
 EM1106,FPD,0.1,sum_ingredients
-EM1108,Treatment  T1,0.015,sum_ingredients
-EM1108,Treatment  T2,0.015,sum_ingredients
-EM1108,Treatment  T3,0.15,sum_ingredients
+EM1108,Treatment  T1,0.00125,sum_ingredients
+EM1108,Treatment  T2,0.00125,sum_ingredients
+EM1108,Treatment  T3,0.0125,sum_ingredients
 EO0027,CBS,2.01,sum_ingredients
 EO0027,COC,2.01,sum_ingredients
 EO0027,Reference diet,3.6416666666666665e-8,sum_ingredients
@@ -2650,7 +2650,7 @@ EO0102,TD12,0.024739999999999998,sum_ingredients
 EO0102,TD6,0.00544,sum_ingredients
 EO0102,TD9,0.00687,sum_ingredients
 HK0008,20% Leucaena Goat,0.1,sum_ingredients
-HK0008,80% Leucaena Sheep,0.2,sum_ingredients
+HK0008,80% Leucaena Sheep,0.1,sum_ingredients
 HK0011,Base_CW,0.24758,sum_ingredients
 HK0011,Base_DSBG,0.24545000000000003,sum_ingredients
 HK0026,Base_Diet 2,0.14884,sum_ingredients
@@ -2733,12 +2733,12 @@ HK0350,Base_Con CSM,0.42,sum_ingredients
 HK0350,Base_Velvet BM 1,0.423,sum_ingredients
 HK0350,Base_Velvet BM 2,0.424,sum_ingredients
 HK0350,Base_Velvet BM 3,0.427,sum_ingredients
-JO1011,LL100,0.4,sum_ingredients
-JO1011,LL50,0.2,sum_ingredients
-JO1011,LL75,0.3,sum_ingredients
-JO1011,MO40,0.16,sum_ingredients
-JO1011,MO60,0.24,sum_ingredients
-JO1011,MO80,0.32,sum_ingredients
+JO1011,LL100,0.1,sum_ingredients
+JO1011,LL50,0.05,sum_ingredients
+JO1011,LL75,0.075,sum_ingredients
+JO1011,MO40,0.04,sum_ingredients
+JO1011,MO60,0.06,sum_ingredients
+JO1011,MO80,0.08,sum_ingredients
 JO1014,DMC40,0.04,sum_ingredients
 JO1014,DMC80,0.18,sum_ingredients
 JO1018,Feed 1,0.202,sum_ingredients
@@ -2758,10 +2758,10 @@ JO1035,Fattening Ba Feed,0.5,sum_ingredients
 JO1035,Suckling Ac Feed,0.3,sum_ingredients
 JO1035,Suckling Ba Feed,0.4,sum_ingredients
 JO1039.1,IQR Feed,1.55,sum_ingredients
-JO1049,P0M100 T5,1.8,sum_ingredients
-JO1066,BC,0.56,sum_ingredients
-JO1066,BC2A,8.56,sum_ingredients
-JO1066,BC4A,16.56,sum_ingredients
+JO1049,P0M100 T5,0.45,sum_ingredients
+JO1066,BC,0.14,sum_ingredients
+JO1066,BC2A,2.14,sum_ingredients
+JO1066,BC4A,4.14,sum_ingredients
 JO1074,URS AL Adults,0.2,sum_ingredients
 JO1074,URS FE Adults,0.2,sum_ingredients
 JO1074,URS MO Adults,0.2,sum_ingredients
@@ -2784,11 +2784,11 @@ JO1081,Diet 1,0.165,sum_ingredients
 JO1081,Diet 2,0.165,sum_ingredients
 JO1081,Diet 3,0.165,sum_ingredients
 JO1081,Diet 4,1.5,sum_ingredients
-JO1083,Diet 1,1.6,sum_ingredients
-JO1083,Diet 2,1.6,sum_ingredients
-JO1083,Diet 3,1.6,sum_ingredients
-JO1083,Diet 4,1.6,sum_ingredients
-JO1083,Diet 5,1.6,sum_ingredients
+JO1083,Diet 1,0.4,sum_ingredients
+JO1083,Diet 2,0.4,sum_ingredients
+JO1083,Diet 3,0.4,sum_ingredients
+JO1083,Diet 4,0.4,sum_ingredients
+JO1083,Diet 5,0.4,sum_ingredients
 JO1084,Diet 3,0.5,sum_ingredients
 JO1086,G1,0.02,sum_ingredients
 JO1086,G2,0.02,sum_ingredients

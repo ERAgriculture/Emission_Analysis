@@ -189,10 +189,10 @@ ggplot(practice_labeled, aes(x = Magnitude_pct, fill = Practice)) +
 # FIGURE 3: Top Substitution Pairs
 # ─────────────────────────────────────────────────────────────
 practice_tbl %>%
-  filter(Practice == "Substitution", Substitution_pairs != "") %>%
-  count(Substitution_pairs, sort = TRUE) %>%
+  filter(Practice == "Substitution", Substitution_pairs_detail != "") %>%
+  count(Substitution_pairs_detail, sort = TRUE) %>%
   slice_head(n = 10) %>%
-  ggplot(aes(x = reorder(Substitution_pairs, n), y = n)) +
+  ggplot(aes(x = reorder(Substitution_pairs_detail, n), y = n)) +
   geom_col(fill = "steelblue") +
   coord_flip() +
   labs(

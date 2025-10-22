@@ -1516,7 +1516,8 @@ ingredients <- merge(
   by = c("B.Code","A.Level.Name"), 
   all.x = TRUE, 
   sort = FALSE
-)
+)%>%
+  distinct()
 
 ```
 

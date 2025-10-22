@@ -1272,11 +1272,11 @@
 "1271","diet","BO1069","MRG diet",183,342,115,85,NA,NA,NA,"High-fat","High-fat","High-fat","High-fat","High-fat","M7_numeric",NA,FALSE,FALSE,"High-fat"
 "1272","diet","BO1074","25% corn cobs",134.9,NA,61.3,30.6,NA,NA,NA,NA,NA,NA,NA,"Good forage","nearest_window_diet",NA,FALSE,TRUE,"Good forage"
 "1273","diet","BO1074","50% corn cobs",119.2,NA,36,27.5,NA,NA,NA,NA,NA,NA,NA,"High-starch","nearest_window_diet",NA,FALSE,TRUE,"High-starch"
-"1274","diet","BO1076","0 GBVH",162.8,NA,108,45.5,18.6,NA,NA,NA,NA,NA,NA,"High-starch","by_category_dominance",1.8,TRUE,FALSE,"High-starch"
+"1274","diet","BO1076","0 GBVH",162.8,NA,108,45.5,18.6,NA,NA,NA,NA,NA,NA,"High-starch","by_category_dominance",0.2,TRUE,FALSE,"High-starch"
 "1275","diet","BO1076","100 GBVH",164,NA,129.6,38.1,18.1,NA,NA,NA,NA,NA,NA,"Good forage","nearest_window_diet",NA,FALSE,TRUE,"Good forage"
-"1276","diet","BO1076","25 GBVH",163.2,NA,114.8,43.2,18.5,NA,NA,NA,NA,NA,NA,"High-starch","by_category_dominance",1.35,TRUE,FALSE,"High-starch"
-"1277","diet","BO1076","50 GBVH",163.5,NA,118.7,41.8,18.4,NA,NA,NA,NA,NA,NA,"High-starch","by_category_dominance",0.9,TRUE,FALSE,"High-starch"
-"1278","diet","BO1076","75 GBVH",163.7,NA,122.9,40.4,18.3,NA,NA,NA,NA,NA,NA,"High-starch","by_category_dominance",0.45,TRUE,FALSE,"High-starch"
+"1276","diet","BO1076","25 GBVH",163.2,NA,114.8,43.2,18.5,NA,NA,NA,NA,NA,NA,"High-starch","by_category_dominance",0.15,TRUE,FALSE,"High-starch"
+"1277","diet","BO1076","50 GBVH",163.5,NA,118.7,41.8,18.4,NA,NA,NA,NA,NA,NA,"High-starch","by_category_dominance",0.1,TRUE,FALSE,"High-starch"
+"1278","diet","BO1076","75 GBVH",163.7,NA,122.9,40.4,18.3,NA,NA,NA,NA,NA,NA,"High-starch","by_category_dominance",0.05,TRUE,FALSE,"High-starch"
 "1279","diet","BO1077","0 Groundnut haulms",146.5,414.8,72.8,118.9,NA,NA,NA,"High-fat","High-fat","High-fat","High-fat","High-fat","M7_numeric",NA,FALSE,FALSE,"High-fat"
 "1280","diet","BO1077","25 Groundnut haulms",144.8,455.8,92.8,101,NA,NA,NA,"High-fat","High-fat","High-fat","High-fat","High-fat","M7_numeric",NA,FALSE,FALSE,"High-fat"
 "1281","diet","BO1077","50 Groundnut haulms",146.3,470.9,111.6,67,NA,NA,NA,"Good forage","Good forage","Good forage","Good forage","Good forage","M7_numeric",NA,FALSE,FALSE,"Good forage"
@@ -2557,8 +2557,8 @@
 "2556","diet","NN0214","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
 "2557","diet","NN0216","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
 "2558","diet","NN0217","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
-"2559","diet","NN0223","Goats diet",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"High-fat","by_category_dominance",1.38,TRUE,FALSE,"High-fat"
-"2560","diet","NN0223","Sheeps diet",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"High-fat","by_category_dominance",1.38,TRUE,FALSE,"High-fat"
+"2559","diet","NN0223","Goats diet",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"High-fat","by_category_dominance",0.92,TRUE,FALSE,"High-fat"
+"2560","diet","NN0223","Sheeps diet",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"High-fat","by_category_dominance",0.92,TRUE,FALSE,"High-fat"
 "2561","diet","NN0224","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
 "2562","diet","NN0227","Base",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
 "2563","diet","NN0227","T4 OV hay,  ML + CH, TS + CH",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,FALSE,FALSE,NA
