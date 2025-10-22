@@ -760,7 +760,6 @@ ggplot(plot_delta_sub,
   theme_minimal(12) + theme(legend.position = "none")
 ```
 
-
 ## separating small and big ruminants 
 
 ```{r}

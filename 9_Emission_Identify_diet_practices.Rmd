@@ -664,7 +664,6 @@ pairwise_diet_shift_tbl <- pairwise_diets %>%
 
 ```{r}
 write.csv(practice_tbl,"data/practice_tbl.csv")
-write.csv(practice_pairwise_tbl,"data/practice_trt_tbl.csv")
 write.csv(pairwise_diet_shift_tbl,"data/pairwise_diet_shift_tbl.csv")
 
 
