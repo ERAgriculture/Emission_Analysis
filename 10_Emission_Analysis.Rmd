@@ -3,11 +3,27 @@ title: "10_Emission_Analysis"
 output: html_document
 date: "2025-09-26"
 ---
-## 18) Link emissions to productivity data 
 
-here we will have the same issue as with feed intake data since the Alevel in the data tab dont always latch the ones in the diet tab 
 
-```{r}
+## Introduction
+
+This notebook provides the analytical workflow used to quantify how observed **diet shifts** alter **enteric methane (CH₄) emission intensity (EI)** across **cattle, sheep, and goats** within African livestock systems.  
+The analyses draw on the **ERA v1.0.1** georeferenced meta-dataset, which compiles more than 500 feeding trials conducted from 1934 to 2024 across the continent. The overarching objective is to link **diet composition**, **feed intake**, and **animal performance** with **Tier-2–based CH₄ emission estimates**, and to identify feeding practices that consistently reduce emission intensity while maintaining or improving productivity.
+
+The workflow harmonizes heterogeneous datasets through a reproducible multi-stage pipeline that integrates:
+
+- **Gross energy (GE) reconstruction:** a five-step cascade combining ERA records, Feedipedia tabulated values, ILRI feed composition libraries, and the Weiss & Tebbe (2019) empirical equation.  
+- **Methane estimation:** application of the **IPCC Tier-2** approach to derive daily CH₄ emissions (g CH₄ animal⁻¹ day⁻¹) from reconstructed GE intake and species-specific methane conversion factors (Ym).  
+- **Emission intensity (EI) computation:** CH₄ emissions expressed per unit of animal output (milk or meat) standardized to daily or annual scales.  
+- **Practice classification:** experimental diets categorized as *Additions*, *Substitutions*, or *No change* based on proportional changes in ingredient-level dry-matter shares.  
+- **Ingredient functional grouping:** feeds harmonized into six categories—high-starch, high-fat, protein, good forage, poor forage, and mineral/vitamin supplements—validated by livestock nutrition experts.
+
+Final analyses compute paired control–treatment differences in emission intensity (ΔEI, %) stratified by **species**, **practice type**, and **ingredient category**.  
+Visual outputs summarize the magnitude and direction of ΔEI responses, highlighting dietary “levers” (e.g., lipid addition, forage substitution) associated with lower CH₄ intensity.
+
+All figures and summary tables produced here are intended to support manuscript preparation, enabling co-authors to review data coverage, classification logic, and reproducible emission-intensity metrics generated from the harmonized dataset.
+
+```{r include=FALSE}
 library(dplyr)
 library(ERAg)
 library(stringr)
@@ -62,9 +78,10 @@ classif_ing_simple <- classif_ing_simple %>%
 ```
 
 
+
+```{r include=FALSE}
 ### to be removed papers with problems 
 
-```{r}
 #EM1047 too high intake not possible 
 
 GE_combined<-GE_combined %>%
@@ -75,9 +92,8 @@ GE_combined<-GE_combined %>%
 ```
 
 
-### 18.1) Merge yield and emission data and number of papers 
 
-```{r}
+```{r include=FALSE}
 
 # Step 1: Make sure the key columns match (D.Item and A.Level.Name)
 GE_combined_for_merge <- GE_combined %>%
@@ -117,8 +133,8 @@ length(unique(practice_tbl$B.Code))
 ```
 
 
-primary data exploration
-```{r}
+## Primary data exploration
+```{r echo=FALSE}
 # ─────────────────────────────────────────────────────────────
 # Libraries
 # ─────────────────────────────────────────────────────────────
@@ -231,8 +247,8 @@ GE_combined %>%
 ```
 ## Emission in function of the highest cat in each diet 
 
-```{r}
-emission_ing_classif<-diet_pct_classif%>%
+```{r include=FALSE}
+emission_ing_classif<-diet_obs_classif%>%
   left_join(GE_combined_for_merge,by=c("B.Code","A.Level.Name"))%>%
   filter(!is.na(CH4_kg_year))
 
@@ -245,7 +261,7 @@ emission_ing_classif %>%
 ```
 
 
-```{r}
+```{r echo=FALSE}
 
 
 df <- emission_ing_classif
@@ -279,7 +295,7 @@ summary_by_prod_dom
 
 ```
 
-```{r}
+```{r echo=FALSE}
 plot_df <- dom %>%
   left_join(ch4, by = "A.Level.Name") %>%
   filter(CH4_kg_year < 100)   # optional outlier trim; remove if not desired
@@ -301,7 +317,7 @@ ggplot(plot_df, aes(x = dom_category, y = CH4_kg_year, fill = dom_category)) +
 
 ```
 
-```{r}
+```{r include=FALSE}
 suppressPackageStartupMessages({
   library(dplyr); library(stringr); library(tidyr); library(forcats); library(ggplot2)
 })
@@ -372,7 +388,7 @@ final_df <- em_dat %>%
 
 ```
 
-```{r}
+```{r include=FALSE}
 # ---------- 5) Compute EI (g CH4 / kg product) ----------
 final_with_ei_all <- final_df %>%
   mutate(
@@ -442,7 +458,7 @@ final_with_deltas <- final_with_deltas %>%
 ```
 
 
-```{r}
+```{r echo=FALSE}
 # ---- A) EI by Practice (treatments only; point overlay + median diamond) ----
 ei_practice_df <- final_with_ei_all %>% filter(!Practice %in% c("Control","No change"))
 
@@ -468,205 +484,8 @@ ggplot(final_with_deltas, aes(x = Practice, y = Delta_EI_pct, fill = Practice)) 
 
 ```
 
-# for pairwise tbl
-```{r}
-# =====================================================================
-#      PAIRWISE EMISSION–YIELD–PRACTICE WORKFLOW  (from scratch)
-# =====================================================================
 
-suppressPackageStartupMessages({
-  library(dplyr); library(stringr); library(tidyr); library(forcats); library(ggplot2)
-})
-
-# ---------- helpers ----------
-str_clean <- function(x) stringr::str_squish(as.character(x))
-has <- function(x, pat) stringr::str_detect(stringr::str_to_lower(coalesce(x, "")),
-                                            stringr::str_to_lower(pat))
-first_non_na <- function(x){ x <- x[!is.na(x)]; if (length(x)==0) NA else x[1] }
-
-# =====================================================================
-# 1️⃣ Emission data per diet arm
-# =====================================================================
-em_dat <- emission_ing_classif %>%
-  mutate(
-    B.Code = str_clean(B.Code),
-    A.Level.Name = str_clean(A.Level.Name)
-  ) %>%
-  group_by(B.Code, A.Level.Name) %>%
-  summarise(
-    CH4_kg_year = mean(CH4_kg_year, na.rm = TRUE),
-    P.Product   = first_non_na(P.Product),
-    .groups = "drop"
-  )
-
-# =====================================================================
-# 2️⃣ Map practice / subpractice from pairwise table
-# =====================================================================
-pairwise_practice <- practice_pairwise_tbl %>%
-  mutate(
-    B.Code = str_clean(B.Code),
-    A = str_clean(A),
-    B = str_clean(B),
-    Subpractice = if_else(
-      Practice == "Addition" & str_detect(Subpractice, ","),
-      "Mixed",
-      Subpractice
-    )
-  )
-
-# We'll create a long "arm-level" map for both A and B diets
-map_A <- pairwise_practice %>%
-  transmute(
-    B.Code,
-    A.Level.Name = A,
-    Practice,
-    Subpractice,
-    Magnitude_pct,
-    pair_label = paste(A, "vs", B),
-    arm_role = "A"
-  )
-
-map_B <- pairwise_practice %>%
-  transmute(
-    B.Code,
-    A.Level.Name = B,
-    Practice,
-    Subpractice,
-    Magnitude_pct,
-    pair_label = paste(A, "vs", B),
-    arm_role = "B"
-  )
-
-practice_map <- bind_rows(map_A, map_B) %>%
-  distinct(B.Code, A.Level.Name, pair_label, arm_role, .keep_all = TRUE)
-
-# =====================================================================
-# 3️⃣ Yield data per diet arm
-# =====================================================================
-yld <- yield_with_emissions %>%
-  mutate(
-    B.Code = str_clean(B.Code),
-    A.Level.Name = str_clean(A.Level.Name)
-  ) %>%
-  group_by(B.Code, A.Level.Name) %>%
-  mutate(is_yield = str_detect(str_to_lower(coalesce(Out.Subind, "")), "yield")) %>%
-  arrange(B.Code, A.Level.Name, desc(is_yield), desc(!is.na(ED.Mean.T))) %>%
-  summarise(
-    Yield   = first_non_na(ED.Mean.T),
-    Product = first_non_na(Out.Subind),
-    Units   = first_non_na(Out.Unit),
-    .groups = "drop"
-  )
-
-# =====================================================================
-# 4️⃣ Merge: Emissions + Yield + Practice
-# =====================================================================
-final_df <- em_dat %>%
-  left_join(practice_map, by = c("B.Code", "A.Level.Name")) %>%
-  left_join(yld, by = c("B.Code", "A.Level.Name")) %>%
-  transmute(
-    B.Code, A.Level.Name,
-    Practice    = coalesce(Practice, "Unknown"),
-    Subpractice = coalesce(Subpractice, ""),
-    Magnitude_pct,
-    CH4_kg_year, Yield, Product, Units, P.Product,
-    pair_label, arm_role
-  ) %>%
-  filter(Practice != "Unknown") %>%
-  drop_na(CH4_kg_year, Yield, Units, P.Product) %>%
-  arrange(B.Code, A.Level.Name)
-
-# =====================================================================
-# 5️⃣ Compute EI (Emission Intensity)
-# =====================================================================
-final_with_ei_all_pairwise <- final_df %>%
-  mutate(
-    days_per_year = case_when(
-      has(Units, "/day")  ~ 365,
-      has(Units, "/year") ~ 1,
-      TRUE ~ NA_real_
-    ),
-    yield_kg = case_when(
-      has(Units, "kg") ~ Yield,
-      has(Units, "g")  ~ Yield / 1000,
-      has(Units, "l") & has(Product, "milk") ~ Yield * 1.03,  # convert milk L→kg
-      TRUE ~ NA_real_
-    ),
-    annual_yield_kg = yield_kg * days_per_year,
-    EI_g_per_kg     = (CH4_kg_year * 1000) / annual_yield_kg
-  ) %>%
-  filter(is.finite(EI_g_per_kg), EI_g_per_kg > 0, is.finite(annual_yield_kg))
-
-# =====================================================================
-# 6️⃣ Compute pairwise deltas (A vs B within each B.Code)
-# =====================================================================
-# Join back A and B values from the same pair
-A_info <- final_with_ei_all_pairwise %>%
-  filter(arm_role == "A") %>%
-  rename(
-    CH4_A = CH4_kg_year,
-    EI_A = EI_g_per_kg,
-    Y_A = annual_yield_kg,
-    Product_A = Product
-  ) %>%
-  select(B.Code, pair_label, Practice, Subpractice, Magnitude_pct,
-         CH4_A, EI_A, Y_A, Product_A)
-
-B_info <- final_with_ei_all_pairwise %>%
-  filter(arm_role == "B") %>%
-  rename(
-    CH4_B = CH4_kg_year,
-    EI_B = EI_g_per_kg,
-    Y_B = annual_yield_kg,
-    Product_B = Product
-  ) %>%
-  select(B.Code, pair_label, Practice, Subpractice, Magnitude_pct,
-         CH4_B, EI_B, Y_B, Product_B)
-
-final_with_deltas_pairwise <- inner_join(A_info, B_info, by = c("B.Code", "pair_label", "Practice", "Subpractice", "Magnitude_pct")) %>%
-  mutate(
-    Delta_EI_pct       = 100 * (EI_B / EI_A - 1),
-    Delta_EI_g_per_kg  = EI_B - EI_A,
-    Delta_CH4_pct      = 100 * (CH4_B / CH4_A - 1),
-    Delta_Y_pct        = 100 * (Y_B / Y_A - 1)
-  ) %>%
-  filter(is.finite(Delta_EI_pct))
-
-# =====================================================================
-# 7️⃣ Visualization
-# =====================================================================
-
-# ---- EI by Practice ----
-ggplot(final_with_ei_all_pairwise %>% filter(arm_role == "B"), 
-       aes(x = Practice, y = EI_g_per_kg, fill = Practice)) +
-  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
-  stat_summary(fun = median, geom = "point",
-               shape = 23, size = 2.6, fill = "white", color = "black") +
-  geom_jitter(width = 0.15, alpha = 0.5, size = 1.2, show.legend = FALSE) +
-  labs(
-    x = NULL,
-    y = expression("Emission intensity (g CH"[4]*"/ kg product)"),
-    title = "Emission intensity by practice (pairwise comparison)"
-  ) +
-  theme_minimal(12) + theme(legend.position = "none")
-
-# ---- ΔEI (%) by Practice ----
-ggplot(final_with_deltas_pairwise, aes(x = Practice, y = Delta_EI_pct, fill = Practice)) +
-  geom_hline(yintercept = 0, linetype = 2) +
-  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
-  stat_summary(fun = median, geom = "point",
-               shape = 23, size = 2.6, fill = "white", color = "black") +
-  geom_jitter(width = 0.15, alpha = 0.5, size = 1.3, show.legend = FALSE) +
-  labs(
-    x = NULL,
-    y = expression(Delta*" Emission intensity (% vs paired arm)"),
-    title = "Δ Emission intensity by practice (pairwise A–B)"
-  ) +
-  theme_minimal(12) + theme(legend.position = "none")
-
-```
-
-```{r}
+```{r echo=FALSE}
 # ---- C) EI by Subpractice (with Ns in labels; reorder by median) ----
 labs_sub <- final_with_ei_all %>%
   count(Subpractice, name = "n") %>%
@@ -779,7 +598,7 @@ print(
 ```
 ##map 
 
-```{r}
+```{r echo=FALSE}
 # -------------------------------------------------------------------------
 # Load libraries
 # -------------------------------------------------------------------------
@@ -879,7 +698,7 @@ plot_sites
 ```
 ## separating small and big ruminants 
 
-```{r}
+```{r echo=FALSE}
 # ---- Emission Intensity (EI) and Yield plots by Subpractice, colored by Product ----
 
 suppressPackageStartupMessages({
@@ -1068,8 +887,8 @@ ggplot(plot_delta_subs,
 
 
 
-### 18.2) Plot the data
-```{r}
+
+```{r echo=FALSE}
 
 
 # Filter meat yield data and drop missing values
@@ -1104,7 +923,7 @@ ggplot(yield_meat, aes(x = ED.Mean.T, y = CH4_kg_year, color = P.Product)) +
 
 ```
 
-```{r}
+```{r echo=FALSE}
 # Filter meat yield data and drop missing values
 yield_milk <- yield_with_emissions %>%
   filter(Out.Subind == "Milk Yield") %>%
@@ -1138,7 +957,7 @@ ggplot(yield_milk, aes(x = ED.Mean.T, y = CH4_kg_year, color = P.Product)) +
 ```
 
 
-```{r}
+```{r echo=FALSE}
 # Filter and clean data
 emissions_by_species <- yield_with_emissions %>%
   filter(!is.na(CH4_kg_year), !is.na(P.Product))
@@ -1158,7 +977,7 @@ ggplot(emissions_by_species, aes(x = P.Product, y = CH4_kg_year, fill = P.Produc
 ```
 
 
-```{r}
+```{r echo=FALSE}
 # Filter and clean data for Goat and Sheep only
 emissions_by_species <- yield_with_emissions %>%
   filter(!is.na(CH4_kg_year), P.Product %in% c("Goat", "Sheep"))
@@ -1180,7 +999,7 @@ ggplot(emissions_by_species, aes(x = P.Product, y = CH4_kg_year, fill = P.Produc
 
 
 
-```{r}
+```{r echo=FALSE}
 ##############################################
 ##  1.  PREPARE DAILY YIELD (kg animal-1 d-1)
 ##############################################
@@ -1245,7 +1064,7 @@ ggplot(ei_prod, aes(x = P.Product, y = EI_CH4_prod,
 
 ## diet shift analysis
 
-```{r}
+```{r echo=FALSE}
 
 # =====================================================================
 #   DIET SHIFT × EMISSION × YIELD ANALYSIS
@@ -1516,7 +1335,7 @@ ggplot(plot_delta_sub_diet,
 ```
 ## number of papers 
 
-```{r}
+```{r include=FALSE}
 
 # ─────────────────────────────────────────────────────────────
 
@@ -1608,7 +1427,6 @@ diet_with_yield <- GE_combined %>%
   inner_join(yield_with_info, by = "B.Code") %>%
   distinct(B.Code)
 
-diet_summary <- summarize_by_product(diet_with_yield, "diet_yield")
 
 # ─────────────────────────────────────────────────────────────
 # 4️⃣ Combine & Print
