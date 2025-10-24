@@ -449,6 +449,26 @@ prod_camel <- camel$Herd.Out[
       Herd.Stage)][, Source := "camel"]
 
 ##############################################################################
+# 3·6 SITE.OUT ---------------------------------------------------------------
+##############################################################################
+# LIVESTOCK ------------------------------------------------------------------
+site_livestock <- copy(livestock_metadata$Site.Out)[
+  , .(Country, Site.ID, Site.LatD, Site.LonD)][
+  , Source := "livestock"]
+
+# CAMEL ----------------------------------------------------------------------
+site_camel <- copy(camel$Site.Out)[
+  , .(B.Code,Country, Site.ID, Site.LatD, Site.LonD)][
+  , Source := "camel"]
+
+##############################################################################
+# 4. Combine camel + livestock ----------------------------------------------
+##############################################################################
+# (Existing Step 4 content continues, but now we add:)
+site_all <- rbindlist(list(site_livestock, site_camel), fill = TRUE)
+
+
+##############################################################################
 # 4. Combine camel + livestock ----------------------------------------------
 ##############################################################################
 diet_livestock_final <- diet_livestock[
@@ -465,14 +485,19 @@ prod_all   <- rbindlist(list(prod_livestock, prod_camel), fill = TRUE)
 ##############################################################################
 # 5. Master list -------------------------------------------------------------
 ##############################################################################
+##############################################################################
+# 5. Master list -------------------------------------------------------------
+##############################################################################
 merged_metadata <- list(
   Animals.Diet        = diet_all,
   MT.Out              = mt_all,
   Animals.Diet.Comp   = comp_all,
   Animals.Diet.Digest = digest_all,
   Data.Out            = data_all,
-  Prod.Out            = prod_all
+  Prod.Out            = prod_all,
+  Site.Out            = site_all          # ← NEW
 )
+
 
 ```
 
@@ -554,6 +579,6 @@ merged_metadata$Data.Out <- dt
 rm(list = setdiff(ls(), c("merged_metadata")))
 gc()   # optional: reclaim memory
 
-saveRDS(merged_metadata, "~/ERL/Emission_Analysis/data/merged_metadata.rds")   # single file
+saveRDS(merged_metadata, "~/Emission_Analysis/data/merged_metadata.rds")   # single file
 
 ```

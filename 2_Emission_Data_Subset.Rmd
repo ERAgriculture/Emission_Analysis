@@ -126,7 +126,8 @@ ingredients <- ingredients %>%
   filter(!str_starts(A.Level.Name, "Base"))
 
 ingredients <- ingredients %>%
-  filter(!str_starts(D.Item.Group, "Base"))
+  filter(is.na(D.Item.Group) | !str_starts(D.Item.Group, "Base"))
+
 
 merged_metadata$Animals.Diet.Comp <- merged_metadata$Animals.Diet.Comp %>%
   filter(!str_starts(D.Item, "Base"))
