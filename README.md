@@ -19,6 +19,6 @@ All analyses are fully reproducible in R (≥ 4.3.0) and rely on open-source pac
 
 Interactive visual summaries, maps, and emission-intensity figures are available on the project website:
 
-👉 **[View Results on GitHub Pages](https://yourusername.github.io/Emission_Analysis/)**
+👉 **[View Results on GitHub Pages](https://ERAgriculture/Emission_Analysis/10_Emission_Analysis.html)**
 
 This page allows co-authors and collaborators to explore the key results directly—viewing emission-intensity distributions, ΔEI comparisons by practice, ingredient category, and species, as well as spatial coverage of the dataset.
