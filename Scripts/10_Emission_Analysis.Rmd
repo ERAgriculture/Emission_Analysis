@@ -222,6 +222,93 @@ diet_obs_classif %>%
     axis.title.y = element_text(margin = margin(r = 10))
   )
 ```
+```{r,echo=FALSE}
+
+# Summarize number of diet observations by Ingredient Category
+diet_summary_tbl <- diet_obs_classif %>%
+  group_by(Ingredient_Category) %>%
+  summarise(N_Obs = n(), .groups = "drop") %>%
+  arrange(desc(N_Obs))
+
+# View the table in console
+print(diet_summary_tbl)
+
+
+
+```
+```{r echo=FALSE}
+
+# 1️⃣  Bring species info into diet_percentages
+diet_with_species <- diet_percentages %>%
+  left_join(GE_combined %>% select(B.Code, P.Product),
+            by = "B.Code")
+
+# 2️⃣  Clean and merge with classification
+diet_obs_classif2 <- diet_with_species %>%
+  mutate(D.Item_clean = tolower(str_trim(D.Item))) %>%
+  left_join(
+    classif_ing_simple %>%
+      mutate(D.Item_clean = tolower(str_trim(D.Item))) %>%
+      select(D.Item_clean, Ingredient_Category),
+    by = "D.Item_clean"
+  ) %>%
+  filter(!is.na(Ingredient_Category), !is.na(P.Product))
+
+# 3️⃣  Compute mean share (summing to 100% within species)
+diet_share_tbl <- diet_obs_classif2 %>%
+  group_by(P.Product, Ingredient_Category) %>%
+  summarise(
+    Mean_Share = mean(Percentage_of_Diet, na.rm = TRUE),
+    N_obs = n(), .groups = "drop"
+  ) %>%
+  group_by(P.Product) %>%
+  mutate(Share_Percent = Mean_Share / sum(Mean_Share, na.rm = TRUE) * 100) %>%
+  ungroup()
+
+# 4️⃣  Compute number of observations per species
+n_per_species <- diet_obs_classif2 %>%
+  group_by(P.Product) %>%
+  summarise(Total_Obs = n_distinct(B.Code), .groups = "drop")
+
+# 5️⃣  Merge observation counts for labeling
+diet_share_plot <- diet_share_tbl %>%
+  left_join(n_per_species, by = "P.Product")
+
+# 6️⃣  Plot stacked bar with observation count and Mako palette
+ggplot(diet_share_plot, aes(x = P.Product, y = Share_Percent, fill = Ingredient_Category)) +
+  geom_col(width = 0.7) +
+  geom_text(
+    aes(y = 102, label = paste0("n=", Total_Obs)),
+    size = 3.6, fontface = "bold"
+  ) +
+  scale_fill_viridis_d(option = "mako", name = "Ingredient Category") +
+  labs(
+    title = "Average Diet Composition by Ingredient Category and Species",
+    x = "Species",
+    y = "Mean Share of Diet (%)"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    legend.position = "right"
+  )
+
+# 7️⃣  Optional: show corresponding table
+datatable(
+  diet_share_tbl,
+  rownames = FALSE,
+  caption = htmltools::tags$caption(
+    style = "caption-side: top; text-align: center; font-weight: bold;",
+    "Mean Ingredient Category Composition (%) by Species (sum = 100)"
+  ),
+  colnames = c("Species" = "P.Product",
+               "Ingredient Category" = "Ingredient_Category",
+               "Mean Share (%)" = "Share_Percent"),
+  options = list(pageLength = 10, dom = 't')
+)
+
+
+```
 
 
 ```{r echo=FALSE}
@@ -276,27 +363,32 @@ practice_tbl %>%
   ) +
   theme_minimal()
 ```
-
-
 ```{r echo=FALSE}
-# ─────────────────────────────────────────────────────────────
-# FIGURE 4: GE vs CH4 Emissions
-# ─────────────────────────────────────────────────────────────
-GE_combined %>%
-  filter(!is.na(CH4_kg_year), !is.na(GE_daily)) %>%
-  ggplot(aes(x = GE_daily, y = CH4_kg_year)) +
-  geom_point(alpha = 0.6, color = "gray30") +
-  geom_smooth(method = "lm", se = FALSE, color = "firebrick") +
-  labs(
-    title = "Methane Emissions vs Gross Energy Intake",
-    x = "Gross Energy (MJ/day)",
-    y = "Methane (kg CH₄ / year)"
-  ) +
-  theme_minimal()
+# Summarize top substitution pairs
+top_sub_pairs_tbl <- practice_tbl %>%
+  filter(Practice == "Substitution", Substitution_pairs_detail != "") %>%
+  count(Substitution_pairs_detail, sort = TRUE) %>%
+  slice_head(n = 10)
 
-
-
+# Display as an interactive DT table
+datatable(
+  top_sub_pairs_tbl,
+  rownames = FALSE,
+  caption = htmltools::tags$caption(
+    style = "caption-side: top; text-align: center; font-weight: bold;",
+    "Top 10 Substitution Category Pairs"
+  ),
+  colnames = c("From → To" = "Substitution_pairs_detail", "Frequency" = "n"),
+  options = list(
+    pageLength = 10,
+    dom = 't', # only table (no search or pagination controls)
+    columnDefs = list(list(className = 'dt-center', targets = "_all"))
+  )
+)
 ```
+
+
+
 ## Relationship between yield and methane emissions
 
 This section explores the fundamental link between **animal productivity** and **methane output** across livestock species.  
@@ -416,6 +508,41 @@ ggplot(emissions_by_species, aes(x = P.Product, y = CH4_kg_year, fill = P.Produc
 
 ```
 
+```{r echo=FALSE}
+
+
+# Filter to keep valid emission data
+emissions_by_species <- yield_with_emissions %>%
+  filter(!is.na(CH4_kg_year), !is.na(P.Product))
+
+# Summarize mean, median, and variance for each species
+species_emission_stats <- emissions_by_species %>%
+  group_by(P.Product) %>%
+  summarise(
+    Mean_CH4   = mean(CH4_kg_year, na.rm = TRUE),
+    Median_CH4 = median(CH4_kg_year, na.rm = TRUE),
+    Var_CH4    = var(CH4_kg_year, na.rm = TRUE),
+    N_Obs      = n(),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(Mean_CH4))
+
+# Display in a pretty interactive DT table
+datatable(
+  species_emission_stats,
+  rownames = FALSE,
+  caption = htmltools::tags$caption(
+    style = "caption-side: top; text-align: center; font-weight: bold;",
+    "Summary of Annual CH4 Emissions by Livestock Species"
+  ),
+  options = list(
+    pageLength = 10,
+    dom = 't',  # table only (no search or pagination)
+    columnDefs = list(list(className = 'dt-center', targets = "_all"))
+  )
+)
+
+```
 
 
 
@@ -481,6 +608,48 @@ ggplot(ei_prod, aes(x = P.Product, y = EI_CH4_prod,
 
 
 ```
+```{r echo=FALSE}
+
+
+# Summarize EI by species and product
+ei_summary_tbl <- ei_prod %>%
+  group_by(P.Product, Product) %>%
+  summarise(
+    Mean_EI   = mean(EI_CH4_prod, na.rm = TRUE),
+    Median_EI = median(EI_CH4_prod, na.rm = TRUE),
+    Var_EI    = var(EI_CH4_prod, na.rm = TRUE),
+    N_Obs     = n(),
+    .groups = "drop"
+  ) %>%
+  arrange(Product, desc(Mean_EI))
+
+# Pretty DT table
+datatable(
+  ei_summary_tbl,
+  rownames = FALSE,
+  caption = htmltools::tags$caption(
+    style = "caption-side: top; text-align: center; font-weight: bold;",
+    "Summary of Enteric CH₄ Emission Intensity by Species and Product"
+  ),
+  colnames = c(
+    "Species" = "P.Product",
+    "Product" = "Product",
+    "Mean (kg CH₄ kg⁻¹)" = "Mean_EI",
+    "Median (kg CH₄ kg⁻¹)" = "Median_EI",
+    "Variance" = "Var_EI",
+    "N" = "N_Obs"
+  ),
+  options = list(
+    pageLength = 10,
+    dom = 't',
+    columnDefs = list(list(className = 'dt-center', targets = "_all")),
+    format = list(
+      list(columns = c(2:5), format = "0.000")
+    )
+  )
+)
+
+```
 
 
 ## Emission in function of the highest cat in each diet 
@@ -492,6 +661,7 @@ The resulting boxplots compare **annual CH₄ emissions (kg animal⁻¹ yr⁻¹)
 This provides an intuitive, data-driven way to explore diet-level variability before applying more formal emission intensity normalization.
 
 ```{r include=FALSE}
+
 emission_ing_classif<-diet_obs_classif%>%
   left_join(GE_combined_for_merge,by=c("B.Code","A.Level.Name"))%>%
   filter(!is.na(CH4_kg_year))
@@ -560,6 +730,27 @@ ggplot(plot_df, aes(x = dom_category, y = CH4_kg_year, fill = dom_category)) +
 
 
 ```
+```{r}
+plot_df <- dom %>%
+  left_join(ch4, by = "A.Level.Name") %>%
+  filter(CH4_kg_year < 100)%>%
+  filter(P.Product!="Cattle")# optional outlier trim; remove if not desired
+# get common y-limits across all products (after any filtering you apply)
+y_lims <- range(plot_df$CH4_kg_year, na.rm = TRUE)
+
+ggplot(plot_df, aes(x = dom_category, y = CH4_kg_year, fill = dom_category)) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.5) +
+  geom_jitter(width = 0.15, height = 0, alpha = 0.5, size = 1.4, show.legend = FALSE) +
+  facet_wrap(~ P.Product, scales = "fixed") +              # <- same y for all facets
+  scale_y_continuous(limits = y_lims, expand = expansion(mult = c(0.02, 0.05))) +
+  labs(x = NULL, y = "CH₄ (kg / animal / year)",
+       title = "Enteric CH₄ by dominant ingredient category within each product") +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 25, hjust = 1))
+```
+
+
 ## Emission intensity and practice-level contrasts
 
 This section integrates methane emission data, yield measurements, and diet-practice classifications to quantify **emission intensity (EI)** for each experimental arm and evaluate how it changes across feeding practices.  
@@ -738,6 +929,77 @@ ggplot(final_with_deltas, aes(x = Practice, y = Delta_EI_pct, fill = Practice)) 
   theme_minimal(12) + theme(legend.position = "none")
 
 ```
+```{r echo=FALSE}
+
+
+# 1️⃣  Emission intensity (g CH4/kg product) summary
+ei_practice_tbl <- final_with_ei_all %>%
+  filter(!Practice %in% c("Control", "No change")) %>%
+  group_by(Practice) %>%
+  summarise(
+    Mean_EI   = mean(EI_g_per_kg, na.rm = TRUE),
+    Median_EI = median(EI_g_per_kg, na.rm = TRUE),
+    Var_EI    = var(EI_g_per_kg, na.rm = TRUE),
+    N_Obs     = n(),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(Mean_EI))
+
+datatable(
+  ei_practice_tbl,
+  rownames = FALSE,
+  caption = htmltools::tags$caption(
+    style = "caption-side: top; text-align: center; font-weight: bold;",
+    "Emission Intensity (g CH₄ / kg product) by Practice"
+  ),
+  colnames = c(
+    "Practice" = "Practice",
+    "Mean (g CH₄/kg)" = "Mean_EI",
+    "Median (g CH₄/kg)" = "Median_EI",
+    "Variance" = "Var_EI",
+    "N" = "N_Obs"
+  ),
+  options = list(
+    pageLength = 10,
+    dom = 't',
+    columnDefs = list(list(className = 'dt-center', targets = "_all"))
+  )
+)
+
+# 2️⃣  ΔEI (%) vs control summary
+delta_practice_tbl <- final_with_deltas %>%
+  group_by(Practice) %>%
+  summarise(
+    Mean_Delta   = mean(Delta_EI_pct, na.rm = TRUE),
+    Median_Delta = median(Delta_EI_pct, na.rm = TRUE),
+    Var_Delta    = var(Delta_EI_pct, na.rm = TRUE),
+    N_Obs        = n(),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(Mean_Delta))
+
+datatable(
+  delta_practice_tbl,
+  rownames = FALSE,
+  caption = htmltools::tags$caption(
+    style = "caption-side: top; text-align: center; font-weight: bold;",
+    "Δ Emission Intensity (% vs Control) by Practice"
+  ),
+  colnames = c(
+    "Practice" = "Practice",
+    "Mean ΔEI (%)" = "Mean_Delta",
+    "Median ΔEI (%)" = "Median_Delta",
+    "Variance" = "Var_Delta",
+    "N" = "N_Obs"
+  ),
+  options = list(
+    pageLength = 10,
+    dom = 't',
+    columnDefs = list(list(className = 'dt-center', targets = "_all"))
+  )
+)
+
+```
 
 ## Emission intensity and yield changes by subpractice
 
@@ -795,6 +1057,44 @@ ggplot(plot_delta_sub,
   labs(x = NULL, y = "Δ Emission intensity (% vs control)",
        title = "Δ Emission intensity by subpractice") +
   theme_minimal(12) + theme(legend.position = "none")
+```
+```{r}
+
+
+# Summarise ΔEI (%) by subpractice
+delta_sub_tbl <- final_with_deltas %>%
+  group_by(Subpractice) %>%
+  summarise(
+    Mean_Delta   = mean(Delta_EI_pct, na.rm = TRUE),
+    Median_Delta = median(Delta_EI_pct, na.rm = TRUE),
+    Var_Delta    = var(Delta_EI_pct, na.rm = TRUE),
+    N_Obs        = n(),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(Mean_Delta))
+
+# Pretty interactive table (for knitting)
+datatable(
+  delta_sub_tbl,
+  rownames = FALSE,
+  caption = htmltools::tags$caption(
+    style = "caption-side: top; text-align: center; font-weight: bold;",
+    "Δ Emission Intensity (% vs Control) by Subpractice"
+  ),
+  colnames = c(
+    "Subpractice" = "Subpractice",
+    "Mean ΔEI (%)" = "Mean_Delta",
+    "Median ΔEI (%)" = "Median_Delta",
+    "Variance" = "Var_Delta",
+    "N" = "N_Obs"
+  ),
+  options = list(
+    pageLength = 10,
+    dom = 't',  # simple table, no search box
+    columnDefs = list(list(className = 'dt-center', targets = "_all"))
+  )
+)
+
 ```
 
 
@@ -1084,6 +1384,45 @@ ggplot(plot_delta_all,
   theme(legend.position = "right",
         axis.text.y = element_text(size = 10),
         plot.title = element_text(face = "bold"))
+```
+```{r echo=FALSE}
+
+
+# Summarise ΔEI (%) by Subpractice and Species_group
+delta_all_tbl <- final_with_deltas %>%
+  group_by(Subpractice, Species_group) %>%
+  summarise(
+    Mean_Delta   = mean(Delta_EI_pct, na.rm = TRUE),
+    Median_Delta = median(Delta_EI_pct, na.rm = TRUE),
+    Var_Delta    = var(Delta_EI_pct, na.rm = TRUE),
+    N_Obs        = n(),
+    .groups = "drop"
+  ) %>%
+  arrange(Subpractice, desc(Mean_Delta))
+
+# Display interactive summary table
+datatable(
+  delta_all_tbl,
+  rownames = FALSE,
+  caption = htmltools::tags$caption(
+    style = "caption-side: top; text-align: center; font-weight: bold;",
+    "Δ Emission Intensity (% vs Control) by Subpractice and Species Group"
+  ),
+  colnames = c(
+    "Subpractice" = "Subpractice",
+    "Species Group" = "Species_group",
+    "Mean ΔEI (%)" = "Mean_Delta",
+    "Median ΔEI (%)" = "Median_Delta",
+    "Variance" = "Var_Delta",
+    "N" = "N_Obs"
+  ),
+  options = list(
+    pageLength = 15,
+    dom = 't',  # table only (no search box)
+    columnDefs = list(list(className = 'dt-center', targets = "_all"))
+  )
+)
+
 ```
 
 
