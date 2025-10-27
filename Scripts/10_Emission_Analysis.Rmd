@@ -1,9 +1,16 @@
 ---
 title: "10_Emission_Analysis"
-output: html_document
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: show
 date: "2025-09-26"
+author:
+  - name: "Lolita Muller"
+    email: "m.lolita@cgiar.org"
+    orcid: "0009-0002-8345-7219"
 ---
-
 
 ## Introduction
 
