@@ -23,6 +23,42 @@ Visual outputs summarize the magnitude and direction of ΔEI responses, highligh
 
 All figures and summary tables produced here are intended to support manuscript preparation, enabling co-authors to review data coverage, classification logic, and reproducible emission-intensity metrics generated from the harmonized dataset.
 
+# ERA Emission Analysis — Context for Co-authors
+
+This report is part of the **ERA livestock feed dataset analysis** (ERA v1.0.1) aiming to quantify how dietary interventions affect **enteric methane (CH₄) emission intensity** in African ruminant systems.  
+It synthesizes results from >500 feeding trials conducted between 1934 and 2024, linking **feed composition**, **intake**, and **animal performance** to Tier-2 emission factors.
+
+
+**Purpose of this page**
+- To visualize how *Additions*, *Substitutions*, and *Diet shifts* influence emission intensity (EI) across cattle, sheep, and goats.  
+- To provide a transparent view of data coverage, preprocessing steps, and reproducibility checks for manuscript figures.  
+- To support co-authors reviewing ERA data integration, classification logic, and emission computation workflow.
+
+**Data sources**
+- ERA v1.0.1 Meta-dataset (1934–2024)
+- Feedipedia (composition library)
+- ILRI feed composition archives
+- Weiss & Tebbe (2019) empirical GE equation
+
+**Generated metrics**
+- Daily and annual CH₄ emissions (Tier-2)
+- Emission intensity (g CH₄ kg⁻¹ product)
+- Paired ΔEI (%) per diet comparison (control–treatment)
+- ΔYield (%) as co-benefit indicator
+
+## How to Read This Report
+
+Each section of this document corresponds to a reproducible analytical stage:
+
+1. **Data Integration:** Merging ERA intake, yield, and CH₄ estimates with ingredient-level classifications.  
+2. **Exploratory Figures:** Visual summaries of diet category coverage, practice distributions, and substitution frequencies.  
+3. **Emission Intensity Analysis:** EI distributions by practice and subpractice, highlighting median responses.  
+4. **Paired ΔEI (%) Comparisons:** Treatment–control contrasts in emission intensity and yield.  
+5. **Species Stratification:** Visual separation of effects for cattle vs. small ruminants.  
+6. **Geospatial Coverage:** Map of study locations and data density by country.  
+7. **Diet-Shift Sensitivity:** Independent cross-check analysis based on pairwise diet classifications.  
+
+
 ```{r include=FALSE}
 library(dplyr)
 library(ERAg)
@@ -134,6 +170,16 @@ length(unique(practice_tbl$B.Code))
 
 
 ## Primary data exploration
+
+These exploratory plots provide quality control and biological context for the subsequent emission-intensity analyses.
+
+- **Diet observations by ingredient category** — verifies that the merged ingredient classification is comprehensive and balanced across nutritional groups.
+
+- **Magnitude of diet change by practice type** — highlights how strongly diets were modified under each experimental condition (*Addition*, *Substitution*, or *No change*). 
+
+- **Top substitution category pairs** — identifies the most frequent “from → to” feed category replacements, revealing which transitions are most common in the dataset and therefore most relevant for interpreting emission responses.
+
+- **Methane emissions vs. gross energy intake** — serves as a diagnostic check of the consistency between reconstructed energy intake and Tier-2 CH₄ estimates. The expected positive relationship confirms that greater energy intake corresponds to higher methane output, validating the coherence of reconstructed emission data before calculating emission intensity.
 ```{r echo=FALSE}
 # ─────────────────────────────────────────────────────────────
 # Libraries
@@ -175,9 +221,10 @@ diet_obs_classif %>%
     plot.title = element_text(face = "bold", hjust = 0.5),
     axis.title.y = element_text(margin = margin(r = 10))
   )
+```
 
 
-
+```{r echo=FALSE}
 # Compute count of unique B.Code per Practice
 practice_counts <- practice_tbl %>%
   filter(Practice %in% c("Addition", "Substitution", "No change")) %>%
@@ -208,8 +255,10 @@ ggplot(practice_labeled, aes(x = Magnitude_pct, fill = Practice)) +
     strip.text = element_text(face = "bold", size = 12),
     legend.position = "none"
   )
+```
 
 
+```{r echo=FALSE}
 # ─────────────────────────────────────────────────────────────
 # FIGURE 3: Top Substitution Pairs
 # ─────────────────────────────────────────────────────────────
@@ -226,7 +275,10 @@ practice_tbl %>%
     y = "Frequency"
   ) +
   theme_minimal()
+```
 
+
+```{r echo=FALSE}
 # ─────────────────────────────────────────────────────────────
 # FIGURE 4: GE vs CH4 Emissions
 # ─────────────────────────────────────────────────────────────
@@ -245,645 +297,13 @@ GE_combined %>%
 
 
 ```
-## Emission in function of the highest cat in each diet 
-
-```{r include=FALSE}
-emission_ing_classif<-diet_obs_classif%>%
-  left_join(GE_combined_for_merge,by=c("B.Code","A.Level.Name"))%>%
-  filter(!is.na(CH4_kg_year))
-
-#number of unique codes 
-emission_ing_classif %>%
-  group_by(P.Product) %>%
-  summarise(n_unique_B = n_distinct(B.Code), .groups = "drop") %>%
-  arrange(desc(n_unique_B))
-
-```
-
-
-```{r echo=FALSE}
-
-
-df <- emission_ing_classif
-
-# 1) Dominant ingredient per diet (max % of diet), keep Product
-dom <- df %>%
-  group_by(A.Level.Name) %>%
-  slice_max(Percentage_of_Diet, n = 1, with_ties = FALSE) %>%
-  ungroup() %>%
-  select(A.Level.Name, P.Product, dom_category = Ingredient_Category)
-
-# 2) One CH4 value per diet
-ch4 <- df %>%
-  group_by(A.Level.Name) %>%
-  summarise(CH4_kg_year = mean(CH4_kg_year, na.rm = TRUE), .groups = "drop")
-
-# 3) Join and summarise BY PRODUCT × DOMINANT INGREDIENT
-summary_by_prod_dom <- dom %>%
-  left_join(ch4, by = "A.Level.Name") %>%
-  group_by(P.Product, dom_category) %>%
-  summarise(
-    n_diets    = n(),
-    mean_CH4   = mean(CH4_kg_year, na.rm = TRUE),
-    median_CH4 = median(CH4_kg_year, na.rm = TRUE),
-    sd_CH4     = sd(CH4_kg_year, na.rm = TRUE),
-    .groups = "drop_last"
-  ) %>%
-  arrange(P.Product, desc(n_diets))
-
-summary_by_prod_dom
-
-```
-
-```{r echo=FALSE}
-plot_df <- dom %>%
-  left_join(ch4, by = "A.Level.Name") %>%
-  filter(CH4_kg_year < 100)   # optional outlier trim; remove if not desired
-# get common y-limits across all products (after any filtering you apply)
-y_lims <- range(plot_df$CH4_kg_year, na.rm = TRUE)
-
-ggplot(plot_df, aes(x = dom_category, y = CH4_kg_year, fill = dom_category)) +
-  geom_boxplot(alpha = 0.6, outlier.alpha = 0.5) +
-  geom_jitter(width = 0.15, height = 0, alpha = 0.5, size = 1.4, show.legend = FALSE) +
-  facet_wrap(~ P.Product, scales = "fixed") +              # <- same y for all facets
-  scale_y_continuous(limits = y_lims, expand = expansion(mult = c(0.02, 0.05))) +
-  labs(x = NULL, y = "CH₄ (kg / animal / year)",
-       title = "Enteric CH₄ by dominant ingredient category within each product") +
-  theme_minimal(base_size = 12) +
-  theme(legend.position = "none",
-        axis.text.x = element_text(angle = 25, hjust = 1))
-
-
-
-```
-
-```{r include=FALSE}
-suppressPackageStartupMessages({
-  library(dplyr); library(stringr); library(tidyr); library(forcats); library(ggplot2)
-})
-
-# ---------- helpers ----------
-str_clean <- function(x) stringr::str_squish(as.character(x))
-has <- function(x, pat) stringr::str_detect(stringr::str_to_lower(coalesce(x, "")),
-                                            stringr::str_to_lower(pat))
-first_non_na <- function(x){ x <- x[!is.na(x)]; if (length(x)==0) NA else x[1] }
-
-# ---------- 1) CH4 per arm + species from emissions ----------
-em_dat <- emission_ing_classif %>%
-  mutate(B.Code = str_clean(B.Code), A.Level.Name = str_clean(A.Level.Name)) %>%
-  group_by(B.Code, A.Level.Name) %>%
-  summarise(
-    CH4_kg_year = mean(CH4_kg_year, na.rm = TRUE),
-    P.Product   = dplyr::first(na.omit(P.Product)),
-    .groups = "drop"
-  )
-
-# ---------- 2) Practice/Subpractice map (include controls) ----------
-practice_tbl <- practice_tbl %>%
-  mutate(B.Code = str_clean(B.Code), Control = str_clean(Control), Trt = str_clean(Trt))
-
-map_trt <- practice_tbl %>%
-  transmute(B.Code, A.Level.Name = Trt, Practice, Subpractice, Magnitude_pct)
-
-map_ctrl <- practice_tbl %>%
-  distinct(B.Code, A.Level.Name = Control) %>%
-  mutate(Practice="Control", Subpractice="", Magnitude_pct = 0)
-
-practice_map <- bind_rows(map_trt, map_ctrl) %>%
-  distinct(B.Code, A.Level.Name, .keep_all = TRUE) %>%
-  # ---- collapse multi-category Additions into "Mixed" ----
-  mutate(Subpractice = if_else(Practice=="Addition" & str_detect(Subpractice, ","),
-                               "Mixed", Subpractice))
-
-# ---------- 3) Choose one yield per arm ----------
-yld <- yield_with_emissions %>%
-  mutate(B.Code = str_clean(B.Code), A.Level.Name = str_clean(A.Level.Name)) %>%
-  group_by(B.Code, A.Level.Name) %>%
-  mutate(is_yield = str_detect(str_to_lower(coalesce(Out.Subind, "")), "yield")) %>%
-  arrange(B.Code, A.Level.Name, desc(is_yield), desc(!is.na(ED.Mean.T))) %>%
-  summarise(
-    Yield   = first_non_na(ED.Mean.T),
-    Product = first_non_na(Out.Subind),
-    Units   = first_non_na(Out.Unit),
-    .groups = "drop"
-  )
-
-# ---------- 4) Final joined table (keeps controls) ----------
-final_df <- em_dat %>%
-  left_join(practice_map, by = c("B.Code", "A.Level.Name")) %>%
-  left_join(yld,         by = c("B.Code", "A.Level.Name")) %>%
-  transmute(
-    B.Code, A.Level.Name,
-    Practice    = coalesce(Practice, "Unknown"),
-    Subpractice = coalesce(Subpractice, ""),
-    Magnitude_pct,
-    CH4_kg_year,
-    Yield, Product, Units,
-    P.Product
-  ) %>%
-  filter(Practice != "Unknown") %>%
-  drop_na(CH4_kg_year, Yield, Units, P.Product) %>%
-  arrange(B.Code, A.Level.Name)%>%
-  filter(Practice!="No change")
-
-```
-
-```{r include=FALSE}
-# ---------- 5) Compute EI (g CH4 / kg product) ----------
-final_with_ei_all <- final_df %>%
-  mutate(
-    days_per_year = case_when(
-      has(Units, "/day")  ~ 365,
-      has(Units, "/year") ~ 1,
-      TRUE ~ NA_real_
-    ),
-    yield_kg = case_when(
-      has(Units, "kg") ~ Yield,
-      has(Units, "g")  ~ Yield/1000,
-      has(Units, "l") & has(Product, "milk") ~ Yield * 1.03,  # L→kg for milk
-      TRUE ~ NA_real_
-    ),
-    annual_yield_kg = yield_kg * days_per_year,
-    EI_g_per_kg     = (CH4_kg_year * 1000) / annual_yield_kg
-  ) %>%
-  filter(is.finite(EI_g_per_kg), EI_g_per_kg > 0, is.finite(annual_yield_kg))%>%
-  filter(EI_g_per_kg<110)
-
-# ---------- 6) Deltas vs control (treatment–control within B.Code) ----------
-ctrl_map <- practice_tbl %>% distinct(B.Code, Control) %>% rename(Control_Arm = Control)
-
-ctrl_metrics <- final_with_ei_all %>%
-  select(B.Code, A.Level.Name, EI_ctrl = EI_g_per_kg,
-         CH4_ctrl = CH4_kg_year, Y_ctrl = annual_yield_kg) %>%
-  rename(Control_Arm = A.Level.Name)
-
-final_with_deltas <- practice_tbl %>%
-  select(B.Code, Control_Arm = Control, A.Level.Name = Trt, Practice, Subpractice, Magnitude_pct) %>%
-  # align "Mixed" rule for Additions here too
-  mutate(Subpractice = if_else(Practice=="Addition" & str_detect(Subpractice, ","),
-                               "Mixed", Subpractice)) %>%
-  inner_join(final_with_ei_all, by = c("B.Code","A.Level.Name")) %>%
-  inner_join(ctrl_metrics,      by = c("B.Code","Control_Arm")) %>%
-  mutate(
-    Delta_EI_pct       = 100 * (EI_g_per_kg / EI_ctrl - 1),
-    Delta_EI_g_per_kg  = EI_g_per_kg - EI_ctrl,
-    Delta_CH4_pct      = 100 * (CH4_kg_year / CH4_ctrl - 1),
-    Delta_Y_pct        = 100 * (annual_yield_kg / Y_ctrl - 1))%>%
-  filter(Delta_EI_pct<200)
-
-
-    
-  final_with_deltas <- final_with_deltas %>%
-  dplyr::mutate(
-    Practice      = dplyr::coalesce(Practice.x, Practice.y),
-    Subpractice   = dplyr::coalesce(Subpractice.x, Subpractice.y),
-    Magnitude_pct = dplyr::coalesce(Magnitude_pct.x, Magnitude_pct.y)
-  ) %>%
-  dplyr::select(
-    B.Code, Control_Arm, A.Level.Name,
-    Practice, Subpractice, Magnitude_pct,
-    CH4_kg_year, Yield, Product, Units, P.Product,
-    days_per_year, yield_kg, annual_yield_kg, EI_g_per_kg,
-    EI_ctrl, CH4_ctrl, Y_ctrl,
-    Delta_EI_pct, Delta_EI_g_per_kg, Delta_CH4_pct, Delta_Y_pct
-  ) %>%
-  dplyr::distinct()
-
-# (optional) keep only treatment rows (i.e., exclude the control arm itself)
-final_with_deltas <- final_with_deltas %>%
-  dplyr::filter(A.Level.Name != Control_Arm)
-
-  
-
-```
-
-
-```{r echo=FALSE}
-# ---- A) EI by Practice (treatments only; point overlay + median diamond) ----
-ei_practice_df <- final_with_ei_all %>% filter(!Practice %in% c("Control","No change"))
-
-ggplot(ei_practice_df, aes(x = Practice, y = EI_g_per_kg, fill = Practice)) +
-  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
-  stat_summary(fun = median, geom = "point",
-               shape = 23, size = 2.8, fill = "white", color = "black") +
-  geom_jitter(width = 0.15, alpha = 0.55, size = 1.4, show.legend = FALSE) +
-  labs(x = NULL, y = expression("Emission intensity (g CH"[4]*"/ kg product)"),
-       title = "Emission intensity by practice") +
-  theme_minimal(12) + theme(legend.position = "none")
-
-# ---- B) ΔEI (%) by Practice (treatments vs control) ----
-ggplot(final_with_deltas, aes(x = Practice, y = Delta_EI_pct, fill = Practice)) +
-  geom_hline(yintercept = 0, linetype = 2) +
-  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
-  stat_summary(fun = median, geom = "point",
-               shape = 23, size = 2.6, fill = "white", color = "black") +
-  geom_jitter(width = 0.15, alpha = 0.55, size = 1.3, show.legend = FALSE) +
-  labs(x = NULL, y = "Δ Emission intensity (% vs control)",
-       title = "Δ Emission intensity by practice") +
-  theme_minimal(12) + theme(legend.position = "none")
-
-```
-
-
-```{r echo=FALSE}
-# ---- C) EI by Subpractice (with Ns in labels; reorder by median) ----
-labs_sub <- final_with_ei_all %>%
-  count(Subpractice, name = "n") %>%
-  mutate(Subpractice_lab = paste0(Subpractice, " (n=", n, ")"))
-
-plot_ei_sub <- final_with_ei_all %>%
-  left_join(labs_sub, by = "Subpractice") %>%
-  mutate(Subpractice_lab = fct_reorder(Subpractice_lab, EI_g_per_kg, median, na.rm = TRUE))
-
-ggplot(plot_ei_sub,
-       aes(x = Subpractice_lab, y = EI_g_per_kg, fill = Subpractice)) +
-  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
-  stat_summary(fun = median, geom = "point",
-               shape = 23, size = 2.6, fill = "white", color = "black") +
-  geom_jitter(width = 0.15, alpha = 0.55, size = 1.2, show.legend = FALSE) +
-  coord_flip() +
-  labs(x = NULL, y = expression("Emission intensity (g CH"[4]*"/ kg product)"),
-       title = "Emission intensity by subpractice (dominant diet lever)") +
-  theme_minimal(12) + theme(legend.position = "none")
-
-# ---- D) ΔEI (%) by Subpractice (with points + median; Ns; reordered) ----
-labs_sub_delta <- final_with_deltas %>%
-  count(Subpractice, name = "n") %>%
-  mutate(Subpractice_lab = paste0(Subpractice, " (n=", n, ")"))
-
-plot_delta_sub <- final_with_deltas %>%
-  left_join(labs_sub_delta, by = "Subpractice") %>%
-  mutate(Subpractice_lab = fct_reorder(Subpractice_lab, Delta_EI_pct, median, na.rm = TRUE))
-
-ggplot(plot_delta_sub,
-       aes(x = Subpractice_lab, y = Delta_EI_pct, fill = Subpractice)) +
-  geom_hline(yintercept = 0, linetype = 2) +
-  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
-  stat_summary(fun = median, geom = "point",
-               shape = 23, size = 2.6, fill = "white", color = "black") +
-  geom_jitter(width = 0.15, height = 0, alpha = 0.55, size = 1.4, show.legend = FALSE) +
-  coord_flip() +
-  labs(x = NULL, y = "Δ Emission intensity (% vs control)",
-       title = "Δ Emission intensity by subpractice (dominant diet lever)") +
-  theme_minimal(12) + theme(legend.position = "none")
-
-plot_delta_sub <- final_with_deltas %>%
-  filter(Practice=="Addition")%>%
-  left_join(labs_sub_delta, by = "Subpractice") %>%
-  mutate(Subpractice_lab = fct_reorder(Subpractice_lab, Delta_EI_pct, median, na.rm = TRUE))
-
-ggplot(plot_delta_sub,
-       aes(x = Subpractice_lab, y = Delta_EI_pct, fill = Subpractice)) +
-  geom_hline(yintercept = 0, linetype = 2) +
-  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
-  stat_summary(fun = median, geom = "point",
-               shape = 23, size = 2.6, fill = "white", color = "black") +
-  geom_jitter(width = 0.15, height = 0, alpha = 0.55, size = 1.4, show.legend = FALSE) +
-  coord_flip() +
-  labs(x = NULL, y = "Δ Emission intensity (% vs control)",
-       title = "Δ Emission intensity by subpractice (dominant diet lever)") +
-  theme_minimal(12) + theme(legend.position = "none")
-
-
-
-ggplot(plot_delta_sub,
-       aes(x = Subpractice_lab, y = Delta_Y_pct, fill = Subpractice)) +
-  geom_hline(yintercept = 0, linetype = 2) +
-  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
-  stat_summary(fun = median, geom = "point",
-               shape = 23, size = 2.6, fill = "white", color = "black") +
-  geom_jitter(width = 0.15, height = 0, alpha = 0.55, size = 1.4, show.legend = FALSE) +
-  coord_flip() +
-  labs(x = NULL, y = "Δ yield intensity (% vs control)",
-       title = "Δ yield  by subpractice (dominant diet lever)") +
-  theme_minimal(12) + theme(legend.position = "none")
-
-plot_delta_sub <- final_with_deltas %>%
-  filter(Practice=="Substitution")%>%
-  left_join(labs_sub_delta, by = "Subpractice") %>%
-  mutate(Subpractice_lab = fct_reorder(Subpractice_lab, Delta_EI_pct, median, na.rm = TRUE))
-
-ggplot(plot_delta_sub,
-       aes(x = Subpractice_lab, y = Delta_EI_pct, fill = Subpractice)) +
-  geom_hline(yintercept = 0, linetype = 2) +
-  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
-  stat_summary(fun = median, geom = "point",
-               shape = 23, size = 2.6, fill = "white", color = "black") +
-  geom_jitter(width = 0.15, height = 0, alpha = 0.55, size = 1.4, show.legend = FALSE) +
-  coord_flip() +
-  labs(x = NULL, y = "Δ Emission intensity (% vs control)",
-       title = "Δ Emission intensity by subpractice (dominant diet lever)") +
-  theme_minimal(12) + theme(legend.position = "none")
-
-ggplot(plot_delta_sub,
-       aes(x = Subpractice_lab, y = Delta_Y_pct, fill = Subpractice)) +
-  geom_hline(yintercept = 0, linetype = 2) +
-  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
-  stat_summary(fun = median, geom = "point",
-               shape = 23, size = 2.6, fill = "white", color = "black") +
-  geom_jitter(width = 0.15, height = 0, alpha = 0.55, size = 1.4, show.legend = FALSE) +
-  coord_flip() +
-  labs(x = NULL, y = "Δ yield intensity (% vs control)",
-       title = "Δ yield  by subpractice (dominant diet lever)") +
-  theme_minimal(12) + theme(legend.position = "none")
-
-print(
-  final_with_deltas %>%
-    filter(Practice !="No change")%>%
-    distinct(B.Code, P.Product) %>%
-    group_by(P.Product) %>%
-    summarise(n_papers = n_distinct(B.Code), .groups = "drop") %>%
-    arrange(desc(n_papers))
-)
-```
-##map 
-
-```{r echo=FALSE}
-# -------------------------------------------------------------------------
-# Load libraries
-# -------------------------------------------------------------------------
-library(dplyr)
-library(ggplot2)
-library(sf)
-library(rnaturalearth)
-library(rnaturalearthdata)
-library(viridis)
-library(stringr)
-
-# -------------------------------------------------------------------------
-# Load data
-# -------------------------------------------------------------------------
-merged_metadata <- readRDS("~/Emission_Analysis/data/merged_metadata_nutrition_inference.rds")
-
-# Filter site info to only those studies present in final_with_deltas
-sites <- merged_metadata$Site.Out %>%
-  filter(B.Code %in% final_with_deltas$B.Code)
-
-# -------------------------------------------------------------------------
-# Prepare data for mapping
-# -------------------------------------------------------------------------
-# Count distinct studies per site
-DATA_map <- sites %>%
-  group_by(Site.ID, Country, Site.LatD, Site.LonD) %>%
-  summarise(N_Studies = n_distinct(B.Code), .groups = "drop") %>%
-  filter(complete.cases(Site.LatD, Site.LonD)) %>%
-  filter(Site.ID != "NJ0129")  # optional outlier removal
-
-# Count number of study sites per country
-DATA_country <- DATA_map %>%
-  group_by(Country) %>%
-  summarise(N_Studies = n_distinct(Site.ID), .groups = "drop") %>%
-  rename(Category = Country)
-
-# -------------------------------------------------------------------------
-# Create spatial data (ensure CRS consistency)
-# -------------------------------------------------------------------------
-# Convert site coordinates to sf object (WGS84)
-DATA_map_sf <- st_as_sf(
-  DATA_map,
-  coords = c("Site.LonD", "Site.LatD"),
-  crs = 4326,
-  remove = FALSE
-)
-
-# Load African country polygons
-africa <- ne_countries(continent = "africa", returnclass = "sf")
-
-# Keep country name and geometry only
-countries_studies <- africa %>%
-  select(admin, geometry) %>%
-  rename(Category = admin)
-
-# Harmonize country name mismatches
-DATA_country <- DATA_country %>%
-  mutate(Category = ifelse(str_trim(Category) == "Congo (Democratic Republic of the)", 
-                           "Democratic Republic of the Congo", Category)) %>%
-  mutate(Category = ifelse(str_trim(Category) == "DRC", 
-                           "Republic of the Congo", Category)) %>%
-  mutate(Category = ifelse(str_trim(Category) == "Tanzania", 
-                           "United Republic of Tanzania", Category))
-
-# Merge country summary with map polygons
-countries_studies <- left_join(countries_studies, DATA_country, by = "Category")
-
-# -------------------------------------------------------------------------
-# Plot the map
-# -------------------------------------------------------------------------
-plot_sites <- ggplot() +
-  geom_sf(data = countries_studies, aes(fill = N_Studies), color = "gray70", size = 0.3) +
-  geom_sf(
-    data = DATA_map_sf,
-    shape = 21, color = "black", fill = "white", size = 2.5, alpha = 0.8
-  ) +
-  scale_fill_viridis(option = "mako", direction = -1, na.value = "gray95") +
-  labs(fill = "Studies (N)") +
-  coord_sf(lims_method = "geometry_bbox") +
-  theme_minimal() +
-  theme(
-    legend.key.size = unit(1, "lines"),
-    axis.line = element_blank(),
-    axis.text = element_blank(),
-    axis.ticks = element_blank(),
-    axis.title = element_blank(),
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
-    legend.position.inside = c(0.19, 0.2),  # valid for ggplot2 >= 3.5
-    panel.background = element_rect(fill = "white", colour = NA)
-  )
-
-# Display map
-plot_sites
-
-  
-```
-## separating small and big ruminants 
-
-```{r echo=FALSE}
-# ---- Emission Intensity (EI) and Yield plots by Subpractice, colored by Product ----
-
-suppressPackageStartupMessages({
-  library(dplyr); library(tidyr); library(stringr); library(forcats); library(ggplot2)
-})
-
-# ---- A) Define species/product groups ----
-final_with_deltas <- final_with_deltas %>%
-  mutate(Species_group = case_when(
-    str_detect(P.Product, regex("cattle|cow|bull", ignore_case = TRUE)) ~ "Cattle",
-    str_detect(P.Product, regex("sheep|goat", ignore_case = TRUE)) ~ "Small ruminants",
-    str_detect(P.Product, regex("buffalo", ignore_case = TRUE)) ~ "Buffalo",
-    str_detect(P.Product, regex("camel", ignore_case = TRUE)) ~ "Camelids",
-    TRUE ~ "Other"
-  ))
-
-final_with_ei_all <- final_with_ei_all %>%
-  mutate(Species_group = case_when(
-    str_detect(P.Product, regex("cattle|cow|bull", ignore_case = TRUE)) ~ "Cattle",
-    str_detect(P.Product, regex("sheep|goat", ignore_case = TRUE)) ~ "Small ruminants",
-    str_detect(P.Product, regex("buffalo", ignore_case = TRUE)) ~ "Buffalo",
-    str_detect(P.Product, regex("camel", ignore_case = TRUE)) ~ "Camelids",
-    TRUE ~ "Other"
-  ))
-
-# ---- B) Build Subpractice labels with Ns ----
-labs_sub_delta <- final_with_deltas %>%
-  count(Subpractice, name = "n") %>%
-  mutate(Subpractice_lab = paste0(Subpractice, " (n=", n, ")"))
-
-# -------------------------------------------------------------------------
-# ---- 1) Absolute EI (g CH4/kg product) by Subpractice ----
-# -------------------------------------------------------------------------
-labs_sub <- final_with_ei_all %>%
-  count(Subpractice, name = "n") %>%
-  mutate(Subpractice_lab = paste0(Subpractice, " (n=", n, ")"))
-
-plot_ei_sub <- final_with_ei_all %>%
-  left_join(labs_sub, by = "Subpractice") %>%
-  mutate(Subpractice_lab = fct_reorder(Subpractice_lab, EI_g_per_kg, median, na.rm = TRUE))
-
-ggplot(plot_ei_sub,
-       aes(x = Subpractice_lab, y = EI_g_per_kg, fill = Species_group)) +
-  geom_boxplot(alpha = 0.6, outlier.alpha = 0.3, position = position_dodge(width = 0.8)) +
-  stat_summary(fun = median, geom = "point",
-               shape = 23, size = 2.4, fill = "white", color = "black",
-               position = position_dodge(width = 0.8)) +
-  geom_jitter(aes(color = Species_group),
-              width = 0.15, alpha = 0.5, size = 1.2, show.legend = FALSE) +
-  coord_flip() +
-  labs(x = NULL, y = expression("Emission intensity (g CH"[4]*"/ kg product)"),
-       title = "Emission intensity by subpractice (colored by product)") +
-  scale_fill_brewer(palette = "Set2", name = "Product") +
-  scale_color_brewer(palette = "Set2", guide = "none") +
-  theme_minimal(base_size = 12) +
-  theme(legend.position = "right",
-        axis.text.y = element_text(size = 10),
-        plot.title = element_text(face = "bold"))
-
-# -------------------------------------------------------------------------
-# ---- 2) ΔEI (%) by Subpractice (all) ----
-# -------------------------------------------------------------------------
-plot_delta_all <- final_with_deltas %>%
-  left_join(labs_sub_delta, by = "Subpractice") %>%
-  mutate(Subpractice_lab = fct_reorder(Subpractice_lab, Delta_EI_pct, median, na.rm = TRUE))
-
-ggplot(plot_delta_all,
-       aes(x = Subpractice_lab, y = Delta_EI_pct, fill = Species_group)) +
-  geom_hline(yintercept = 0, linetype = 2) +
-  geom_boxplot(alpha = 0.6, outlier.alpha = 0.3, position = position_dodge(width = 0.8)) +
-  stat_summary(fun = median, geom = "point",
-               shape = 23, size = 2.4, fill = "white", color = "black",
-               position = position_dodge(width = 0.8)) +
-  geom_jitter(aes(color = Species_group),
-              width = 0.15, alpha = 0.5, size = 1.2, show.legend = FALSE) +
-  coord_flip() +
-  labs(x = NULL, y = "Δ Emission intensity (% vs control)",
-       title = "Δ Emission intensity by subpractice (colored by product)") +
-  scale_fill_brewer(palette = "Set2", name = "Product") +
-  scale_color_brewer(palette = "Set2", guide = "none") +
-  theme_minimal(base_size = 12) +
-  theme(legend.position = "right",
-        axis.text.y = element_text(size = 10),
-        plot.title = element_text(face = "bold"))
-
-# -------------------------------------------------------------------------
-# ---- 3) ΔEI (%) by Subpractice (Addition only) ----
-# -------------------------------------------------------------------------
-plot_delta_add <- final_with_deltas %>%
-  filter(Practice == "Addition") %>%
-  left_join(labs_sub_delta, by = "Subpractice") %>%
-  mutate(Subpractice_lab = fct_reorder(Subpractice_lab, Delta_EI_pct, median, na.rm = TRUE))
-
-ggplot(plot_delta_add,
-       aes(x = Subpractice_lab, y = Delta_EI_pct, fill = Species_group)) +
-  geom_hline(yintercept = 0, linetype = 2) +
-  geom_boxplot(alpha = 0.6, outlier.alpha = 0.3, position = position_dodge(width = 0.8)) +
-  stat_summary(fun = median, geom = "point",
-               shape = 23, size = 2.4, fill = "white", color = "black",
-               position = position_dodge(width = 0.8)) +
-  geom_jitter(aes(color = Species_group),
-              width = 0.15, alpha = 0.5, size = 1.2, show.legend = FALSE) +
-  coord_flip() +
-  labs(x = NULL, y = "Δ Emission intensity (% vs control)",
-       title = "Δ Emission intensity (Addition only) by subpractice") +
-  scale_fill_brewer(palette = "Set2", name = "Product") +
-  scale_color_brewer(palette = "Set2", guide = "none") +
-  theme_minimal(base_size = 12) +
-  theme(legend.position = "right",
-        axis.text.y = element_text(size = 10),
-        plot.title = element_text(face = "bold"))
-
-# -------------------------------------------------------------------------
-# ---- 4) ΔYield (%) by Subpractice (Addition only) ----
-# -------------------------------------------------------------------------
-ggplot(plot_delta_add,
-       aes(x = Subpractice_lab, y = Delta_Y_pct, fill = Species_group)) +
-  geom_hline(yintercept = 0, linetype = 2) +
-  geom_boxplot(alpha = 0.6, outlier.alpha = 0.3, position = position_dodge(width = 0.8)) +
-  stat_summary(fun = median, geom = "point",
-               shape = 23, size = 2.4, fill = "white", color = "black",
-               position = position_dodge(width = 0.8)) +
-  geom_jitter(aes(color = Species_group),
-              width = 0.15, alpha = 0.5, size = 1.2, show.legend = FALSE) +
-  coord_flip() +
-  labs(x = NULL, y = "Δ Yield (% vs control)",
-       title = "Δ Yield by subpractice (Addition only)") +
-  scale_fill_brewer(palette = "Set2", name = "Product") +
-  scale_color_brewer(palette = "Set2", guide = "none") +
-  theme_minimal(base_size = 12) +
-  theme(legend.position = "right",
-        axis.text.y = element_text(size = 10),
-        plot.title = element_text(face = "bold"))
-
-# -------------------------------------------------------------------------
-# ---- 5) ΔEI (%) by Subpractice (Substitution only) ----
-# -------------------------------------------------------------------------
-plot_delta_subs <- final_with_deltas %>%
-  filter(Practice == "Substitution") %>%
-  left_join(labs_sub_delta, by = "Subpractice") %>%
-  mutate(Subpractice_lab = fct_reorder(Subpractice_lab, Delta_EI_pct, median, na.rm = TRUE))
-
-ggplot(plot_delta_subs,
-       aes(x = Subpractice_lab, y = Delta_EI_pct, fill = Species_group)) +
-  geom_hline(yintercept = 0, linetype = 2) +
-  geom_boxplot(alpha = 0.6, outlier.alpha = 0.3, position = position_dodge(width = 0.8)) +
-  stat_summary(fun = median, geom = "point",
-               shape = 23, size = 2.4, fill = "white", color = "black",
-               position = position_dodge(width = 0.8)) +
-  geom_jitter(aes(color = Species_group),
-              width = 0.15, alpha = 0.5, size = 1.2, show.legend = FALSE) +
-  coord_flip() +
-  labs(x = NULL, y = "Δ Emission intensity (% vs control)",
-       title = "Δ Emission intensity (Substitution only) by subpractice") +
-  scale_fill_brewer(palette = "Set2", name = "Product") +
-  scale_color_brewer(palette = "Set2", guide = "none") +
-  theme_minimal(base_size = 12) +
-  theme(legend.position = "right",
-        axis.text.y = element_text(size = 10),
-        plot.title = element_text(face = "bold"))
-
-# -------------------------------------------------------------------------
-# ---- 6) ΔYield (%) by Subpractice (Substitution only) ----
-# -------------------------------------------------------------------------
-ggplot(plot_delta_subs,
-       aes(x = Subpractice_lab, y = Delta_Y_pct, fill = Species_group)) +
-  geom_hline(yintercept = 0, linetype = 2) +
-  geom_boxplot(alpha = 0.6, outlier.alpha = 0.3, position = position_dodge(width = 0.8)) +
-  stat_summary(fun = median, geom = "point",
-               shape = 23, size = 2.4, fill = "white", color = "black",
-               position = position_dodge(width = 0.8)) +
-  geom_jitter(aes(color = Species_group),
-              width = 0.15, alpha = 0.5, size = 1.2, show.legend = FALSE) +
-  coord_flip() +
-  labs(x = NULL, y = "Δ Yield (% vs control)",
-       title = "Δ Yield by subpractice (Substitution only)") +
-  scale_fill_brewer(palette = "Set2", name = "Product") +
-  scale_color_brewer(palette = "Set2", guide = "none") +
-  theme_minimal(base_size = 12) +
-  theme(legend.position = "right",
-        axis.text.y = element_text(size = 10),
-        plot.title = element_text(face = "bold"))
-
-```
-
+## Relationship between yield and methane emissions
+
+This section explores the fundamental link between **animal productivity** and **methane output** across livestock species.  
+By plotting annual CH₄ emissions against both **meat yield** and **milk yield**, the figures assess whether higher-producing animals tend to emit more methane in absolute terms, and whether the expected scaling between feed intake, energy use, and CH₄ production holds true.  
+The subsequent boxplots summarize the overall distribution of annual methane emissions by species—first across all livestock, then focusing specifically on **goats vs. sheep** to highlight small-ruminant contrasts.  
+Finally, emission intensity (CH₄ per kg of product) is computed from harmonized yield data to provide a normalized view of efficiency.  
+Together, these diagnostics ensure that yield–emission relationships are internally consistent and biologically plausible before interpreting practice- and diet-level mitigation effects.
 
 
 
@@ -1062,10 +482,735 @@ ggplot(ei_prod, aes(x = P.Product, y = EI_CH4_prod,
 
 ```
 
-## diet shift analysis
+
+## Emission in function of the highest cat in each diet 
+
+This analysis examines how enteric methane (CH₄) emissions vary according to the **dominant ingredient category** in each diet.  
+By identifying the feed category contributing the largest share of dry matter (e.g., *high-starch*, *protein*, *good forage*), each diet is linked to a primary nutritional “driver.”  
+The purpose of these plots is to test whether diets dominated by different ingredient types are systematically associated with higher or lower methane outputs across products (milk, meat, etc.).  
+The resulting boxplots compare **annual CH₄ emissions (kg animal⁻¹ yr⁻¹)** across dominant categories within each livestock product, helping visualize whether certain feed bases—such as energy-rich concentrates or improved forages—tend to correspond to lower methane emissions.  
+This provides an intuitive, data-driven way to explore diet-level variability before applying more formal emission intensity normalization.
+
+```{r include=FALSE}
+emission_ing_classif<-diet_obs_classif%>%
+  left_join(GE_combined_for_merge,by=c("B.Code","A.Level.Name"))%>%
+  filter(!is.na(CH4_kg_year))
+
+#number of unique codes 
+emission_ing_classif %>%
+  group_by(P.Product) %>%
+  summarise(n_unique_B = n_distinct(B.Code), .groups = "drop") %>%
+  arrange(desc(n_unique_B))
+
+```
+
 
 ```{r echo=FALSE}
 
+
+df <- emission_ing_classif
+
+# 1) Dominant ingredient per diet (max % of diet), keep Product
+dom <- df %>%
+  group_by(A.Level.Name) %>%
+  slice_max(Percentage_of_Diet, n = 1, with_ties = FALSE) %>%
+  ungroup() %>%
+  select(A.Level.Name, P.Product, dom_category = Ingredient_Category)
+
+# 2) One CH4 value per diet
+ch4 <- df %>%
+  group_by(A.Level.Name) %>%
+  summarise(CH4_kg_year = mean(CH4_kg_year, na.rm = TRUE), .groups = "drop")
+
+# 3) Join and summarise BY PRODUCT × DOMINANT INGREDIENT
+summary_by_prod_dom <- dom %>%
+  left_join(ch4, by = "A.Level.Name") %>%
+  group_by(P.Product, dom_category) %>%
+  summarise(
+    n_diets    = n(),
+    mean_CH4   = mean(CH4_kg_year, na.rm = TRUE),
+    median_CH4 = median(CH4_kg_year, na.rm = TRUE),
+    sd_CH4     = sd(CH4_kg_year, na.rm = TRUE),
+    .groups = "drop_last"
+  ) %>%
+  arrange(P.Product, desc(n_diets))
+
+summary_by_prod_dom
+
+```
+
+```{r echo=FALSE}
+plot_df <- dom %>%
+  left_join(ch4, by = "A.Level.Name") %>%
+  filter(CH4_kg_year < 100)   # optional outlier trim; remove if not desired
+# get common y-limits across all products (after any filtering you apply)
+y_lims <- range(plot_df$CH4_kg_year, na.rm = TRUE)
+
+ggplot(plot_df, aes(x = dom_category, y = CH4_kg_year, fill = dom_category)) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.5) +
+  geom_jitter(width = 0.15, height = 0, alpha = 0.5, size = 1.4, show.legend = FALSE) +
+  facet_wrap(~ P.Product, scales = "fixed") +              # <- same y for all facets
+  scale_y_continuous(limits = y_lims, expand = expansion(mult = c(0.02, 0.05))) +
+  labs(x = NULL, y = "CH₄ (kg / animal / year)",
+       title = "Enteric CH₄ by dominant ingredient category within each product") +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 25, hjust = 1))
+
+
+
+```
+## Emission intensity and practice-level contrasts
+
+This section integrates methane emission data, yield measurements, and diet-practice classifications to quantify **emission intensity (EI)** for each experimental arm and evaluate how it changes across feeding practices.  
+The workflow first computes absolute EI values (g CH₄ kg⁻¹ product) for individual diets, then compares each treatment diet against its corresponding control within the same study to derive **ΔEI (%)**—the percentage change in methane emission intensity relative to the baseline.  
+These plots illustrate two complementary perspectives:
+
+- **Emission intensity by practice:** shows the absolute distribution of CH₄ intensity for diets classified as *Additions* or *Substitutions*, allowing comparison of their central tendencies and variability.  
+- **ΔEI (% vs. control):** highlights the direction and magnitude of change in emission intensity due to each practice, where negative values indicate emission reductions without normalizing for yield.  
+
+Together, these figures provide an empirical overview of how different feeding interventions influence methane efficiency, serving as a foundation for interpreting diet-level levers in subsequent analyses.
+
+
+```{r include=FALSE}
+suppressPackageStartupMessages({
+  library(dplyr); library(stringr); library(tidyr); library(forcats); library(ggplot2)
+})
+
+# ---------- helpers ----------
+str_clean <- function(x) stringr::str_squish(as.character(x))
+has <- function(x, pat) stringr::str_detect(stringr::str_to_lower(coalesce(x, "")),
+                                            stringr::str_to_lower(pat))
+first_non_na <- function(x){ x <- x[!is.na(x)]; if (length(x)==0) NA else x[1] }
+
+# ---------- 1) CH4 per arm + species from emissions ----------
+em_dat <- emission_ing_classif %>%
+  mutate(B.Code = str_clean(B.Code), A.Level.Name = str_clean(A.Level.Name)) %>%
+  group_by(B.Code, A.Level.Name) %>%
+  summarise(
+    CH4_kg_year = mean(CH4_kg_year, na.rm = TRUE),
+    P.Product   = dplyr::first(na.omit(P.Product)),
+    .groups = "drop"
+  )
+
+# ---------- 2) Practice/Subpractice map (include controls) ----------
+practice_tbl <- practice_tbl %>%
+  mutate(B.Code = str_clean(B.Code), Control = str_clean(Control), Trt = str_clean(Trt))
+
+map_trt <- practice_tbl %>%
+  transmute(B.Code, A.Level.Name = Trt, Practice, Subpractice, Magnitude_pct)
+
+map_ctrl <- practice_tbl %>%
+  distinct(B.Code, A.Level.Name = Control) %>%
+  mutate(Practice="Control", Subpractice="", Magnitude_pct = 0)
+
+practice_map <- bind_rows(map_trt, map_ctrl) %>%
+  distinct(B.Code, A.Level.Name, .keep_all = TRUE) %>%
+  # ---- collapse multi-category Additions into "Mixed" ----
+  mutate(Subpractice = if_else(Practice=="Addition" & str_detect(Subpractice, ","),
+                               "Mixed", Subpractice))
+
+# ---------- 3) Choose one yield per arm ----------
+yld <- yield_with_emissions %>%
+  mutate(B.Code = str_clean(B.Code), A.Level.Name = str_clean(A.Level.Name)) %>%
+  group_by(B.Code, A.Level.Name) %>%
+  mutate(is_yield = str_detect(str_to_lower(coalesce(Out.Subind, "")), "yield")) %>%
+  arrange(B.Code, A.Level.Name, desc(is_yield), desc(!is.na(ED.Mean.T))) %>%
+  summarise(
+    Yield   = first_non_na(ED.Mean.T),
+    Product = first_non_na(Out.Subind),
+    Units   = first_non_na(Out.Unit),
+    .groups = "drop"
+  )
+
+# ---------- 4) Final joined table (keeps controls) ----------
+final_df <- em_dat %>%
+  left_join(practice_map, by = c("B.Code", "A.Level.Name")) %>%
+  left_join(yld,         by = c("B.Code", "A.Level.Name")) %>%
+  transmute(
+    B.Code, A.Level.Name,
+    Practice    = coalesce(Practice, "Unknown"),
+    Subpractice = coalesce(Subpractice, ""),
+    Magnitude_pct,
+    CH4_kg_year,
+    Yield, Product, Units,
+    P.Product
+  ) %>%
+  filter(Practice != "Unknown") %>%
+  drop_na(CH4_kg_year, Yield, Units, P.Product) %>%
+  arrange(B.Code, A.Level.Name)%>%
+  filter(Practice!="No change")
+
+```
+
+```{r include=FALSE}
+# ---------- 5) Compute EI (g CH4 / kg product) ----------
+final_with_ei_all <- final_df %>%
+  mutate(
+    days_per_year = case_when(
+      has(Units, "/day")  ~ 365,
+      has(Units, "/year") ~ 1,
+      TRUE ~ NA_real_
+    ),
+    yield_kg = case_when(
+      has(Units, "kg") ~ Yield,
+      has(Units, "g")  ~ Yield/1000,
+      has(Units, "l") & has(Product, "milk") ~ Yield * 1.03,  # L→kg for milk
+      TRUE ~ NA_real_
+    ),
+    annual_yield_kg = yield_kg * days_per_year,
+    EI_g_per_kg     = (CH4_kg_year * 1000) / annual_yield_kg
+  ) %>%
+  filter(is.finite(EI_g_per_kg), EI_g_per_kg > 0, is.finite(annual_yield_kg))%>%
+  filter(EI_g_per_kg<110)
+
+# ---------- 6) Deltas vs control (treatment–control within B.Code) ----------
+ctrl_map <- practice_tbl %>% distinct(B.Code, Control) %>% rename(Control_Arm = Control)
+
+ctrl_metrics <- final_with_ei_all %>%
+  select(B.Code, A.Level.Name, EI_ctrl = EI_g_per_kg,
+         CH4_ctrl = CH4_kg_year, Y_ctrl = annual_yield_kg) %>%
+  rename(Control_Arm = A.Level.Name)
+
+final_with_deltas <- practice_tbl %>%
+  select(B.Code, Control_Arm = Control, A.Level.Name = Trt, Practice, Subpractice, Magnitude_pct) %>%
+  # align "Mixed" rule for Additions here too
+  mutate(Subpractice = if_else(Practice=="Addition" & str_detect(Subpractice, ","),
+                               "Mixed", Subpractice)) %>%
+  inner_join(final_with_ei_all, by = c("B.Code","A.Level.Name")) %>%
+  inner_join(ctrl_metrics,      by = c("B.Code","Control_Arm")) %>%
+  mutate(
+    Delta_EI_pct       = 100 * (EI_g_per_kg / EI_ctrl - 1),
+    Delta_EI_g_per_kg  = EI_g_per_kg - EI_ctrl,
+    Delta_CH4_pct      = 100 * (CH4_kg_year / CH4_ctrl - 1),
+    Delta_Y_pct        = 100 * (annual_yield_kg / Y_ctrl - 1))%>%
+  filter(Delta_EI_pct<200)
+
+
+    
+  final_with_deltas <- final_with_deltas %>%
+  dplyr::mutate(
+    Practice      = dplyr::coalesce(Practice.x, Practice.y),
+    Subpractice   = dplyr::coalesce(Subpractice.x, Subpractice.y),
+    Magnitude_pct = dplyr::coalesce(Magnitude_pct.x, Magnitude_pct.y)
+  ) %>%
+  dplyr::select(
+    B.Code, Control_Arm, A.Level.Name,
+    Practice, Subpractice, Magnitude_pct,
+    CH4_kg_year, Yield, Product, Units, P.Product,
+    days_per_year, yield_kg, annual_yield_kg, EI_g_per_kg,
+    EI_ctrl, CH4_ctrl, Y_ctrl,
+    Delta_EI_pct, Delta_EI_g_per_kg, Delta_CH4_pct, Delta_Y_pct
+  ) %>%
+  dplyr::distinct()
+
+# (optional) keep only treatment rows (i.e., exclude the control arm itself)
+final_with_deltas <- final_with_deltas %>%
+  dplyr::filter(A.Level.Name != Control_Arm)
+
+  
+
+```
+
+
+```{r echo=FALSE}
+# ---- A) EI by Practice (treatments only; point overlay + median diamond) ----
+ei_practice_df <- final_with_ei_all %>% filter(!Practice %in% c("Control","No change"))
+
+ggplot(ei_practice_df, aes(x = Practice, y = EI_g_per_kg, fill = Practice)) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
+  stat_summary(fun = median, geom = "point",
+               shape = 23, size = 2.8, fill = "white", color = "black") +
+  geom_jitter(width = 0.15, alpha = 0.55, size = 1.4, show.legend = FALSE) +
+  labs(x = NULL, y = expression("Emission intensity (g CH"[4]*"/ kg product)"),
+       title = "Emission intensity by practice") +
+  theme_minimal(12) + theme(legend.position = "none")
+
+# ---- B) ΔEI (%) by Practice (treatments vs control) ----
+ggplot(final_with_deltas, aes(x = Practice, y = Delta_EI_pct, fill = Practice)) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
+  stat_summary(fun = median, geom = "point",
+               shape = 23, size = 2.6, fill = "white", color = "black") +
+  geom_jitter(width = 0.15, alpha = 0.55, size = 1.3, show.legend = FALSE) +
+  labs(x = NULL, y = "Δ Emission intensity (% vs control)",
+       title = "Δ Emission intensity by practice") +
+  theme_minimal(12) + theme(legend.position = "none")
+
+```
+
+## Emission intensity and yield changes by subpractice
+
+This section disaggregates emission intensity results by **subpractice**, representing the dominant dietary lever applied within each experiment (e.g., *lipid addition*, *protein supplement*, *forage substitution*).  
+While the previous section examined overall practice effects (*Addition* vs. *Substitution*), these plots reveal which specific feed modifications drive the largest differences in methane outcomes.
+
+- **Emission intensity by subpractice** — compares absolute CH₄ emission intensity (g CH₄ kg⁻¹ product) across all subpractices, reordered by their median values to highlight which dietary levers are most emission-efficient.  
+- **ΔEI (% vs. control)** — shows the percent change in emission intensity relative to each study’s control diet, with negative values indicating mitigation potential.  
+- **ΔEI for Additions and Substitutions separately** — isolates the effects of additive vs. replacement strategies to distinguish how these intervention types alter emission responses.  
+- **ΔYield (% vs. control)** — evaluates whether changes in emission intensity occur alongside productivity gains or losses, ensuring that apparent CH₄ reductions are not driven by yield depression.  
+
+Together, these figures provide a fine-grained understanding of **which feed interventions consistently reduce methane intensity**, helping identify robust mitigation strategies within and across livestock products.
+
+```{r echo=FALSE}
+# ---- C) EI by Subpractice (with Ns in labels; reorder by median) ----
+labs_sub <- final_with_ei_all %>%
+  count(Subpractice, name = "n") %>%
+  mutate(Subpractice_lab = paste0(Subpractice, " (n=", n, ")"))
+
+plot_ei_sub <- final_with_ei_all %>%
+  left_join(labs_sub, by = "Subpractice") %>%
+  mutate(Subpractice_lab = fct_reorder(Subpractice_lab, EI_g_per_kg, median, na.rm = TRUE))
+
+ggplot(plot_ei_sub,
+       aes(x = Subpractice_lab, y = EI_g_per_kg, fill = Subpractice)) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
+  stat_summary(fun = median, geom = "point",
+               shape = 23, size = 2.6, fill = "white", color = "black") +
+  geom_jitter(width = 0.15, alpha = 0.55, size = 1.2, show.legend = FALSE) +
+  coord_flip() +
+  labs(x = NULL, y = expression("Emission intensity (g CH"[4]*"/ kg product)"),
+       title = "Emission intensity by subpractice") +
+  theme_minimal(12) + theme(legend.position = "none")
+```
+
+
+```{r echo=FALSE}
+# ---- D) ΔEI (%) by Subpractice (with points + median; Ns; reordered) ----
+labs_sub_delta <- final_with_deltas %>%
+  count(Subpractice, name = "n") %>%
+  mutate(Subpractice_lab = paste0(Subpractice, " (n=", n, ")"))
+
+plot_delta_sub <- final_with_deltas %>%
+  left_join(labs_sub_delta, by = "Subpractice") %>%
+  mutate(Subpractice_lab = fct_reorder(Subpractice_lab, Delta_EI_pct, median, na.rm = TRUE))
+
+ggplot(plot_delta_sub,
+       aes(x = Subpractice_lab, y = Delta_EI_pct, fill = Subpractice)) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
+  stat_summary(fun = median, geom = "point",
+               shape = 23, size = 2.6, fill = "white", color = "black") +
+  geom_jitter(width = 0.15, height = 0, alpha = 0.55, size = 1.4, show.legend = FALSE) +
+  coord_flip() +
+  labs(x = NULL, y = "Δ Emission intensity (% vs control)",
+       title = "Δ Emission intensity by subpractice") +
+  theme_minimal(12) + theme(legend.position = "none")
+```
+
+
+```{r echo=FALSE}
+plot_delta_sub <- final_with_deltas %>%
+  filter(Practice=="Addition")%>%
+  left_join(labs_sub_delta, by = "Subpractice") %>%
+  mutate(Subpractice_lab = fct_reorder(Subpractice_lab, Delta_EI_pct, median, na.rm = TRUE))
+
+ggplot(plot_delta_sub,
+       aes(x = Subpractice_lab, y = Delta_EI_pct, fill = Subpractice)) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
+  stat_summary(fun = median, geom = "point",
+               shape = 23, size = 2.6, fill = "white", color = "black") +
+  geom_jitter(width = 0.15, height = 0, alpha = 0.55, size = 1.4, show.legend = FALSE) +
+  coord_flip() +
+  labs(x = NULL, y = "Δ Emission intensity (% vs control)",
+       title = "Δ Emission intensity by subpractice (additions only)") +
+  theme_minimal(12) + theme(legend.position = "none")
+```
+
+
+```{r echo=FALSE}
+ggplot(plot_delta_sub,
+       aes(x = Subpractice_lab, y = Delta_Y_pct, fill = Subpractice)) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
+  stat_summary(fun = median, geom = "point",
+               shape = 23, size = 2.6, fill = "white", color = "black") +
+  geom_jitter(width = 0.15, height = 0, alpha = 0.55, size = 1.4, show.legend = FALSE) +
+  coord_flip() +
+  labs(x = NULL, y = "Δ yield intensity (% vs control)",
+       title = "Δ yield  by subpractice (additions only)") +
+  theme_minimal(12) + theme(legend.position = "none")
+
+plot_delta_sub <- final_with_deltas %>%
+  filter(Practice=="Substitution")%>%
+  left_join(labs_sub_delta, by = "Subpractice") %>%
+  mutate(Subpractice_lab = fct_reorder(Subpractice_lab, Delta_EI_pct, median, na.rm = TRUE))
+```
+
+
+```{r echo=FALSE}
+ggplot(plot_delta_sub,
+       aes(x = Subpractice_lab, y = Delta_EI_pct, fill = Subpractice)) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
+  stat_summary(fun = median, geom = "point",
+               shape = 23, size = 2.6, fill = "white", color = "black") +
+  geom_jitter(width = 0.15, height = 0, alpha = 0.55, size = 1.4, show.legend = FALSE) +
+  coord_flip() +
+  labs(x = NULL, y = "Δ Emission intensity (% vs control)",
+       title = "Δ Emission intensity by subpractice (Subtitution only) ") +
+  theme_minimal(12) + theme(legend.position = "none")
+```
+
+
+```{r echo=FALSE}
+ggplot(plot_delta_sub,
+       aes(x = Subpractice_lab, y = Delta_Y_pct, fill = Subpractice)) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
+  stat_summary(fun = median, geom = "point",
+               shape = 23, size = 2.6, fill = "white", color = "black") +
+  geom_jitter(width = 0.15, height = 0, alpha = 0.55, size = 1.4, show.legend = FALSE) +
+  coord_flip() +
+  labs(x = NULL, y = "Δ yield intensity (% vs control)",
+       title = "Δ yield  by subpractice (substitutions only) ") +
+  theme_minimal(12) + theme(legend.position = "none")
+
+print(
+  final_with_deltas %>%
+    filter(Practice !="No change")%>%
+    distinct(B.Code, P.Product) %>%
+    group_by(P.Product) %>%
+    summarise(n_papers = n_distinct(B.Code), .groups = "drop") %>%
+    arrange(desc(n_papers))
+)
+```
+
+## Spatial distribution of ERA feeding trials
+
+This map summarizes the **geographical coverage** of the studies included in the emission-intensity analysis.  
+Each point represents a study site from the ERA meta-dataset where methane emissions and yield data were available, while the shaded countries indicate the **number of distinct sites** contributing data within their borders.  
+By visualizing the spatial footprint of the dataset, this figure helps assess **regional representativeness** and identify data clusters or geographic gaps across Africa.  
+Such spatial context is critical for interpreting emission responses, as feed resources, production systems, and experimental conditions vary considerably among regions.  
+Together, these patterns illustrate the extent to which the ERA database captures continental diversity in livestock feeding practices and methane emission measurements.
+
+
+```{r echo=FALSE}
+# -------------------------------------------------------------------------
+# Load libraries
+# -------------------------------------------------------------------------
+library(dplyr)
+library(ggplot2)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(viridis)
+library(stringr)
+
+# -------------------------------------------------------------------------
+# Load data
+# -------------------------------------------------------------------------
+merged_metadata <- readRDS("~/Emission_Analysis/data/merged_metadata_nutrition_inference.rds")
+
+# Filter site info to only those studies present in final_with_deltas
+sites <- merged_metadata$Site.Out %>%
+  filter(B.Code %in% final_with_deltas$B.Code)
+
+# -------------------------------------------------------------------------
+# Prepare data for mapping
+# -------------------------------------------------------------------------
+# Count distinct studies per site
+DATA_map <- sites %>%
+  group_by(Site.ID, Country, Site.LatD, Site.LonD) %>%
+  summarise(N_Studies = n_distinct(B.Code), .groups = "drop") %>%
+  filter(complete.cases(Site.LatD, Site.LonD)) %>%
+  filter(Site.ID != "NJ0129")  # optional outlier removal
+
+# Count number of study sites per country
+DATA_country <- DATA_map %>%
+  group_by(Country) %>%
+  summarise(N_Studies = n_distinct(Site.ID), .groups = "drop") %>%
+  rename(Category = Country)
+
+# -------------------------------------------------------------------------
+# Create spatial data (ensure CRS consistency)
+# -------------------------------------------------------------------------
+# Convert site coordinates to sf object (WGS84)
+DATA_map_sf <- st_as_sf(
+  DATA_map,
+  coords = c("Site.LonD", "Site.LatD"),
+  crs = 4326,
+  remove = FALSE
+)
+
+# Load African country polygons
+africa <- ne_countries(continent = "africa", returnclass = "sf")
+
+# Keep country name and geometry only
+countries_studies <- africa %>%
+  select(admin, geometry) %>%
+  rename(Category = admin)
+
+# Harmonize country name mismatches
+DATA_country <- DATA_country %>%
+  mutate(Category = ifelse(str_trim(Category) == "Congo (Democratic Republic of the)", 
+                           "Democratic Republic of the Congo", Category)) %>%
+  mutate(Category = ifelse(str_trim(Category) == "DRC", 
+                           "Republic of the Congo", Category)) %>%
+  mutate(Category = ifelse(str_trim(Category) == "Tanzania", 
+                           "United Republic of Tanzania", Category))
+
+# Merge country summary with map polygons
+countries_studies <- left_join(countries_studies, DATA_country, by = "Category")
+
+# -------------------------------------------------------------------------
+# Plot the map
+# -------------------------------------------------------------------------
+plot_sites <- ggplot() +
+  geom_sf(data = countries_studies, aes(fill = N_Studies), color = "gray70", size = 0.3) +
+  geom_sf(
+    data = DATA_map_sf,
+    shape = 21, color = "black", fill = "white", size = 2.5, alpha = 0.8
+  ) +
+  scale_fill_viridis(option = "mako", direction = -1, na.value = "gray95") +
+  labs(fill = "Studies (N)") +
+  coord_sf(lims_method = "geometry_bbox") +
+  theme_minimal() +
+  theme(
+    legend.key.size = unit(1, "lines"),
+    axis.line = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    axis.title = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    legend.position.inside = c(0.19, 0.2),  # valid for ggplot2 >= 3.5
+    panel.background = element_rect(fill = "white", colour = NA)
+  )
+
+# Display map
+plot_sites
+
+  
+```
+## Emission and yield responses separated by livestock group
+
+To assess whether methane-mitigation patterns differ between species, this section separates results for **large ruminants (cattle)** and **small ruminants (sheep and goats)**, with additional grouping for buffalo and camelids where present.  
+By coloring subpractice plots by **species group**, the figures reveal whether certain dietary strategies are consistently effective across livestock types or exhibit species-specific responses.
+
+- **Emission intensity by subpractice** — compares absolute CH₄ intensity (g CH₄ kg⁻¹ product) among subpractices, now stratified by animal group, highlighting baseline efficiency differences between cattle and small ruminants.  
+- **ΔEI (% vs. control)** — quantifies relative changes in methane intensity due to feeding interventions, showing how each subpractice performs within and across species groups.  
+- **Addition vs. Substitution effects** — examines the direction and magnitude of ΔEI for additive and replacement strategies separately, clarifying whether certain interventions reduce emissions more effectively in specific ruminant types.  
+- **ΔYield (% vs. control)** — evaluates the production response accompanying each emission change, ensuring that mitigation patterns are not confounded by yield reductions.
+
+Together, these comparisons contextualize diet-mitigation outcomes by species, providing insight into whether feed-based CH₄ reduction strategies can be generalized across African livestock systems or require species-specific adaptation.
+
+
+```{r echo=FALSE}
+# ---- Emission Intensity (EI) and Yield plots by Subpractice, colored by Product ----
+
+suppressPackageStartupMessages({
+  library(dplyr); library(tidyr); library(stringr); library(forcats); library(ggplot2)
+})
+
+# ---- A) Define species/product groups ----
+final_with_deltas <- final_with_deltas %>%
+  mutate(Species_group = case_when(
+    str_detect(P.Product, regex("cattle|cow|bull", ignore_case = TRUE)) ~ "Cattle",
+    str_detect(P.Product, regex("sheep|goat", ignore_case = TRUE)) ~ "Small ruminants",
+    str_detect(P.Product, regex("buffalo", ignore_case = TRUE)) ~ "Buffalo",
+    str_detect(P.Product, regex("camel", ignore_case = TRUE)) ~ "Camelids",
+    TRUE ~ "Other"
+  ))
+
+final_with_ei_all <- final_with_ei_all %>%
+  mutate(Species_group = case_when(
+    str_detect(P.Product, regex("cattle|cow|bull", ignore_case = TRUE)) ~ "Cattle",
+    str_detect(P.Product, regex("sheep|goat", ignore_case = TRUE)) ~ "Small ruminants",
+    str_detect(P.Product, regex("buffalo", ignore_case = TRUE)) ~ "Buffalo",
+    str_detect(P.Product, regex("camel", ignore_case = TRUE)) ~ "Camelids",
+    TRUE ~ "Other"
+  ))
+
+# ---- B) Build Subpractice labels with Ns ----
+labs_sub_delta <- final_with_deltas %>%
+  count(Subpractice, name = "n") %>%
+  mutate(Subpractice_lab = paste0(Subpractice, " (n=", n, ")"))
+
+# -------------------------------------------------------------------------
+# ---- 1) Absolute EI (g CH4/kg product) by Subpractice ----
+# -------------------------------------------------------------------------
+labs_sub <- final_with_ei_all %>%
+  count(Subpractice, name = "n") %>%
+  mutate(Subpractice_lab = paste0(Subpractice, " (n=", n, ")"))
+
+plot_ei_sub <- final_with_ei_all %>%
+  left_join(labs_sub, by = "Subpractice") %>%
+  mutate(Subpractice_lab = fct_reorder(Subpractice_lab, EI_g_per_kg, median, na.rm = TRUE))
+
+ggplot(plot_ei_sub,
+       aes(x = Subpractice_lab, y = EI_g_per_kg, fill = Species_group)) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.3, position = position_dodge(width = 0.8)) +
+  stat_summary(fun = median, geom = "point",
+               shape = 23, size = 2.4, fill = "white", color = "black",
+               position = position_dodge(width = 0.8)) +
+  geom_jitter(aes(color = Species_group),
+              width = 0.15, alpha = 0.5, size = 1.2, show.legend = FALSE) +
+  coord_flip() +
+  labs(x = NULL, y = expression("Emission intensity (g CH"[4]*"/ kg product)"),
+       title = "Emission intensity by subpractice (colored by product)") +
+  scale_fill_brewer(palette = "Set2", name = "Product") +
+  scale_color_brewer(palette = "Set2", guide = "none") +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "right",
+        axis.text.y = element_text(size = 10),
+        plot.title = element_text(face = "bold"))
+```
+
+
+```{r echo=FALSE}
+# -------------------------------------------------------------------------
+# ---- 2) ΔEI (%) by Subpractice (all) ----
+# -------------------------------------------------------------------------
+plot_delta_all <- final_with_deltas %>%
+  left_join(labs_sub_delta, by = "Subpractice") %>%
+  mutate(Subpractice_lab = fct_reorder(Subpractice_lab, Delta_EI_pct, median, na.rm = TRUE))
+
+ggplot(plot_delta_all,
+       aes(x = Subpractice_lab, y = Delta_EI_pct, fill = Species_group)) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.3, position = position_dodge(width = 0.8)) +
+  stat_summary(fun = median, geom = "point",
+               shape = 23, size = 2.4, fill = "white", color = "black",
+               position = position_dodge(width = 0.8)) +
+  geom_jitter(aes(color = Species_group),
+              width = 0.15, alpha = 0.5, size = 1.2, show.legend = FALSE) +
+  coord_flip() +
+  labs(x = NULL, y = "Δ Emission intensity (% vs control)",
+       title = "Δ Emission intensity by subpractice (colored by product)") +
+  scale_fill_brewer(palette = "Set2", name = "Product") +
+  scale_color_brewer(palette = "Set2", guide = "none") +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "right",
+        axis.text.y = element_text(size = 10),
+        plot.title = element_text(face = "bold"))
+```
+
+
+```{r echo=FALSE}
+# -------------------------------------------------------------------------
+# ---- 3) ΔEI (%) by Subpractice (Addition only) ----
+# -------------------------------------------------------------------------
+plot_delta_add <- final_with_deltas %>%
+  filter(Practice == "Addition") %>%
+  left_join(labs_sub_delta, by = "Subpractice") %>%
+  mutate(Subpractice_lab = fct_reorder(Subpractice_lab, Delta_EI_pct, median, na.rm = TRUE))
+
+ggplot(plot_delta_add,
+       aes(x = Subpractice_lab, y = Delta_EI_pct, fill = Species_group)) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.3, position = position_dodge(width = 0.8)) +
+  stat_summary(fun = median, geom = "point",
+               shape = 23, size = 2.4, fill = "white", color = "black",
+               position = position_dodge(width = 0.8)) +
+  geom_jitter(aes(color = Species_group),
+              width = 0.15, alpha = 0.5, size = 1.2, show.legend = FALSE) +
+  coord_flip() +
+  labs(x = NULL, y = "Δ Emission intensity (% vs control)",
+       title = "Δ Emission intensity (Addition only) by subpractice") +
+  scale_fill_brewer(palette = "Set2", name = "Product") +
+  scale_color_brewer(palette = "Set2", guide = "none") +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "right",
+        axis.text.y = element_text(size = 10),
+        plot.title = element_text(face = "bold"))
+```
+
+
+```{r echo=FALSE}
+# -------------------------------------------------------------------------
+# ---- 4) ΔYield (%) by Subpractice (Addition only) ----
+# -------------------------------------------------------------------------
+ggplot(plot_delta_add,
+       aes(x = Subpractice_lab, y = Delta_Y_pct, fill = Species_group)) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.3, position = position_dodge(width = 0.8)) +
+  stat_summary(fun = median, geom = "point",
+               shape = 23, size = 2.4, fill = "white", color = "black",
+               position = position_dodge(width = 0.8)) +
+  geom_jitter(aes(color = Species_group),
+              width = 0.15, alpha = 0.5, size = 1.2, show.legend = FALSE) +
+  coord_flip() +
+  labs(x = NULL, y = "Δ Yield (% vs control)",
+       title = "Δ Yield by subpractice (Addition only)") +
+  scale_fill_brewer(palette = "Set2", name = "Product") +
+  scale_color_brewer(palette = "Set2", guide = "none") +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "right",
+        axis.text.y = element_text(size = 10),
+        plot.title = element_text(face = "bold"))
+```
+
+
+```{r echo=FALSE}
+# -------------------------------------------------------------------------
+# ---- 5) ΔEI (%) by Subpractice (Substitution only) ----
+# -------------------------------------------------------------------------
+plot_delta_subs <- final_with_deltas %>%
+  filter(Practice == "Substitution") %>%
+  left_join(labs_sub_delta, by = "Subpractice") %>%
+  mutate(Subpractice_lab = fct_reorder(Subpractice_lab, Delta_EI_pct, median, na.rm = TRUE))
+
+ggplot(plot_delta_subs,
+       aes(x = Subpractice_lab, y = Delta_EI_pct, fill = Species_group)) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.3, position = position_dodge(width = 0.8)) +
+  stat_summary(fun = median, geom = "point",
+               shape = 23, size = 2.4, fill = "white", color = "black",
+               position = position_dodge(width = 0.8)) +
+  geom_jitter(aes(color = Species_group),
+              width = 0.15, alpha = 0.5, size = 1.2, show.legend = FALSE) +
+  coord_flip() +
+  labs(x = NULL, y = "Δ Emission intensity (% vs control)",
+       title = "Δ Emission intensity (Substitution only) by subpractice") +
+  scale_fill_brewer(palette = "Set2", name = "Product") +
+  scale_color_brewer(palette = "Set2", guide = "none") +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "right",
+        axis.text.y = element_text(size = 10),
+        plot.title = element_text(face = "bold"))
+```
+
+
+```{r echo=FALSE}
+# -------------------------------------------------------------------------
+# ---- 6) ΔYield (%) by Subpractice (Substitution only) ----
+# -------------------------------------------------------------------------
+ggplot(plot_delta_subs,
+       aes(x = Subpractice_lab, y = Delta_Y_pct, fill = Species_group)) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.3, position = position_dodge(width = 0.8)) +
+  stat_summary(fun = median, geom = "point",
+               shape = 23, size = 2.4, fill = "white", color = "black",
+               position = position_dodge(width = 0.8)) +
+  geom_jitter(aes(color = Species_group),
+              width = 0.15, alpha = 0.5, size = 1.2, show.legend = FALSE) +
+  coord_flip() +
+  labs(x = NULL, y = "Δ Yield (% vs control)",
+       title = "Δ Yield by subpractice (Substitution only)") +
+  scale_fill_brewer(palette = "Set2", name = "Product") +
+  scale_color_brewer(palette = "Set2", guide = "none") +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "right",
+        axis.text.y = element_text(size = 10),
+        plot.title = element_text(face = "bold"))
+
+```
+
+
+## Diet-shift analysis at the paired-diet level
+
+This section extends the emission-intensity comparison to **paired diet shifts**, where both control and treatment diets are explicitly defined within the same experiment.  
+Unlike the earlier practice-level summaries, which aggregate all “Additions” or “Substitutions,” this analysis focuses on **direct A–B diet pairs** to capture how complete reformulation of rations influences methane efficiency.  
+The workflow integrates emission, yield, and diet-classification data to calculate emission intensity (EI) for each diet arm and then compute **ΔEI (%)** — the relative change between the two paired diets.  
+
+- **Emission intensity by diet shift vs. no change** — compares absolute CH₄ intensity (g CH₄ kg⁻¹ product) between diets classified as “shifted” and those with no modification, revealing whether reformulated diets systematically reduce emissions.  
+- **ΔEI (% vs. paired arm)** — quantifies the relative gain or loss in emission efficiency between paired diets, with negative values indicating mitigation effects.  
+
+Together, these figures provide a diet-level validation of ERA’s classification logic, showing whether observed shifts in ingredient composition correspond to measurable reductions in enteric methane intensity across livestock products.
+
+
+```{r echo=FALSE}
 # =====================================================================
 #   DIET SHIFT × EMISSION × YIELD ANALYSIS
 #   Goal: combine emission + yield + diet shift classifications
@@ -1260,7 +1405,10 @@ ggplot(final_with_ei_all_diet %>% filter(arm_role == "B"),
   labs(x = NULL, y = expression("Emission intensity (g CH"[4]*"/ kg product)"),
        title = "Emission intensity by diet shift vs no change") +
   theme_minimal(base_size = 12) + theme(legend.position = "none")
+```
 
+
+```{r echo=FALSE}
 # ---- B) ΔEI (%) by Practice ----
 ggplot(final_with_deltas_diet, aes(x = Practice, y = Delta_EI_pct, fill = Practice)) +
   geom_hline(yintercept = 0, linetype = 2, color = "gray50") +
@@ -1271,7 +1419,20 @@ ggplot(final_with_deltas_diet, aes(x = Practice, y = Delta_EI_pct, fill = Practi
   labs(x = NULL, y = expression(Delta*" Emission intensity (% vs paired arm)"),
        title = "Δ Emission intensity by diet shift practice") +
   theme_minimal(base_size = 12) + theme(legend.position = "none")
+```
+## Subpractice-level effects within diet shifts
 
+This section disaggregates the **diet shift** category to explore how specific reformulation strategies—such as increasing concentrate proportion, improving forage quality, or balancing nutrients—affect methane emission intensity and productivity outcomes.  
+Each *subpractice* represents a distinct dietary change implemented between paired diets (A vs. B) within the same experiment.
+
+- **Emission intensity by subpractice** — shows the absolute CH₄ intensity (g CH₄ kg⁻¹ product) for each diet shift subcategory, reordered by their median values to highlight which nutritional strategies are most emission-efficient.  
+- **ΔEI (% vs. paired arm)** — quantifies the relative change in emission intensity between paired diets for each subpractice, with negative medians indicating consistent CH₄ mitigation effects.  
+- **ΔYield (% vs. paired arm)** — evaluates whether emission reductions coincide with productivity changes, identifying trade-offs or co-benefits between performance and mitigation.  
+
+Together, these plots pinpoint which types of diet shifts most effectively lower methane intensity while sustaining—or enhancing—animal productivity.
+
+
+```{r echo=FALSE}
 # ---- C) EI by Subpractice (Diet shift only) ----
 labs_sub_diet <- final_with_ei_all_diet %>%
   filter(Practice == "Diet shift") %>%
@@ -1282,7 +1443,10 @@ plot_ei_sub_diet <- final_with_ei_all_diet %>%
   filter(Practice == "Diet shift") %>%
   left_join(labs_sub_diet, by = "Subpractice") %>%
   mutate(Subpractice_lab = fct_reorder(Subpractice_lab, EI_g_per_kg, median, na.rm = TRUE))
+```
 
+
+```{r echo=FALSE}
 ggplot(plot_ei_sub_diet,
        aes(x = Subpractice_lab, y = EI_g_per_kg, fill = Subpractice)) +
   geom_boxplot(alpha = 0.6, outlier.alpha = 0.35) +
@@ -1304,7 +1468,10 @@ plot_delta_sub_diet <- final_with_deltas_diet %>%
   filter(Practice == "Diet shift") %>%
   left_join(labs_sub_delta_diet, by = "Subpractice") %>%
   mutate(Subpractice_lab = fct_reorder(Subpractice_lab, Delta_EI_pct, median, na.rm = TRUE))
+```
 
+
+```{r echo=FALSE}
 ggplot(plot_delta_sub_diet,
        aes(x = Subpractice_lab, y = Delta_EI_pct, fill = Subpractice)) +
   geom_hline(yintercept = 0, linetype = 2, color = "gray50") +
@@ -1316,7 +1483,10 @@ ggplot(plot_delta_sub_diet,
   labs(x = NULL, y = "Δ Emission intensity (% vs paired arm)",
        title = "Δ Emission intensity by subpractice (diet shift only)") +
   theme_minimal(12) + theme(legend.position = "none")
+```
 
+
+```{r echo=FALSE}
 # ---- E) ΔYield (%) by Subpractice ----
 ggplot(plot_delta_sub_diet,
        aes(x = Subpractice_lab, y = Delta_Y_pct, fill = Subpractice)) +
@@ -1333,10 +1503,9 @@ ggplot(plot_delta_sub_diet,
 
 
 ```
-## number of papers 
 
 ```{r include=FALSE}
-
+## number of papers
 # ─────────────────────────────────────────────────────────────
 
 
