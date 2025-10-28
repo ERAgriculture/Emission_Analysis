@@ -878,6 +878,59 @@ missing_unit_feed_intake<- merged_metadata$Data.Out %>%
          ED.Mean.T, ED.Error, Out.Unit, Out.Subind,is_entire_diet,Source,Out.Code.Joined) %>%
   filter(Out.Subind == "Feed Intake") %>%
   filter(is.na(Out.Unit))
+
+#correection of errors ientitief by below script on intakes units suspicious 
+# ─────────────────────────────────────────────────────────────
+#  PRE-CLEANING: Fix known feed-intake unit inconsistencies
+# ─────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────
+#  PRE-CLEANING: Fix known feed-intake unit inconsistencies
+# ─────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────
+#  PRE-CLEANING (applied directly to merged_metadata$Data.Out)
+# ─────────────────────────────────────────────────────────────
+
+merged_metadata$Data.Out <- merged_metadata$Data.Out %>%
+  mutate(
+    Out.Unit = tolower(trimws(Out.Unit))
+  ) %>%
+  mutate(
+    # AG0051: feed intake units should be kg/day (values 8–9 kg realistic)
+    Out.Unit = if_else(
+      B.Code == "AG0051" & str_detect(Out.Unit, "^g")&  str_detect(Out.Code.Joined, "^Feed Intake"),
+      "kg/individual/day", Out.Unit
+    ),
+
+    # NN0212: entire-diet feed intake given in g/day (~70 g/day realistic)
+    Out.Unit = if_else(
+      B.Code == "NN0212" & str_detect(Out.Unit, "^g") &  str_detect(Out.Code.Joined, "^Feed Intake"),
+      "g dm/kg body weight (0.75)", Out.Unit
+    ),
+
+    # NN0217: some rows use kg/day but actually g/kg metabolic weight
+    Out.Unit = case_when(
+      B.Code == "NN0217" & str_detect(Out.Unit, "kg dm/individual/day") &  str_detect(Out.Code.Joined, "^Feed Intake") ~
+        "g dm/kg body weight (0.75)/individual/day",
+      TRUE ~ Out.Unit
+    ),
+
+    # Generic cleanup for all cases
+    Out.Unit = str_replace_all(Out.Unit, "dm\\s*/", "dm/"),
+    Out.Unit = str_replace_all(Out.Unit, "//", "/"),
+    Out.Unit = str_trim(Out.Unit)
+  )
+
+# ── Sanity check on corrected records ─────────────────────────
+merged_metadata$Data.Out %>%
+  filter(B.Code %in% c("AG0051", "NN0212", "NN0217"),
+         Out.Subind == "Feed Intake") %>%
+  select(B.Code, A.Level.Name, ED.Mean.T, Out.Unit) %>%
+  arrange(B.Code) %>%
+  print(n = Inf)
+
+
+
+
 ```
 
 
@@ -887,7 +940,7 @@ missing_unit_feed_intake<- merged_metadata$Data.Out %>%
 
 feed_intake <- merged_metadata$Data.Out %>%
   select(B.Code, A.Level.Name, ED.Intake.Item, ED.Intake.Item.Raw,
-         ED.Mean.T, ED.Error, Out.Unit, Out.Subind,
+         ED.Mean.T, ED.Error, Out.Unit, Out.Subind,P.Product,
          is_entire_diet, is_group, T.Animals) %>%
   filter(Out.Subind == "Feed Intake") %>%
   filter(!is.na(ED.Mean.T)) %>%
@@ -1102,48 +1155,18 @@ suspicious_feed_intake <- feed_intake %>%
       TRUE ~ NA_character_
     )
   ) %>% 
-  filter(!is.na(flag)) %>% 
-  select(B.Code, A.Level.Name, ED.Mean.T,
-         Out.Unit.Amount, Out.Unit.Time, Out.Unit.Animals, flag)
+  filter(!is.na(flag))%>%
+  filter(P.Product %in% c("Cattle","Sheep","Goat"))%>%
+  filter(is_entire_diet=="TRUE")
 
 print(suspicious_feed_intake)
 
 
-low_intake_codes <- feed_intake %>% 
-  filter(
-    # (a) < 0.1 kg / day / individual
-    (Out.Unit.Amount %in% c("kg", "kg dm") &
-     Out.Unit.Time   == "day" &
-     Out.Unit.Animals == "individual" &
-     ED.Mean.T < 0.1) |
-    
-    # (b) 1–20 g reported in gram units
-    (Out.Unit.Amount %in% c("g", "g dm") &
-     ED.Mean.T >= 1 & ED.Mean.T <= 20)
-  ) %>% 
-  distinct(B.Code) %>%           # keep each code only once
-  pull()                         # return as a plain character vector
 
-low_intake_codes
 
 
 ```
 
-Some papers were identified with errors. This section corrects those error if they are still present before the next update of the data. 
-
-
-```{r}
-
-# Step: Convert suspiciously high kg values that are likely mislabelled g
-feed_intake <- feed_intake %>%
-  mutate(
-    Out.Unit.Amount = case_when(
-      Out.Unit.Amount == "kg" & Out.Unit.Animals == "individual" & Out.Unit.Time == "day" & ED.Mean.T > 50 ~ "g",  # correct mislabeling
-      TRUE ~ Out.Unit.Amount
-    )
-  )
-
-```
 
 
 #### 2.4.3) Use of feed intake for ingredient amounts

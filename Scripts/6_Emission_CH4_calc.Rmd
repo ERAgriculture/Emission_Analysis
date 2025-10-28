@@ -681,7 +681,37 @@ GE_reconstructed_clean <- GE_all_reconstructed %>%
     source
   )
 
-GE_combined <- bind_rows(GE_all_clean, GE_reconstructed_clean, GE_diet_reconstructed) %>%
+# ───────────────────────────────────────────────
+# 1️⃣ Standardize Total_Amount units to kg
+# ───────────────────────────────────────────────
+
+convert_to_kg <- function(df) {
+  df %>%
+    mutate(
+      Total_Amount = case_when(
+        D.Unit.Amount %in% c("g", "gram", "grams") ~ Total_Amount / 1000,
+        D.Unit.Amount %in% c("mg", "milligram", "milligrams") ~ Total_Amount / 1e6,
+        TRUE ~ Total_Amount  # already in kg or %
+      ),
+      D.Unit.Amount = case_when(
+        D.Unit.Amount %in% c("g", "gram", "grams", "mg", "milligram", "milligrams") ~ "kg",
+        TRUE ~ D.Unit.Amount
+      )
+    )
+}
+
+GE_all_clean_std <- convert_to_kg(GE_all_clean)
+GE_reconstructed_clean_std <- convert_to_kg(GE_reconstructed_clean)
+GE_diet_reconstructed_std <- convert_to_kg(GE_diet_reconstructed)
+
+# ───────────────────────────────────────────────
+# 2️⃣ Now safely combine sources
+# ───────────────────────────────────────────────
+GE_combined <- bind_rows(
+  GE_all_clean_std,
+  GE_reconstructed_clean_std,
+  GE_diet_reconstructed_std
+) %>%
   mutate(
     source_priority = case_when(
       source == "GE_all" ~ 1,
@@ -696,11 +726,11 @@ GE_combined <- bind_rows(GE_all_clean, GE_reconstructed_clean, GE_diet_reconstru
   select(-has_CH4, -source_priority)
 
 
+
 # Define non-emitting or pre-ruminant stages
 non_emitting_stages <- c(
    "Kid", "Kid Male", "Calf Female", "Weaned Calf Male",
-  "Young Male", "Young Female", 
-   "Intact Kid Male"
+  "Young Male", "Young Female", "Calf Male","Intact Kid Male","Young","Castrate Kid Male","Kid Female"
 )
 
 # Filter them out

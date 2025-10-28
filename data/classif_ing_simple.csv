@@ -7,840 +7,844 @@
 "6","acacia brevispica leaves crushed dried","Good forage",NA
 "7","acacia brevispica leaves dried","Good forage",NA
 "8","acacia brevispica pods dried","Good forage",NA
-"9","acacia etbaica fruits dried","Good forage",NA
-"10","acacia karroo leaves dried","Good forage",NA
-"11","acacia karroo leaves dried ground","Good forage",NA
-"12","acacia mearnsii dried","Good forage",NA
-"13","acacia mearnsii dried ground","Poor forage",NA
-"14","acacia mearnsii leaves","Good forage",NA
-"15","acacia nilotica","High-starch",NA
-"16","acacia nilotica leaves dried","Good forage",NA
-"17","acacia nilotica leaves dried ground","High-starch",NA
-"18","acacia nilotica pods dried","High-starch",NA
-"19","acacia polyacantha leaves dried ground","Good forage",NA
-"20","acacia saligna dried","Good forage",NA
-"21","acacia saligna leaves and soft twig dried","Poor forage",NA
-"22","acacia senegal leaves wilted","High-starch",NA
-"23","acacia senegal pods dried","Good forage",NA
-"24","acacia seyal wilted","High-starch",NA
-"25","acacia sieberiana","Good forage",NA
-"26","acacia sieberiana dried ensiled ground","Good forage",NA
-"27","acacia sieberiana pods","Poor forage",NA
-"28","acacia sieberiana pods dried ground","Good forage",NA
-"29","acacia tortilis","High-fat",NA
-"30","acacia tortilis fruits dried","Good forage",NA
-"31","acacia tortilis leaves dried ground","High-fat",NA
-"32","acacia tortilis leaves wilted","High-starch",NA
-"33","acacia tortilis pods dried","Good forage",NA
-"34","acacia tortilis pods ground","Good forage",NA
-"35","actipal hp 1","Mineral/Vitamin",NA
-"36","adansonia digitata seed cake","Protein",NA
-"37","adansonia digitata seed cake decorticated ground screw press","Protein",NA
-"38","adansonia digitata seed cake dried fermented ground","Protein",NA
-"39","adansonia digitata seed dried fermented ground","Protein",NA
-"40","adansonia digitata seed ground","Protein",NA
-"41","african palm larvae dried ground","Protein",NA
-"42","african yam bean dried ground","High-fat",NA
-"43","afzelia africana leaves and twigs","Good forage",NA
-"44","albizia harveyi dried","Poor forage",NA
-"45","albizia lebbeck","Good forage",NA
-"46","albizia lebbeck leaves ground","Good forage",NA
-"47","alchornea cordifolia","Good forage",NA
-"48","alfalfa","Good forage",NA
-"49","alfalfa dried","Good forage",NA
-"50","alfalfa dried ground","Good forage",NA
-"51","alfalfa ground","Good forage",NA
-"52","alkali","Mineral/Vitamin",NA
-"53","amaranthus cruentus leaves ground","Good forage",NA
-"54","ammonium chloride","Mineral/Vitamin",NA
-"55","ammonium sulphate","Mineral/Vitamin",NA
-"56","anacardium occidentale leaves","Good forage",NA
-"57","andropogon gayanus","Poor forage",NA
-"58","andropogon gayanus ensiled wilted","Good forage",NA
-"59","andropogon tectorum","Good forage",NA
-"60","annona senegalensis leaves and twigs wilted","Good forage",NA
-"61","anti fungi","Mineral/Vitamin",NA
-"62","aquanutro abalone grower","Mineral/Vitamin",NA
-"63","argan pulp","High-starch",NA
-"64","argan seed cake","High-fat",NA
-"65","asperozym fibrolytic enzymes","Mineral/Vitamin",NA
-"66","aspilia africana","Good forage",NA
-"67","atella","Poor forage",NA
-"68","atella dried","Poor forage",NA
-"69","atella fermented","Good forage",NA
-"70","atriplex halimus","Good forage",NA
-"71","atriplex halimus leaves and twigs","Good forage",NA
-"72","atriplex nummularia","Good forage",NA
-"73","atriplex nummularia dried","Good forage",NA
-"74","atriplex nummularia dried ground","Poor forage",NA
-"75","atriplex nummularia leaves and twigs","Good forage",NA
-"76","avatec","Mineral/Vitamin",NA
-"77","avocado","Poor forage",NA
-"78","axtra xap","Mineral/Vitamin",NA
-"79","azadirachta indica leaves wilted","Good forage",NA
-"80","baby corn stalk ensiled","Poor forage",NA
-"81","balanites aegyptiaca dried","Good forage",NA
-"82","balanites aegyptiaca leaves ground","Good forage",NA
-"83","bamboo leaves dried","Poor forage",NA
-"84","bamboo leaves dried ensiled molasse treated urea treated","Poor forage",NA
-"85","bambusa balcooa leaves dried","Good forage",NA
-"86","bambusa vulgaris","Poor forage",NA
-"87","banana leaves","Poor forage",NA
-"88","banana leaves dried","Poor forage",NA
-"89","barley","High-starch",NA
-"90","barley dried","High-starch",NA
-"91","barley grain","High-starch",NA
-"92","barley grain sprouted","High-starch",NA
-"93","barley ground","High-starch",NA
-"94","barley offal","High-fat",NA
-"95","barley straw","Poor forage",NA
-"96","barley straw fermented","Poor forage",NA
-"97","beef survival meal","Protein",NA
-"98","beet fodder ensiled","Good forage",NA
-"99","beet pulp dried","Good forage",NA
-"100","beetroot discards dried","High-starch",NA
-"101","bentonite","Mineral/Vitamin",NA
-"102","berchemia discolor leaves crushed dried","Good forage",NA
-"103","bicarbonate of soda","Mineral/Vitamin",NA
-"104","binder","Mineral/Vitamin",NA
-"105","biscuit waste","High-starch",NA
-"106","biscuit waste dried ground","High-starch",NA
-"107","black cumin seed","Poor forage",NA
-"108","black cumin seed cake crushed dried","High-fat",NA
-"109","black cumin seed ground","High-fat",NA
-"110","black soldier fly larvae dried ground","Protein",NA
-"111","blood dried ground heated","Protein",NA
-"112","blood ground","Protein",NA
-"113","blue lupin","Protein",NA
-"114","blue lupin grain","Protein",NA
-"115","bone","Mineral/Vitamin",NA
-"116","bone crushed","Mineral/Vitamin",NA
-"117","bone ground","Mineral/Vitamin",NA
-"118","bracharia decumbens dried","Poor forage",NA
-"119","bracharia dried","Poor forage",NA
-"120","bracharia dried ground","Poor forage",NA
-"121","brachiaria brizantha","Poor forage",NA
-"122","brachiaria brizantha dried","Poor forage",NA
-"123","brachiaria hybrid dried","Good forage",NA
-"124","brachiaria ruziziensis dried","Poor forage",NA
-"125","bread waste","High-starch",NA
-"126","bread waste dried","High-starch",NA
-"127","breadfruit dried ground","High-starch",NA
-"128","brewers by product","Poor forage",NA
-"129","brewers by product dried ground","Poor forage",NA
-"130","brewers grain","Poor forage",NA
-"131","brewers grain dried","Good forage",NA
-"132","brown fish ground","Protein",NA
-"133","cabbage discards","Good forage",NA
-"134","cabbage discards dried","High-starch",NA
-"135","calcium carbonate","Mineral/Vitamin",NA
-"136","calcium oxide","Mineral/Vitamin",NA
-"137","calcium phosphate","Mineral/Vitamin",NA
-"138","calliandra calothyrsus","Poor forage",NA
-"139","calliandra calothyrsus leaves","Good forage",NA
-"140","calliandra calothyrsus leaves dried","High-starch",NA
-"141","calliandra calothyrsus leaves dried ensiled","Poor forage",NA
-"142","calliandra calothyrsus leaves dried ground","Good forage",NA
-"143","canola cake","Protein",NA
-"144","canola ground","High-fat",NA
-"145","carissa edulis","Good forage",NA
-"146","carrot waste","High-starch",NA
-"147","cashew shell","Poor forage",NA
-"148","cashew shell boiled crushed","High-fat",NA
-"149","cashew shell crushed dried","Poor forage",NA
-"150","cashew shell ground","High-fat",NA
-"151","cassava ground","High-starch",NA
-"152","cassava leaves","Good forage",NA
-"153","cassava leaves and twigs dried","Good forage",NA
-"154","cassava leaves dried","Good forage",NA
-"155","cassava leaves dried ground","Good forage",NA
-"156","cassava leaves ground","Good forage",NA
-"157","cassava offal","High-starch","Nearest-window"
-"158","cassava peel","Good forage",NA
-"159","cassava peel crushed","High-starch",NA
-"160","cassava peel crushed urea treated","High-starch",NA
-"161","cassava peel dried","Good forage",NA
-"162","cassava peel dried ensiled wilted","Good forage",NA
-"163","cassava peel dried ground","Good forage",NA
-"164","cassava peel dried wilted","Good forage",NA
-"165","cassava peel ensiled","High-starch",NA
-"166","cassava peel enzyme treated ground","High-starch",NA
-"167","cassava peel ground","Good forage",NA
-"168","cassava peel urea treated","High-starch",NA
-"169","cassava sieviate dried fermented ground","High-starch",NA
-"170","cassava sieviate dried ground","High-starch",NA
-"171","cassava starch","High-starch",NA
-"172","cassava starch residue dried fermented ground","High-starch",NA
-"173","cassava tuber dried grated fermented peeled","High-starch",NA
-"174","cassava tuber dried ground","High-starch",NA
-"175","cassava waste","High-starch",NA
-"176","cassava waste dried fermented","High-starch",NA
-"177","catha edulis residue","Good forage",NA
-"178","catha edulis residue dried","Good forage",NA
-"179","catha edulis residue ensiled","Poor forage",NA
-"180","cellulose","Mineral/Vitamin",NA
-"181","cellulose ground","Mineral/Vitamin",NA
-"182","cement","Mineral/Vitamin",NA
-"183","cenchrus ciliaris","Poor forage",NA
-"184","cenchrus ciliaris dried","Poor forage",NA
-"185","centrosema pubescens dried","Good forage",NA
-"186","centrosema pubescens dried ground","Good forage",NA
-"187","centrosema pubescens leaves dried ground","Poor forage",NA
-"188","ceratonia siliqua ground","High-starch",NA
-"189","cgs silage ensiled","Good forage",NA
-"190","chalk","Mineral/Vitamin",NA
-"191","chamaecytisus palmensis dried","Good forage",NA
-"192","chamaecytisus palmensis leaves dried","Good forage",NA
-"193","chamomile flower by product","Good forage",NA
-"194","chembind","Mineral/Vitamin",NA
-"195","chicken ground","Protein",NA
-"196","chicken manure","Good forage",NA
-"197","chicken manure dried","Good forage",NA
-"198","chicken manure dried ground","Good forage",NA
-"199","chicken offal dried ground","High-fat",NA
-"200","chloris gayana","Poor forage",NA
-"201","chloris gayana dried","Poor forage",NA
-"202","chloris gayana dried ground","Poor forage",NA
-"203","choline cloride","Mineral/Vitamin",NA
-"204","choline cloride ground","Mineral/Vitamin",NA
-"205","chromium oxide","Mineral/Vitamin",NA
-"206","chromolaena odorata leaves dried ground","Good forage",NA
-"207","citrus aurantifolia dried ground","High-starch",NA
-"208","citrus pulp","High-starch",NA
-"209","citrus pulp alkali treated dried fermented","High-starch",NA
-"210","clove basil leaves extract dried ethanol treated ground","Mineral/Vitamin",NA
-"211","clupeid fish ground","Protein",NA
-"212","cochlospermum planchonii rhizomes dried ground","High-starch",NA
-"213","cocoa bean shell dried ground","Good forage",NA
-"214","cocoa pods husk boiled dried ground","Poor forage",NA
-"215","cocoa pods husk ensiled dried urea treated","Poor forage",NA
-"216","coconut cake ground","High-fat",NA
-"217","cod liver oil","High-fat",NA
-"218","coffee ground roasted","High-starch",NA
-"219","coffee leaves dried","Good forage",NA
-"220","coffee pulp","Good forage",NA
-"221","commelina benghalensis dried","Good forage",NA
-"222","commelina imberbis dried","Good forage",NA
-"223","commercial feed","High-starch",NA
-"224","common bean crushed","High-starch",NA
-"225","common bean straw","Poor forage",NA
-"226","common bean tops","Good forage",NA
-"227","concentrate","Good forage",NA
-"228","cotton seed","High-fat",NA
-"229","cotton seed cake","High-fat",NA
-"230","cotton seed cake decorticated","Good forage",NA
-"231","cotton seed cake dried","High-fat",NA
-"232","cotton seed cake ground","High-fat",NA
-"233","cotton seed ground","High-fat",NA
-"234","cowpea dried","Good forage",NA
-"235","cowpea haulm crushed","Good forage",NA
-"236","cowpea haulm dried","Good forage",NA
-"237","cowpea haulm dried ground","Good forage",NA
-"238","cowpea husk","Poor forage",NA
-"239","cowpea husk crushed","Poor forage",NA
-"240","cowpea husk ground","Poor forage",NA
-"241","cowpea leaves","Good forage",NA
-"242","cowpea residue","Good forage",NA
-"243","cowpea vine","Good forage",NA
-"244","crotalaria ochroleuca dried","Good forage",NA
-"245","cynadon dactylon dried","Poor forage",NA
-"246","cynodon dried","Poor forage",NA
-"247","cynodon nlemfuensis dried","Poor forage",NA
-"248","dactyloctenium aegyptium","Poor forage",NA
-"249","daniellia oliveri leaves","Good forage",NA
-"250","daniellia oliveri leaves decorticated dried ground roasted","Good forage",NA
-"251","daniellia oliveri leaves dried ground","High-fat",NA
-"252","date","High-starch",NA
-"253","date cull dried ground","High-starch",NA
-"254","date ground","High-starch",NA
-"255","date leaves","Poor forage",NA
-"256","date leaves dried","Poor forage",NA
-"257","date leaves ensiled sprouted wilted","Poor forage",NA
-"258","date leaves ensiled wilted","Poor forage",NA
-"259","date leaves wilted","Poor forage",NA
-"260","date palm fronds ground","Poor forage",NA
-"261","date seed ground","Poor forage",NA
-"262","delonix elata dried","Good forage",NA
-"263","delonix regia seed alkali treated dried fermented ground","Good forage",NA
-"264","delonix regia seed dried ground roasted","High-starch",NA
-"265","delonix regia seed ground","High-starch",NA
-"266","delonix regia seed ground roasted","High-starch",NA
-"267","desmodium distortum","Good forage",NA
-"268","desmodium dried","Poor forage",NA
-"269","desmodium intortum dried","Good forage",NA
-"270","desmodium uncinatum","Good forage",NA
-"271","dextrin","Mineral/Vitamin",NA
-"272","dicalcium phosphate","Mineral/Vitamin",NA
-"273","dichrostachys cinerea","Good forage",NA
-"274","dichrostachys cinerea dried ground","Good forage",NA
-"275","dichrostachys cinerea fruits dried","Good forage",NA
-"276","distillers grain dried","Protein",NA
-"277","dodonaea angustifolia leaves dried","Good forage",NA
-"278","dvlm dmlm","Mineral/Vitamin",NA
-"279","eclipta alba leaves dried","Good forage",NA
-"280","effective microbes solution","Mineral/Vitamin",NA
-"281","enterolobium cyclocarpum crushed wilted","Good forage",NA
-"282","enzyme","Mineral/Vitamin",NA
-"283","eragrostis curvula","Poor forage",NA
-"284","eragrostis curvula dried","Poor forage",NA
-"285","eragrostis curvula dried ground","Good forage",NA
-"286","erythrina abyssinica wilted","Good forage",NA
-"287","erythrina brucei leaves dried","Good forage",NA
-"288","euclea crispa","Good forage",NA
-"289","euclea schimperi","Poor forage",NA
-"290","faidherbia albida","Good forage",NA
-"291","faidherbia albida dried","Good forage",NA
-"292","faidherbia albida pods dried ground soaked","Good forage",NA
-"293","faidherbia albida pods ground","Good forage",NA
-"294","fava bean","Poor forage",NA
-"295","feather boiled dried ground","Protein",NA
-"296","feather ground","Protein",NA
-"297","ficus exasperata","Good forage",NA
-"298","ficus exasperata dried ground","Good forage",NA
-"299","ficus gnaphalocarpa leaves and twigs","Good forage",NA
-"300","ficus polita","Good forage",NA
-"301","ficus sur fruits crushed dried","High-starch",NA
-"302","ficus sur fruits dried ground","High-starch",NA
-"303","ficus thonningii leaves dried","Good forage",NA
-"304","ficus thonningii leaves ground","Good forage",NA
-"305","finger millet straw","Poor forage",NA
-"306","finger millet straw effective microbe em treatment ensiled","Poor forage",NA
-"307","finger millet straw ensiled urea treated","Poor forage",NA
-"308","finisher diet","High-starch",NA
-"309","fish boiled dried ground","Protein",NA
-"310","fish boiled ground","Protein",NA
-"311","fish dried ground","Protein",NA
-"312","fish ground","Protein",NA
-"313","fish ground roasted","Protein",NA
-"314","fish oil","High-fat",NA
-"315","fish oil heated","High-fat",NA
-"316","fish processing waste","Protein",NA
-"317","fish processing waste ground","Protein",NA
-"318","flaxseed","High-fat",NA
-"319","flaxseed oil","High-fat",NA
-"320","flaxseed oil cold pressed","High-fat",NA
-"321","fluted pumpkin leaves dried ground","High-fat",NA
-"322","fluted pumpkin leaves ground","Good forage",NA
-"323","food waste dried","High-starch",NA
-"324","fossil shell ground","Mineral/Vitamin",NA
-"325","fumaric acid","Mineral/Vitamin",NA
-"326","garcinia kola seeds dried ground","Protein",NA
-"327","garlic oil","High-fat",NA
-"328","giant snail boiled dried ground","Protein",NA
-"329","gliciridia sepium ground","Good forage",NA
-"330","gliciridia sepium leaves","Good forage",NA
-"331","gliciridia sepium leaves dried","Good forage",NA
-"332","gliciridia sepium leaves dried ground","Good forage",NA
-"333","gliciridia sepium leaves ground","Good forage",NA
-"334","gliciridia sepium leaves wilted","Good forage",NA
-"335","gliricidia sepium leaves and soft twig","Poor forage",NA
-"336","glycerol","High-starch",NA
-"337","gmelina arborea","Good forage",NA
-"338","gmelina arborea leaves","Good forage",NA
-"339","gmelina arborea leaves dried ground","Good forage",NA
-"340","gmelina arborea leaves ground","Good forage",NA
-"341","gmelina arborea leaves wilted","Good forage",NA
-"342","grape seeds","High-fat",NA
-"343","grass dried","Poor forage",NA
-"344","grass dried ensiled","Poor forage",NA
-"345","grass pea haulm","Good forage",NA
-"346","green bean vine dried","Good forage",NA
-"347","grewia similis dried","Good forage",NA
-"348","grewia spp dried","Good forage",NA
-"349","groundnut cake","Protein",NA
-"350","groundnut haulm","Poor forage",NA
-"351","groundnut haulm crushed","High-fat",NA
-"352","groundnut haulm dried","Poor forage",NA
-"353","groundnut haulm ensiled","Good forage",NA
-"354","groundnut hull","Poor forage",NA
-"355","groundnut hull crushed dried","Poor forage",NA
-"356","groundnut oil","High-fat",NA
-"357","groundnut residue","Good forage",NA
-"358","groundnut straw","Good forage",NA
-"359","guar gum ground","Protein",NA
-"360","haricot bean vine","Poor forage",NA
-"361","hermosa sidoides dried","Good forage",NA
-"362","hevea brasiliensis seed cake boiled dried ground","High-fat",NA
-"363","hibiscus seed ground","Good forage",NA
-"364","hominy","High-starch",NA
-"365","hominy ground","High-starch",NA
-"366","housefly maggot dried ground","High-fat",NA
-"367","hsb silage ensiled","Good forage",NA
-"368","imported concentrate","Protein",NA
-"369","jackfruit","High-starch",NA
-"370","jackfruit seed dried fermented ground","High-starch",NA
-"371","jackfruit seed dried ground","High-starch",NA
-"372","jatropha curcas cake defatted ground","Good forage",NA
-"373","jatropha curcas cake dried ground","High-fat",NA
-"374","jatropha curcas cake ground","Protein",NA
-"375","jatropha curcas leaves dried ground","Good forage",NA
-"376","jatropha curcas seed ground","Protein",NA
-"377","jojoba enzyme treated ground","Good forage",NA
-"378","jojoba ground","Good forage",NA
-"379","khat leftover crushed dried","Poor forage",NA
-"380","kochia scoparia","Poor forage",NA
-"381","l tryptophan","Mineral/Vitamin",NA
-"382","lablab purpureus","Good forage",NA
-"383","lablab purpureus crushed dried","Good forage",NA
-"384","lablab purpureus dried","Good forage",NA
-"385","lablab purpureus dried ground","Good forage",NA
-"386","lablab purpureus ensiled","Good forage",NA
-"387","lablab purpureus haulm dried","Good forage",NA
-"388","lablab purpureus leaves dried","Good forage",NA
-"389","lablab purpureus stover","Good forage",NA
-"390","lake shells","Good forage",NA
-"391","lamb and ewe pellet","High-starch",NA
-"392","lantana camara leaves dried ground","Good forage",NA
-"393","lard","High-fat",NA
-"394","layer s meal","High-starch",NA
-"395","lemna dried","Good forage",NA
-"396","lemon peel essential oil","High-fat",NA
-"397","lentil screening","High-starch",NA
-"398","leucaena leaves dried","Good forage",NA
-"399","leucaena leucocephala","Good forage",NA
-"400","leucaena leucocephala dried","Good forage",NA
-"401","leucaena leucocephala dried ground","Good forage",NA
-"402","leucaena leucocephala leaves","Good forage",NA
-"403","leucaena leucocephala leaves dried","Good forage",NA
-"404","leucaena leucocephala leaves dried ensiled","Good forage",NA
-"405","leucaena leucocephala leaves dried ground","Good forage",NA
-"406","leucaena leucocephala leaves ground","Good forage",NA
-"407","leucaena leucocephala leaves wilted","Good forage",NA
-"408","leucaena leucocephala wilted","Good forage",NA
-"409","leucaena pallida","Good forage",NA
-"410","leucaena pallida dried","Good forage",NA
-"411","leucaena pallida leaves dried","Good forage",NA
-"412","lima bean vein dried","Good forage",NA
-"413","lime","Mineral/Vitamin",NA
-"414","linseed cake","High-fat",NA
-"415","linseed cake ground","High-fat",NA
-"416","linseed ground","High-fat",NA
-"417","lsb silage ensiled","Good forage",NA
-"418","lysine","Mineral/Vitamin",NA
-"419","lysine hcl","Mineral/Vitamin",NA
-"420","macadamia cake","High-fat",NA
-"421","macroptilium atropurpureum","Poor forage",NA
-"422","macroptilium atropurpureum dried ground","Good forage",NA
-"423","macroptilium atropurpureum leaves dried ensiled","Good forage",NA
-"424","macrotyloma axillare dried","Good forage",NA
-"425","magnesium oxide","Mineral/Vitamin",NA
-"426","maize","High-starch",NA
-"427","maize wheat offal","Good forage",NA
-"428","maize cob ensiled","Poor forage",NA
-"429","maize cob enzyme treated ground","Poor forage",NA
-"430","maize cob ground","Poor forage",NA
-"431","maize cracked","High-starch",NA
-"432","maize crushed","High-starch",NA
-"433","maize ensiled","Good forage",NA
-"434","maize ensiled inoculated","Good forage",NA
-"435","maize germ","High-fat",NA
-"436","maize germ ground","High-fat",NA
-"437","maize gluten","Protein",NA
-"438","maize gluten ground","Protein",NA
-"439","maize grain","High-starch",NA
-"440","maize grain crushed","High-starch",NA
-"441","maize grain ground","High-starch",NA
-"442","maize ground","High-starch",NA
-"443","maize husk dried ground","Poor forage",NA
-"444","maize leaves dried","Poor forage",NA
-"445","maize offal","Good forage",NA
-"446","maize offal alkali treated ground","High-starch","Nearest-window"
-"447","maize offal dried","Good forage",NA
-"448","maize offal dried ground","Good forage",NA
-"449","maize offal ground","Good forage",NA
-"450","maize oil","High-fat",NA
-"451","maize starch","High-starch",NA
-"452","maize stover","Poor forage",NA
-"453","maize stover ensiled","Poor forage",NA
-"454","maize stover sprouted","Poor forage",NA
-"455","maize stover urea treated","Poor forage",NA
-"456","maize straw","Poor forage",NA
-"457","maize straw dried ensiled ground urea treated","Poor forage",NA
-"458","maize straw dried ground","Poor forage",NA
-"459","maize straw ensiled urea treated wilted","Poor forage",NA
-"460","maize straw molasses treated urea treated","Poor forage",NA
-"461","maize straw urea treated","Poor forage",NA
-"462","maize whole ensiled","Good forage",NA
-"463","malt sprout","Good forage",NA
-"464","mangifera indica leaves","Good forage",NA
-"465","mango","Good forage",NA
-"466","mango seed crushed dried","High-starch",NA
-"467","mango seed dried ground","High-starch",NA
-"468","mango seed kernel","High-fat",NA
-"469","mango seed kernel dried ground","High-fat",NA
-"470","marula kernel cake","High-starch",NA
-"471","meat and bone ground","High-fat",NA
-"472","megathyrsus maximus dried","Poor forage",NA
-"473","megathyrsus maximus offal","Poor forage","Nearest-window"
-"474","megathyrsus maximus wilted","Poor forage",NA
-"475","melon seed husk ground","Poor forage",NA
-"476","menhaden ground","High-fat",NA
-"477","methionine","Mineral/Vitamin",NA
-"478","milk","High-starch",NA
-"479","millet","High-starch",NA
-"480","millet offal","High-fat",NA
-"481","millettia ferruginea wilted","Good forage",NA
-"482","mineral","Mineral/Vitamin",NA
-"483","mineral lick","Mineral/Vitamin",NA
-"484","mineral mix","Mineral/Vitamin",NA
-"485","minerals and urea mix","Mineral/Vitamin",NA
-"486","minerals and vitamins mix","Mineral/Vitamin",NA
-"487","mixed marine hydrolysate","Protein",NA
-"488","mixture","Mineral/Vitamin",NA
-"489","molasses","High-starch",NA
-"490","molasses urea block","Protein",NA
-"491","monocalcium phosphate","Mineral/Vitamin",NA
-"492","moringa oleifera","Good forage",NA
-"493","moringa oleifera dried","Good forage",NA
-"494","moringa oleifera dried ground","Good forage",NA
-"495","moringa oleifera ground","Good forage",NA
-"496","moringa oleifera leaves","Good forage",NA
-"497","moringa oleifera leaves dried ground","III","Nearest-window"
-"498","moringa oleifera leaves extract","Good forage",NA
-"499","moringa oleifera leaves extract dried ground","Good forage",NA
-"500","moringa oleifera leaves ground","Good forage",NA
-"501","moringa oleifera root bark dried ground","Poor forage",NA
-"502","moringa oleifera seed cake ground","Protein",NA
-"503","moringa oleifera seed cold press","High-fat",NA
-"504","moringa oleifera seed dried ground","Protein",NA
-"505","moringa oleifera seed oil","High-fat",NA
-"506","moringa stenopetala dried","High-starch",NA
-"507","moringa stenopetala leaves dried","High-starch",NA
-"508","morus alba","Good forage",NA
-"509","morus alba leaves crushed dried","Good forage",NA
-"510","morus indica leaves crushed dried","Good forage",NA
-"511","mucuna pruriens dried","Good forage",NA
-"512","mucuna pruriens ground","High-starch",NA
-"513","mucuna pruriens protein acid treated alkali treated dried ground","Protein",NA
-"514","mucuna pruriens protein isolate alkali treated boiled decorticated ground","Protein",NA
-"515","mucuna pruriens seed alkali treated boiled decorticated dried ground","High-starch",NA
-"516","mucuna pruriens seed alkali treated boiled ground","High-starch",NA
-"517","mucuna pruriens seed boiled dried ground","High-starch",NA
-"518","mucuna pruriens seed crushed","High-starch",NA
-"519","mung bean haulm","Good forage",NA
-"520","myrtus communis leaves dried ground","Good forage",NA
-"521","natural pasture","Poor forage",NA
-"522","natural pasture dried","Poor forage",NA
-"523","natuzyme","Mineral/Vitamin",NA
-"524","noug cake ground","Good forage",NA
-"525","noug ground","High-fat",NA
-"526","noug seed cake","High-fat",NA
-"527","noug seed cake ground","Good forage",NA
-"528","noug seed ground","High-fat",NA
-"529","oat vetch dried","Poor forage",NA
-"530","oat dried","Poor forage",NA
-"531","oat grain","High-starch",NA
-"532","oat ground","High-starch",NA
-"533","oat leaves dried ground","Poor forage",NA
-"534","oat straw","Poor forage",NA
-"535","oat vetch dried","Poor forage",NA
-"536","occicum gatissimum dried ground","Good forage",NA
-"537","oil","High-fat",NA
-"538","olive cake","High-fat",NA
-"539","olive cake dried","High-fat",NA
-"540","olive leaves dried","Good forage",NA
-"541","onion bulb dried ethanol treated blended","High-starch",NA
-"542","onion veins and lemon pulp mixture 2","Mineral/Vitamin",NA
-"543","opuntia ficus indica cladode crushed","Good forage",NA
-"544","opuntia ficus indica cladode dried ground","Good forage",NA
-"545","opuntia ficus indica cladode ensiled","Good forage",NA
-"546","opuntia ficus indica cladode ensiled singed","Good forage",NA
-"547","opuntia ficus indica dried ground","Good forage",NA
-"548","opuntia ficus indica fruits dried ground","Poor forage",NA
-"549","opuntia ficus indica juice","High-starch",NA
-"550","orange dried","High-starch",NA
-"551","orange peels dried fermented ground","High-starch",NA
-"552","oryctes rhinoceros ground","Protein",NA
-"553","oxytenanthera abyssinica leaves dried","Good forage",NA
-"554","oyster shells","Mineral/Vitamin",NA
-"555","palm kernel cake","High-fat",NA
-"556","palm kernel cake dried","High-fat",NA
-"557","palm kernel cake dried ground","Protein",NA
-"558","palm kernel cake ground","High-fat",NA
-"559","palm kernel dried ground","High-fat",NA
-"560","palm kernel ground","High-fat",NA
-"561","palm oil","High-fat",NA
-"562","palm oil crude ground","High-fat",NA
-"563","palm oil sludge","High-fat",NA
-"564","panicum maximum","Poor forage",NA
-"565","panicum maximum dried","Poor forage",NA
-"566","panicum maximum ensiled","Good forage",NA
-"567","panicum maximum ensiled wilted","Poor forage",NA
-"568","panicum maximum wilted","Poor forage",NA
-"569","papaya leaves","Good forage",NA
-"570","pea","High-starch",NA
-"571","pea seed hull","Poor forage",NA
-"572","pearl millet","Poor forage",NA
-"573","pennisetum clandestinum leaves dried ground","Poor forage",NA
-"574","pennisetum pedicellatum dried","Poor forage",NA
-"575","pennisetum purpureum","Poor forage",NA
-"576","pennisetum purpureum dried","Poor forage",NA
-"577","pennisetum purpureum ensiled","Poor forage",NA
-"578","pennisetum purpureum ground","Poor forage",NA
-"579","pericopis laxiflora leaves and twigs","Good forage",NA
-"580","phoenix dactylifera leaves cellulase treated dried","Good forage",NA
-"581","phoenix dactylifera leaves cellulase treated dried fibrolytic treated","Good forage",NA
-"582","phoenix dactylifera leaves dried fibrolytic treated","Good forage",NA
-"583","phyllanthus amarus dried ground","Good forage",NA
-"584","phytase","Mineral/Vitamin",NA
-"585","pigeon pea dried","Poor forage",NA
-"586","pigeon pea leaves dried","Good forage",NA
-"587","piliostigma reticulatum pods crushed dried","Poor forage",NA
-"588","piliostigma thonningii pods crushed","Poor forage",NA
-"589","pleurotus ostreatus","Protein",NA
-"590","pollard","High-starch",NA
-"591","polyalthia longifolia leaves dried","Good forage",NA
-"592","polyethylene","Mineral/Vitamin",NA
-"593","polyethylene glycol","Mineral/Vitamin",NA
-"594","potassium carbonate","Mineral/Vitamin",NA
-"595","potassium humate","Mineral/Vitamin",NA
-"596","potato hash ensiled","High-starch",NA
-"597","potato processing waste","Good forage",NA
-"598","poultry feed","High-starch",NA
-"599","poultry litter","Good forage",NA
-"600","poultry litter deep stacked dried","Good forage",NA
-"601","poultry litter dried","Poor forage",NA
-"602","poultry litter dried ground","Good forage",NA
-"603","poultry litter ground","Mineral/Vitamin",NA
-"604","prime gluten 60","Protein",NA
-"605","propionibacterium freudenreinchi","Mineral/Vitamin",NA
-"606","prosopis juliflora dried","Good forage",NA
-"607","prosopis juliflora pods dried fermented ground","High-starch",NA
-"608","prosopis juliflora pods dried ground","High-starch",NA
-"609","prosopis juliflora pods ground","Good forage",NA
-"610","protected fat","High-fat",NA
-"611","pterocarpus erinaceus","Poor forage",NA
-"612","pterocarpus erinaceus leaves and twigs","Good forage",NA
-"613","pterocarpus lucens leaves dried","Good forage",NA
-"614","pterocarpus lucens pods dried","Good forage",NA
-"615","pulse hulm","Poor forage",NA
-"616","quercus ilex","Good forage",NA
-"617","rainbow trout oil ensiled","High-fat",NA
-"618","rangeland hay dried","Good forage",NA
-"619","rice grain ground","High-starch",NA
-"620","rice husk","Poor forage",NA
-"621","rice husk dried urea treated","Poor forage",NA
-"622","rice husk ensiled","Poor forage",NA
-"623","rice husk fermented","Poor forage",NA
-"624","rice milling waste","Poor forage",NA
-"625","rice offal","High-fat",NA
-"626","rice offal dried inoculated","High-starch",NA
-"627","rice offal ground","High-fat",NA
-"628","rice polish","High-starch",NA
-"629","rice straw","Poor forage",NA
-"630","rice straw dried","Poor forage",NA
-"631","rice straw dried fermented ground","Poor forage",NA
-"632","rice straw dried fermented ground inoculated","Poor forage",NA
-"633","rice straw dried ground","Poor forage",NA
-"634","rice straw ensiled","Poor forage",NA
-"635","rice straw ensiled urea treated","Poor forage",NA
-"636","rice straw fermented ground","Poor forage",NA
-"637","rice straw ground","Poor forage",NA
-"638","rosemary oil","High-fat",NA
-"639","rosemary residues dried ground","Poor forage",NA
-"640","rumen contents dried ground","High-fat",NA
-"641","rye offal","High-starch","Nearest-window"
-"642","saccharomyces cerevisiae","Protein",NA
-"643","saccharomyces cerevisiae dried","Mineral/Vitamin",NA
-"644","safflower ground","High-fat",NA
-"645","safflower seed","High-fat",NA
-"646","samanea saman dried ground","Good forage",NA
-"647","samanea saman wilted","Good forage",NA
-"648","sand","Mineral/Vitamin",NA
-"649","schoenefeldia gracilis dried","Poor forage",NA
-"650","sclerocarya birrea seed cake ground","Protein",NA
-"651","sesame fermented","Mineral/Vitamin",NA
-"652","sesame ground","High-fat",NA
-"653","sesame residue","High-fat",NA
-"654","sesame seed cake","High-fat",NA
-"655","sesame seed cake autoclaved dried ground","High-fat",NA
-"656","sesame seed cake ground","High-fat",NA
-"657","sesame seed cake ground roasted","High-fat",NA
-"658","sesame seed ground","High-fat",NA
-"659","sesbania dried","Good forage",NA
-"660","sesbania goetzei dried","Good forage",NA
-"661","sesbania sesban","Good forage",NA
-"662","sesbania sesban dried","High-starch",NA
-"663","sesbania sesban ensiled","Good forage",NA
-"664","sesbania sesban leaves and twigs","Good forage",NA
-"665","sesbania sesban leaves and twigs dried","High-starch",NA
-"666","sesbania sesban leaves dried","High-starch",NA
-"667","sesbania sesban leaves dried ground","Good forage",NA
-"668","sesbania sesban seed","High-fat",NA
-"669","sesbania sesban seed roasted","High-fat",NA
-"670","sheanut cake","High-fat",NA
-"671","sheanut cake boiled dried","High-fat",NA
-"672","sheanut cake ground","High-fat",NA
-"673","sheep meal","Protein",NA
-"674","shell ground","Good forage",NA
-"675","shrimp ground","Protein",NA
-"676","shrimp heads ground","Protein",NA
-"677","shrimp hydrolysate","Protein",NA
-"678","siam weed leaves ground","Good forage",NA
-"679","sodium sulfate","Mineral/Vitamin",NA
-"680","sorghum brewers grain dried","Good forage",NA
-"681","sorghum brewers grain dried refermented","Protein",NA
-"682","sorghum dried","Good forage",NA
-"683","sorghum ensiled","Poor forage",NA
-"684","sorghum grain","High-starch",NA
-"685","sorghum ground","High-starch",NA
-"686","sorghum sprout","Good forage",NA
-"687","sorghum straw","Poor forage",NA
-"688","sorghum straw alkali treated dried","Poor forage",NA
-"689","sorghum straw crushed","Poor forage",NA
-"690","sorghum straw crushed dried fermented","Poor forage",NA
-"691","sorghum straw dried ground","Poor forage",NA
-"692","sorghum sudanense","Poor forage",NA
-"693","sorghum sudanense dried","Poor forage",NA
-"694","soybean","High-fat",NA
-"695","soybean cake","High-starch",NA
-"696","soybean cake ground","Protein",NA
-"697","soybean cheese waste crushed ensiled","Protein",NA
-"698","soybean dehulled ground","High-fat",NA
-"699","soybean flakes defatted crushed dehulled dried extruded heated ground","Protein",NA
-"700","soybean flakes defatted crushed dehulled heated","Protein",NA
-"701","soybean flakes defatted extruded","Protein",NA
-"702","soybean full fat","High-fat",NA
-"703","soybean full fat cake","Protein",NA
-"704","soybean full fat ground","High-fat",NA
-"705","soybean full fat heated","High-fat",NA
-"706","soybean ground","Protein",NA
-"707","soybean ground roasted","Protein",NA
-"708","soybean hull","Poor forage",NA
-"709","soybean hull extruded ground","Poor forage",NA
-"710","soybean oil","High-fat",NA
-"711","soybean pulp","Protein",NA
-"712","soybean residue dried","Poor forage",NA
-"713","soybean shell","High-starch",NA
-"714","soybean straw baker s yeast treament dried molasses treated urea treated","Poor forage",NA
-"715","soybean straw dried","Poor forage",NA
-"716","soybean straw dried molasses treated urea treated","Poor forage",NA
-"717","spirulina","Protein",NA
-"718","spirulina dried","Protein",NA
-"719","spirulina ground","Protein",NA
-"720","starch","High-starch",NA
-"721","stipa tenacissima dried","Poor forage",NA
-"722","stylosanthes guianensis dried","Good forage",NA
-"723","stylosanthes guianensis dried ground","Poor forage",NA
-"724","stylosanthes scabra dried","Good forage",NA
-"725","sugar beet crushed","High-starch",NA
-"726","sugar beet leaves ensiled wilted","Good forage",NA
-"727","sugar beet molasses","High-starch",NA
-"728","sugar beet pulp","Good forage",NA
-"729","sugar beet pulp dried","Good forage",NA
-"730","sugarcane bagasse","Poor forage",NA
-"731","sugarcane bagasse ensiled","Poor forage",NA
-"732","sugarcane bagasse fermented","Poor forage",NA
-"733","sugarcane bagasse ground","Poor forage",NA
-"734","sugarcane molasses","High-starch",NA
-"735","sugarcane peel dried ground","Poor forage",NA
-"736","sulphur","Mineral/Vitamin",NA
-"737","sunflower","High-fat",NA
-"738","sunflower ground","High-fat",NA
-"739","sunflower oil","High-fat",NA
-"740","sunflower seed","High-fat",NA
-"741","sunflower seed cake","High-fat",NA
-"742","sunflower seed cake ground","High-fat",NA
-"743","sunflower seed ground","High-fat",NA
-"744","supplement","High-fat",NA
-"745","surplus cafeteria food scf dried ground","High-starch",NA
-"746","sweet basil by product","Good forage",NA
-"747","sweet potato peels dried","Good forage",NA
-"748","sweet potato vine dried","Good forage",NA
-"749","sweet potato vine ensiled wilted","Good forage",NA
-"750","sweet potato vine wilted","Good forage",NA
-"751","tamarind wilted","Good forage",NA
-"752","taro leaves boiled dried","Good forage",NA
-"753","tata dried","High-starch",NA
-"754","tectona grandis leaves wilted","Good forage",NA
-"755","tectona grandis wilted","Good forage",NA
-"756","teff","Poor forage",NA
-"757","teff ground","Poor forage",NA
-"758","teff straw dried","Poor forage",NA
-"759","teff straw ensiled fermented urea treated","Poor forage",NA
-"760","tela","Mineral/Vitamin",NA
-"761","terminalia brownii leaves dried","Good forage",NA
-"762","termite dried ground","Protein",NA
-"763","threonine","Mineral/Vitamin",NA
-"764","tithonia diversifolia","Good forage",NA
-"765","tithonia diversifolia dried","Good forage",NA
-"766","tithonia diversifolia ensiled wilted","Good forage",NA
-"767","tomato pulp","High-fat",NA
-"768","tomato waste dried","Protein",NA
-"769","toxynil ground","Mineral/Vitamin",NA
-"770","tricalcium phosphate","Mineral/Vitamin",NA
-"771","trifolium alexandrinum","Good forage",NA
-"772","trifolium alexandrinum dried","Good forage",NA
-"773","trifolium alexandrinum straw","Poor forage",NA
-"774","trifolium alexandrinum straw dried","Good forage",NA
-"775","tripsacum laxum","Poor forage",NA
-"776","trout ensiled","Protein",NA
-"777","trout oil ensiled","High-fat",NA
-"778","tuna ground","Protein",NA
-"779","typha domingensis ensiled wilted","Poor forage",NA
-"780","ulva rigida dried ground","Mineral/Vitamin",NA
-"781","unspecified forage","Good forage",NA
-"782","unspecified grass","Poor forage",NA
-"783","unspecified grass dried","Poor forage",NA
-"784","unspecified grass dried ground","Poor forage",NA
-"785","unspecified grass urea treated","Poor forage",NA
-"786","unspecified grass urea treated dried","Poor forage",NA
-"787","unspecified molasses ground","High-starch",NA
-"788","unspecified straw","Poor forage",NA
-"789","unspecified straw ground","Poor forage",NA
-"790","unspecified yeast","Protein",NA
-"791","untreated organic waste dried fermented ground","High-starch",NA
-"792","untreated organic waste ground","High-starch",NA
-"793","urea","Mineral/Vitamin",NA
-"794","urochloa hybrid mulato ii dried","Good forage",NA
-"795","urochloa mosambicensis","Poor forage",NA
-"796","vachellia erioloba","Good forage",NA
-"797","vachellia polyacantha","Good forage",NA
-"798","vachellia polyacantha leaves ground","Good forage",NA
-"799","vegetable oil","High-fat",NA
-"800","velvet bean ground","Protein",NA
-"801","velvet bean seeds boiled decorticated dried ground soaked","Protein",NA
-"802","vernonia amygdalina dried ground","Good forage",NA
-"803","vernonia amygdalina ground","Good forage",NA
-"804","vernonia amygdalina leaves crushed dried","Good forage",NA
-"805","vernonia amygdalina wilted","Good forage",NA
-"806","vicia","Good forage",NA
-"807","vicia dried","Good forage",NA
-"808","viscum album dried ground","Good forage",NA
-"809","vitamin ad3e","Mineral/Vitamin",NA
-"810","vitamin c","Mineral/Vitamin",NA
-"811","vitamin mix","Mineral/Vitamin",NA
-"812","vitex doniana ground wilted","Good forage",NA
-"813","vmc","Mineral/Vitamin",NA
-"814","walnut leaves dried ethanol treated ground","Good forage",NA
-"815","water hyacinth dried fermented ground","Good forage",NA
-"816","water hyacinth dried ground","Poor forage",NA
-"817","watermelon seed ground","High-fat",NA
-"818","watermelon vine dried","Good forage",NA
-"819","watermelon vine dried fermented","Good forage",NA
-"820","wheat","High-starch",NA
-"821","wheat crushed","High-starch",NA
-"822","wheat grain","High-starch",NA
-"823","wheat grain ground","High-starch",NA
-"824","wheat ground","High-starch",NA
-"825","wheat offal","Good forage",NA
-"826","wheat offal ground","Good forage",NA
-"827","wheat shorts","Good forage",NA
-"828","wheat straw","Poor forage",NA
-"829","wheat straw effective microbes","Poor forage",NA
-"830","wheat straw ensiled","Poor forage",NA
-"831","wheat straw ensiled fermented","Poor forage",NA
-"832","wheat straw ground","Poor forage",NA
-"833","wheat whole ground","High-starch",NA
-"834","white lupin grain","High-fat",NA
-"835","white lupin grain dehulled dried soaked","High-fat",NA
-"836","white lupin grain dried soaked","High-fat",NA
-"837","white lupin grain roasted","High-fat",NA
-"838","whole milk","High-starch",NA
-"839","winged bean autoclaved ground","Protein",NA
-"840","winged bean ground","Protein",NA
-"841","winged bean ground roasted","Protein",NA
-"842","winged termite dried ground","Protein",NA
-"843","wood charcoal","Mineral/Vitamin",NA
-"844","yam peels dried ground","Poor forage",NA
-"845","zinc","Mineral/Vitamin",NA
+"9","acacia cyanophylla","Good forage",NA
+"10","acacia dealbata leaves","Good forage",NA
+"11","acacia etbaica fruits dried","Good forage",NA
+"12","acacia karroo leaves dried","Good forage",NA
+"13","acacia karroo leaves dried ground","Good forage",NA
+"14","acacia mearnsii dried","Good forage",NA
+"15","acacia mearnsii dried ground","Poor forage",NA
+"16","acacia mearnsii leaves","Good forage",NA
+"17","acacia nilotica","High-starch",NA
+"18","acacia nilotica leaves dried","Good forage",NA
+"19","acacia nilotica leaves dried ground","High-starch",NA
+"20","acacia nilotica pods dried","High-starch",NA
+"21","acacia polyacantha leaves dried ground","Good forage",NA
+"22","acacia saligna dried","Good forage",NA
+"23","acacia saligna leaves and soft twig dried","Poor forage",NA
+"24","acacia senegal leaves wilted","High-starch",NA
+"25","acacia senegal pods dried","Good forage",NA
+"26","acacia seyal wilted","High-starch",NA
+"27","acacia sieberiana","Good forage",NA
+"28","acacia sieberiana dried ensiled ground","Good forage",NA
+"29","acacia sieberiana pods","Poor forage",NA
+"30","acacia sieberiana pods dried ground","Good forage",NA
+"31","acacia tortilis","High-fat",NA
+"32","acacia tortilis fruits dried","Good forage",NA
+"33","acacia tortilis leaves dried ground","High-fat",NA
+"34","acacia tortilis leaves wilted","High-starch",NA
+"35","acacia tortilis pods dried","Good forage",NA
+"36","acacia tortilis pods ground","Good forage",NA
+"37","actipal hp 1","Mineral/Vitamin",NA
+"38","adansonia digitata seed cake","Protein",NA
+"39","adansonia digitata seed cake decorticated ground screw press","Protein",NA
+"40","adansonia digitata seed cake dried fermented ground","Protein",NA
+"41","adansonia digitata seed dried fermented ground","Protein",NA
+"42","adansonia digitata seed ground","Protein",NA
+"43","african palm larvae dried ground","Protein",NA
+"44","african yam bean dried ground","High-fat",NA
+"45","afzelia africana leaves and twigs","Good forage",NA
+"46","albizia harveyi dried","Poor forage",NA
+"47","albizia lebbeck","Good forage",NA
+"48","albizia lebbeck leaves ground","Good forage",NA
+"49","alchornea cordifolia","Good forage",NA
+"50","alfalfa","Good forage",NA
+"51","alfalfa dried","Good forage",NA
+"52","alfalfa dried ground","Good forage",NA
+"53","alfalfa ground","Good forage",NA
+"54","alkali","Mineral/Vitamin",NA
+"55","amaranthus cruentus leaves ground","Good forage",NA
+"56","ammonium chloride","Mineral/Vitamin",NA
+"57","ammonium sulphate","Mineral/Vitamin",NA
+"58","anacardium occidentale leaves","Good forage",NA
+"59","andropogon gayanus","Poor forage",NA
+"60","andropogon gayanus ensiled wilted","Good forage",NA
+"61","andropogon tectorum","Good forage",NA
+"62","annona senegalensis leaves and twigs wilted","Good forage",NA
+"63","anti fungi","Mineral/Vitamin",NA
+"64","aquanutro abalone grower","Mineral/Vitamin",NA
+"65","argan pulp","High-starch",NA
+"66","argan seed cake","High-fat",NA
+"67","asperozym fibrolytic enzymes","Mineral/Vitamin",NA
+"68","aspilia africana","Good forage",NA
+"69","atella","Poor forage",NA
+"70","atella dried","Poor forage",NA
+"71","atella fermented","Good forage",NA
+"72","atriplex halimus","Good forage",NA
+"73","atriplex halimus leaves and twigs","Good forage",NA
+"74","atriplex nummularia","Good forage",NA
+"75","atriplex nummularia dried","Good forage",NA
+"76","atriplex nummularia dried ground","Poor forage",NA
+"77","atriplex nummularia leaves and twigs","Good forage",NA
+"78","avatec","Mineral/Vitamin",NA
+"79","avocado","Poor forage",NA
+"80","axtra xap","Mineral/Vitamin",NA
+"81","azadirachta indica leaves wilted","Good forage",NA
+"82","baby corn stalk ensiled","Poor forage",NA
+"83","balanites aegyptiaca dried","Good forage",NA
+"84","balanites aegyptiaca leaves ground","Good forage",NA
+"85","bamboo leaves dried","Poor forage",NA
+"86","bamboo leaves dried ensiled molasse treated urea treated","Poor forage",NA
+"87","bambusa balcooa leaves dried","Good forage",NA
+"88","bambusa vulgaris","Poor forage",NA
+"89","banana leaves","Poor forage",NA
+"90","banana leaves dried","Poor forage",NA
+"91","barley","High-starch",NA
+"92","barley dried","High-starch",NA
+"93","barley grain","High-starch",NA
+"94","barley grain sprouted","High-starch",NA
+"95","barley ground","High-starch",NA
+"96","barley offal","High-fat",NA
+"97","barley straw","Poor forage",NA
+"98","barley straw fermented","Poor forage",NA
+"99","beef survival meal","Protein",NA
+"100","beet fodder ensiled","Good forage",NA
+"101","beet pulp dried","Good forage",NA
+"102","beetroot discards dried","High-starch",NA
+"103","bentonite","Mineral/Vitamin",NA
+"104","berchemia discolor leaves crushed dried","Good forage",NA
+"105","berchemia discolor leaves dried","Good forage",NA
+"106","bicarbonate of soda","Mineral/Vitamin",NA
+"107","binder","Mineral/Vitamin",NA
+"108","biscuit waste","High-starch",NA
+"109","biscuit waste dried ground","High-starch",NA
+"110","black cumin seed","Poor forage",NA
+"111","black cumin seed cake crushed dried","High-fat",NA
+"112","black cumin seed ground","High-fat",NA
+"113","black soldier fly larvae dried ground","Protein",NA
+"114","blood dried ground heated","Protein",NA
+"115","blood ground","Protein",NA
+"116","blue lupin","Protein",NA
+"117","blue lupin grain","Protein",NA
+"118","bone","Mineral/Vitamin",NA
+"119","bone crushed","Mineral/Vitamin",NA
+"120","bone ground","Mineral/Vitamin",NA
+"121","bracharia decumbens dried","Poor forage",NA
+"122","bracharia dried","Poor forage",NA
+"123","bracharia dried ground","Poor forage",NA
+"124","brachiaria brizantha","Poor forage",NA
+"125","brachiaria brizantha dried","Poor forage",NA
+"126","brachiaria hybrid dried","Good forage",NA
+"127","brachiaria ruziziensis dried","Poor forage",NA
+"128","bread waste","High-starch",NA
+"129","bread waste dried","High-starch",NA
+"130","breadfruit dried ground","High-starch",NA
+"131","brewers by product","Poor forage",NA
+"132","brewers by product dried ground","Poor forage",NA
+"133","brewers grain","Poor forage",NA
+"134","brewers grain dried","Good forage",NA
+"135","brown fish ground","Protein",NA
+"136","cabbage discards","Good forage",NA
+"137","cabbage discards dried","High-starch",NA
+"138","calcium carbonate","Mineral/Vitamin",NA
+"139","calcium oxide","Mineral/Vitamin",NA
+"140","calcium phosphate","Mineral/Vitamin",NA
+"141","calliandra calothyrsus","Poor forage",NA
+"142","calliandra calothyrsus leaves","Good forage",NA
+"143","calliandra calothyrsus leaves dried","High-starch",NA
+"144","calliandra calothyrsus leaves dried ensiled","Poor forage",NA
+"145","calliandra calothyrsus leaves dried ground","Good forage",NA
+"146","canola cake","Protein",NA
+"147","canola ground","High-fat",NA
+"148","carissa edulis","Good forage",NA
+"149","carrot waste","High-starch",NA
+"150","cashew shell","Poor forage",NA
+"151","cashew shell boiled crushed","High-fat",NA
+"152","cashew shell crushed dried","Poor forage",NA
+"153","cashew shell ground","High-fat",NA
+"154","cassava ground","High-starch",NA
+"155","cassava leaves","Good forage",NA
+"156","cassava leaves and twigs dried","Good forage",NA
+"157","cassava leaves dried","Good forage",NA
+"158","cassava leaves dried ground","Good forage",NA
+"159","cassava leaves ground","Good forage",NA
+"160","cassava offal","High-starch","Nearest-window"
+"161","cassava peel","Good forage",NA
+"162","cassava peel crushed","High-starch",NA
+"163","cassava peel crushed urea treated","High-starch",NA
+"164","cassava peel dried","Good forage",NA
+"165","cassava peel dried ensiled wilted","Good forage",NA
+"166","cassava peel dried ground","Good forage",NA
+"167","cassava peel dried wilted","Good forage",NA
+"168","cassava peel ensiled","High-starch",NA
+"169","cassava peel enzyme treated ground","High-starch",NA
+"170","cassava peel ground","Good forage",NA
+"171","cassava peel urea treated","High-starch",NA
+"172","cassava sieviate dried fermented ground","High-starch",NA
+"173","cassava sieviate dried ground","High-starch",NA
+"174","cassava starch","High-starch",NA
+"175","cassava starch residue dried fermented ground","High-starch",NA
+"176","cassava tuber dried grated fermented peeled","High-starch",NA
+"177","cassava tuber dried ground","High-starch",NA
+"178","cassava waste","High-starch",NA
+"179","cassava waste dried fermented","High-starch",NA
+"180","catha edulis residue","Good forage",NA
+"181","catha edulis residue dried","Good forage",NA
+"182","catha edulis residue ensiled","Poor forage",NA
+"183","cellulose","Mineral/Vitamin",NA
+"184","cellulose ground","Mineral/Vitamin",NA
+"185","cement","Mineral/Vitamin",NA
+"186","cenchrus ciliaris","Poor forage",NA
+"187","cenchrus ciliaris dried","Poor forage",NA
+"188","centrosema pubescens dried","Good forage",NA
+"189","centrosema pubescens dried ground","Good forage",NA
+"190","centrosema pubescens leaves dried ground","Poor forage",NA
+"191","ceratonia siliqua ground","High-starch",NA
+"192","cgs silage ensiled","Good forage",NA
+"193","chalk","Mineral/Vitamin",NA
+"194","chamaecytisus palmensis dried","Good forage",NA
+"195","chamaecytisus palmensis leaves dried","Good forage",NA
+"196","chamomile flower by product","Good forage",NA
+"197","chembind","Mineral/Vitamin",NA
+"198","chicken ground","Protein",NA
+"199","chicken manure","Good forage",NA
+"200","chicken manure dried","Good forage",NA
+"201","chicken manure dried ground","Good forage",NA
+"202","chicken offal dried ground","High-fat",NA
+"203","chloris gayana","Poor forage",NA
+"204","chloris gayana dried","Poor forage",NA
+"205","chloris gayana dried ground","Poor forage",NA
+"206","choline cloride","Mineral/Vitamin",NA
+"207","choline cloride ground","Mineral/Vitamin",NA
+"208","chromium oxide","Mineral/Vitamin",NA
+"209","chromolaena odorata leaves dried ground","Good forage",NA
+"210","citrus aurantifolia dried ground","High-starch",NA
+"211","citrus pulp","High-starch",NA
+"212","citrus pulp alkali treated dried fermented","High-starch",NA
+"213","clove basil leaves extract dried ethanol treated ground","Mineral/Vitamin",NA
+"214","clupeid fish ground","Protein",NA
+"215","cochlospermum planchonii rhizomes dried ground","High-starch",NA
+"216","cocoa bean shell dried ground","Good forage",NA
+"217","cocoa pods husk boiled dried ground","Poor forage",NA
+"218","cocoa pods husk ensiled dried urea treated","Poor forage",NA
+"219","coconut cake ground","High-fat",NA
+"220","cod liver oil","High-fat",NA
+"221","coffee ground roasted","High-starch",NA
+"222","coffee leaves dried","Good forage",NA
+"223","coffee pulp","Good forage",NA
+"224","commelina benghalensis dried","Good forage",NA
+"225","commelina imberbis dried","Good forage",NA
+"226","commercial feed","High-starch",NA
+"227","common bean crushed","High-starch",NA
+"228","common bean straw","Poor forage",NA
+"229","common bean tops","Good forage",NA
+"230","concentrate","Good forage",NA
+"231","cotton seed","High-fat",NA
+"232","cotton seed cake","High-fat",NA
+"233","cotton seed cake decorticated","Good forage",NA
+"234","cotton seed cake dried","High-fat",NA
+"235","cotton seed cake ground","High-fat",NA
+"236","cotton seed decorticated dried","Good forage",NA
+"237","cotton seed ground","High-fat",NA
+"238","cowpea dried","Good forage",NA
+"239","cowpea haulm crushed","Good forage",NA
+"240","cowpea haulm dried","Good forage",NA
+"241","cowpea haulm dried ground","Good forage",NA
+"242","cowpea husk","Poor forage",NA
+"243","cowpea husk crushed","Poor forage",NA
+"244","cowpea husk ground","Poor forage",NA
+"245","cowpea leaves","Good forage",NA
+"246","cowpea residue","Good forage",NA
+"247","cowpea vine","Good forage",NA
+"248","crotalaria ochroleuca dried","Good forage",NA
+"249","cynadon dactylon dried","Poor forage",NA
+"250","cynodon dried","Poor forage",NA
+"251","cynodon nlemfuensis dried","Poor forage",NA
+"252","dactyloctenium aegyptium","Poor forage",NA
+"253","daniellia oliveri leaves","Good forage",NA
+"254","daniellia oliveri leaves decorticated dried ground roasted","Good forage",NA
+"255","daniellia oliveri leaves dried ground","High-fat",NA
+"256","date","High-starch",NA
+"257","date cull dried ground","High-starch",NA
+"258","date ground","High-starch",NA
+"259","date leaves","Poor forage",NA
+"260","date leaves dried","Poor forage",NA
+"261","date leaves ensiled sprouted wilted","Poor forage",NA
+"262","date leaves ensiled wilted","Poor forage",NA
+"263","date leaves wilted","Poor forage",NA
+"264","date palm fronds ground","Poor forage",NA
+"265","date seed ground","Poor forage",NA
+"266","delonix elata dried","Good forage",NA
+"267","delonix regia seed alkali treated dried fermented ground","Good forage",NA
+"268","delonix regia seed dried ground roasted","High-starch",NA
+"269","delonix regia seed ground","High-starch",NA
+"270","delonix regia seed ground roasted","High-starch",NA
+"271","desmodium distortum","Good forage",NA
+"272","desmodium dried","Poor forage",NA
+"273","desmodium intortum dried","Good forage",NA
+"274","desmodium uncinatum","Good forage",NA
+"275","dextrin","Mineral/Vitamin",NA
+"276","dicalcium phosphate","Mineral/Vitamin",NA
+"277","dichrostachys cinerea","Good forage",NA
+"278","dichrostachys cinerea dried ground","Good forage",NA
+"279","dichrostachys cinerea fruits dried","Good forage",NA
+"280","distillers grain dried","Protein",NA
+"281","dodonaea angustifolia leaves dried","Good forage",NA
+"282","dvlm dmlm","Mineral/Vitamin",NA
+"283","eclipta alba leaves dried","Good forage",NA
+"284","effective microbes solution","Mineral/Vitamin",NA
+"285","enterolobium cyclocarpum crushed wilted","Good forage",NA
+"286","enzyme","Mineral/Vitamin",NA
+"287","eragrostis curvula","Poor forage",NA
+"288","eragrostis curvula dried","Poor forage",NA
+"289","eragrostis curvula dried ground","Good forage",NA
+"290","erythrina abyssinica wilted","Good forage",NA
+"291","erythrina brucei leaves dried","Good forage",NA
+"292","euclea crispa","Good forage",NA
+"293","euclea schimperi","Poor forage",NA
+"294","faidherbia albida","Good forage",NA
+"295","faidherbia albida dried","Good forage",NA
+"296","faidherbia albida pods dried ground soaked","Good forage",NA
+"297","faidherbia albida pods ground","Good forage",NA
+"298","fava bean","Poor forage",NA
+"299","feather boiled dried ground","Protein",NA
+"300","feather ground","Protein",NA
+"301","ficus exasperata","Good forage",NA
+"302","ficus exasperata dried ground","Good forage",NA
+"303","ficus gnaphalocarpa leaves and twigs","Good forage",NA
+"304","ficus polita","Good forage",NA
+"305","ficus sur fruits crushed dried","High-starch",NA
+"306","ficus sur fruits dried ground","High-starch",NA
+"307","ficus thonningii leaves dried","Good forage",NA
+"308","ficus thonningii leaves ground","Good forage",NA
+"309","finger millet straw","Poor forage",NA
+"310","finger millet straw effective microbe em treatment ensiled","Poor forage",NA
+"311","finger millet straw ensiled urea treated","Poor forage",NA
+"312","finisher diet","High-starch",NA
+"313","fish boiled dried ground","Protein",NA
+"314","fish boiled ground","Protein",NA
+"315","fish dried ground","Protein",NA
+"316","fish ground","Protein",NA
+"317","fish ground roasted","Protein",NA
+"318","fish oil","High-fat",NA
+"319","fish oil heated","High-fat",NA
+"320","fish processing waste","Protein",NA
+"321","fish processing waste ground","Protein",NA
+"322","flaxseed","High-fat",NA
+"323","flaxseed oil","High-fat",NA
+"324","flaxseed oil cold pressed","High-fat",NA
+"325","fluted pumpkin leaves dried ground","High-fat",NA
+"326","fluted pumpkin leaves ground","Good forage",NA
+"327","food waste dried","High-starch",NA
+"328","fossil shell ground","Mineral/Vitamin",NA
+"329","fumaric acid","Mineral/Vitamin",NA
+"330","garcinia kola seeds dried ground","Protein",NA
+"331","garlic oil","High-fat",NA
+"332","giant snail boiled dried ground","Protein",NA
+"333","gliciridia sepium ground","Good forage",NA
+"334","gliciridia sepium leaves","Good forage",NA
+"335","gliciridia sepium leaves dried","Good forage",NA
+"336","gliciridia sepium leaves dried ground","Good forage",NA
+"337","gliciridia sepium leaves ground","Good forage",NA
+"338","gliciridia sepium leaves wilted","Good forage",NA
+"339","gliricidia sepium leaves and soft twig","Poor forage",NA
+"340","glycerol","High-starch",NA
+"341","gmelina arborea","Good forage",NA
+"342","gmelina arborea leaves","Good forage",NA
+"343","gmelina arborea leaves dried ground","Good forage",NA
+"344","gmelina arborea leaves ground","Good forage",NA
+"345","gmelina arborea leaves wilted","Good forage",NA
+"346","grape seeds","High-fat",NA
+"347","grass dried","Poor forage",NA
+"348","grass dried ensiled","Poor forage",NA
+"349","grass pea haulm","Good forage",NA
+"350","green bean vine dried","Good forage",NA
+"351","grewia similis dried","Good forage",NA
+"352","grewia spp dried","Good forage",NA
+"353","groundnut cake","Protein",NA
+"354","groundnut haulm","Poor forage",NA
+"355","groundnut haulm crushed","High-fat",NA
+"356","groundnut haulm dried","Poor forage",NA
+"357","groundnut haulm ensiled","Good forage",NA
+"358","groundnut hull","Poor forage",NA
+"359","groundnut hull crushed dried","Poor forage",NA
+"360","groundnut oil","High-fat",NA
+"361","groundnut residue","Good forage",NA
+"362","groundnut straw","Good forage",NA
+"363","guar gum ground","Protein",NA
+"364","haricot bean vine","Poor forage",NA
+"365","hermosa sidoides dried","Good forage",NA
+"366","hevea brasiliensis seed cake boiled dried ground","High-fat",NA
+"367","hibiscus seed ground","Good forage",NA
+"368","hominy","High-starch",NA
+"369","hominy ground","High-starch",NA
+"370","housefly maggot dried ground","High-fat",NA
+"371","hsb silage ensiled","Good forage",NA
+"372","imported concentrate","Protein",NA
+"373","jackfruit","High-starch",NA
+"374","jackfruit seed dried fermented ground","High-starch",NA
+"375","jackfruit seed dried ground","High-starch",NA
+"376","jatropha curcas cake defatted ground","Good forage",NA
+"377","jatropha curcas cake dried ground","High-fat",NA
+"378","jatropha curcas cake ground","Protein",NA
+"379","jatropha curcas leaves dried ground","Good forage",NA
+"380","jatropha curcas seed ground","Protein",NA
+"381","jojoba enzyme treated ground","Good forage",NA
+"382","jojoba ground","Good forage",NA
+"383","khat leftover crushed dried","Poor forage",NA
+"384","kochia scoparia","Poor forage",NA
+"385","l tryptophan","Mineral/Vitamin",NA
+"386","lablab purpureus","Good forage",NA
+"387","lablab purpureus crushed dried","Good forage",NA
+"388","lablab purpureus dried","Good forage",NA
+"389","lablab purpureus dried ground","Good forage",NA
+"390","lablab purpureus ensiled","Good forage",NA
+"391","lablab purpureus haulm dried","Good forage",NA
+"392","lablab purpureus leaves dried","Good forage",NA
+"393","lablab purpureus stover","Good forage",NA
+"394","lake shells","Good forage",NA
+"395","lamb and ewe pellet","High-starch",NA
+"396","lantana camara leaves dried ground","Good forage",NA
+"397","lard","High-fat",NA
+"398","layer s meal","High-starch",NA
+"399","lemna dried","Good forage",NA
+"400","lemon peel essential oil","High-fat",NA
+"401","lentil screening","High-starch",NA
+"402","leucaena leaves dried","Good forage",NA
+"403","leucaena leucocephala","Good forage",NA
+"404","leucaena leucocephala dried","Good forage",NA
+"405","leucaena leucocephala dried ground","Good forage",NA
+"406","leucaena leucocephala leaves","Good forage",NA
+"407","leucaena leucocephala leaves dried","Good forage",NA
+"408","leucaena leucocephala leaves dried ensiled","Good forage",NA
+"409","leucaena leucocephala leaves dried ground","Good forage",NA
+"410","leucaena leucocephala leaves ground","Good forage",NA
+"411","leucaena leucocephala leaves wilted","Good forage",NA
+"412","leucaena leucocephala wilted","Good forage",NA
+"413","leucaena pallida","Good forage",NA
+"414","leucaena pallida dried","Good forage",NA
+"415","leucaena pallida leaves dried","Good forage",NA
+"416","lima bean vein dried","Good forage",NA
+"417","lime","Mineral/Vitamin",NA
+"418","linseed cake","High-fat",NA
+"419","linseed cake ground","High-fat",NA
+"420","linseed ground","High-fat",NA
+"421","lsb silage ensiled","Good forage",NA
+"422","lysine","Mineral/Vitamin",NA
+"423","lysine hcl","Mineral/Vitamin",NA
+"424","macadamia cake","High-fat",NA
+"425","macroptilium atropurpureum","Poor forage",NA
+"426","macroptilium atropurpureum dried ground","Good forage",NA
+"427","macroptilium atropurpureum leaves dried ensiled","Good forage",NA
+"428","macrotyloma axillare dried","Good forage",NA
+"429","magnesium oxide","Mineral/Vitamin",NA
+"430","maize","High-starch",NA
+"431","maize wheat offal","Good forage",NA
+"432","maize cob ensiled","Poor forage",NA
+"433","maize cob enzyme treated ground","Poor forage",NA
+"434","maize cob ground","Poor forage",NA
+"435","maize cracked","High-starch",NA
+"436","maize crushed","High-starch",NA
+"437","maize ensiled","Good forage",NA
+"438","maize ensiled inoculated","Good forage",NA
+"439","maize germ","High-fat",NA
+"440","maize germ ground","High-fat",NA
+"441","maize gluten","Protein",NA
+"442","maize gluten ground","Protein",NA
+"443","maize grain","High-starch",NA
+"444","maize grain crushed","High-starch",NA
+"445","maize grain ground","High-starch",NA
+"446","maize ground","High-starch",NA
+"447","maize husk dried ground","Poor forage",NA
+"448","maize leaves dried","Poor forage",NA
+"449","maize offal","Good forage",NA
+"450","maize offal alkali treated ground","High-starch","Nearest-window"
+"451","maize offal dried","Good forage",NA
+"452","maize offal dried ground","Good forage",NA
+"453","maize offal ground","Good forage",NA
+"454","maize oil","High-fat",NA
+"455","maize starch","High-starch",NA
+"456","maize stover","Poor forage",NA
+"457","maize stover ensiled","Poor forage",NA
+"458","maize stover sprouted","Poor forage",NA
+"459","maize stover urea treated","Poor forage",NA
+"460","maize straw","Poor forage",NA
+"461","maize straw dried ensiled ground urea treated","Poor forage",NA
+"462","maize straw dried ground","Poor forage",NA
+"463","maize straw ensiled urea treated wilted","Poor forage",NA
+"464","maize straw molasses treated urea treated","Poor forage",NA
+"465","maize straw urea treated","Poor forage",NA
+"466","maize whole ensiled","Good forage",NA
+"467","malt sprout","Good forage",NA
+"468","mangifera indica leaves","Good forage",NA
+"469","mango","Good forage",NA
+"470","mango seed crushed dried","High-starch",NA
+"471","mango seed dried ground","High-starch",NA
+"472","mango seed kernel","High-fat",NA
+"473","mango seed kernel dried ground","High-fat",NA
+"474","marula kernel cake","High-starch",NA
+"475","meat and bone ground","High-fat",NA
+"476","megathyrsus maximus dried","Poor forage",NA
+"477","megathyrsus maximus offal","Poor forage","Nearest-window"
+"478","megathyrsus maximus wilted","Poor forage",NA
+"479","melon seed husk ground","Poor forage",NA
+"480","menhaden ground","High-fat",NA
+"481","methionine","Mineral/Vitamin",NA
+"482","milk","High-starch",NA
+"483","millet","High-starch",NA
+"484","millet offal","High-fat",NA
+"485","millettia ferruginea wilted","Good forage",NA
+"486","mineral","Mineral/Vitamin",NA
+"487","mineral lick","Mineral/Vitamin",NA
+"488","mineral mix","Mineral/Vitamin",NA
+"489","minerals and urea mix","Mineral/Vitamin",NA
+"490","minerals and vitamins mix","Mineral/Vitamin",NA
+"491","mixed marine hydrolysate","Protein",NA
+"492","mixture","Mineral/Vitamin",NA
+"493","molasses","High-starch",NA
+"494","molasses urea block","Protein",NA
+"495","monocalcium phosphate","Mineral/Vitamin",NA
+"496","moringa oleifera","Good forage",NA
+"497","moringa oleifera dried","Good forage",NA
+"498","moringa oleifera dried ground","Good forage",NA
+"499","moringa oleifera ground","Good forage",NA
+"500","moringa oleifera leaves","Good forage",NA
+"501","moringa oleifera leaves dried ground","III","Nearest-window"
+"502","moringa oleifera leaves extract","Good forage",NA
+"503","moringa oleifera leaves extract dried ground","Good forage",NA
+"504","moringa oleifera leaves ground","Good forage",NA
+"505","moringa oleifera root bark dried ground","Poor forage",NA
+"506","moringa oleifera seed cake ground","Protein",NA
+"507","moringa oleifera seed cold press","High-fat",NA
+"508","moringa oleifera seed dried ground","Protein",NA
+"509","moringa oleifera seed oil","High-fat",NA
+"510","moringa stenopetala dried","High-starch",NA
+"511","moringa stenopetala leaves dried","High-starch",NA
+"512","morus alba","Good forage",NA
+"513","morus alba leaves crushed dried","Good forage",NA
+"514","morus indica leaves crushed dried","Good forage",NA
+"515","mucuna pruriens dried","Good forage",NA
+"516","mucuna pruriens ground","High-starch",NA
+"517","mucuna pruriens protein acid treated alkali treated dried ground","Protein",NA
+"518","mucuna pruriens protein isolate alkali treated boiled decorticated ground","Protein",NA
+"519","mucuna pruriens seed alkali treated boiled decorticated dried ground","High-starch",NA
+"520","mucuna pruriens seed alkali treated boiled ground","High-starch",NA
+"521","mucuna pruriens seed boiled dried ground","High-starch",NA
+"522","mucuna pruriens seed crushed","High-starch",NA
+"523","mung bean haulm","Good forage",NA
+"524","myrtus communis leaves dried ground","Good forage",NA
+"525","natural pasture","Poor forage",NA
+"526","natural pasture dried","Poor forage",NA
+"527","natuzyme","Mineral/Vitamin",NA
+"528","noug cake ground","Good forage",NA
+"529","noug ground","High-fat",NA
+"530","noug seed cake","High-fat",NA
+"531","noug seed cake ground","Good forage",NA
+"532","noug seed ground","High-fat",NA
+"533","oat vetch dried","Poor forage",NA
+"534","oat dried","Poor forage",NA
+"535","oat grain","High-starch",NA
+"536","oat ground","High-starch",NA
+"537","oat leaves dried ground","Poor forage",NA
+"538","oat straw","Poor forage",NA
+"539","oat vetch dried","Poor forage",NA
+"540","occicum gatissimum dried ground","Good forage",NA
+"541","oil","High-fat",NA
+"542","olive cake","High-fat",NA
+"543","olive cake dried","High-fat",NA
+"544","olive leaves dried","Good forage",NA
+"545","onion bulb dried ethanol treated blended","High-starch",NA
+"546","onion veins and lemon pulp mixture 2","Mineral/Vitamin",NA
+"547","opuntia ficus indica cladode crushed","Good forage",NA
+"548","opuntia ficus indica cladode dried ground","Good forage",NA
+"549","opuntia ficus indica cladode ensiled","Good forage",NA
+"550","opuntia ficus indica cladode ensiled singed","Good forage",NA
+"551","opuntia ficus indica dried ground","Good forage",NA
+"552","opuntia ficus indica fruits dried ground","Poor forage",NA
+"553","opuntia ficus indica juice","High-starch",NA
+"554","orange dried","High-starch",NA
+"555","orange peels dried fermented ground","High-starch",NA
+"556","oryctes rhinoceros ground","Protein",NA
+"557","oxytenanthera abyssinica leaves dried","Good forage",NA
+"558","oyster shells","Mineral/Vitamin",NA
+"559","palm kernel cake","High-fat",NA
+"560","palm kernel cake dried","High-fat",NA
+"561","palm kernel cake dried ground","Protein",NA
+"562","palm kernel cake ground","High-fat",NA
+"563","palm kernel dried ground","High-fat",NA
+"564","palm kernel ground","High-fat",NA
+"565","palm oil","High-fat",NA
+"566","palm oil crude ground","High-fat",NA
+"567","palm oil sludge","High-fat",NA
+"568","panicum maximum","Poor forage",NA
+"569","panicum maximum dried","Poor forage",NA
+"570","panicum maximum ensiled","Good forage",NA
+"571","panicum maximum ensiled wilted","Poor forage",NA
+"572","panicum maximum wilted","Poor forage",NA
+"573","papaya leaves","Good forage",NA
+"574","pea","High-starch",NA
+"575","pea seed hull","Poor forage",NA
+"576","pearl millet","Poor forage",NA
+"577","pennisetum clandestinum leaves dried ground","Poor forage",NA
+"578","pennisetum pedicellatum dried","Poor forage",NA
+"579","pennisetum purpureum","Poor forage",NA
+"580","pennisetum purpureum dried","Poor forage",NA
+"581","pennisetum purpureum ensiled","Poor forage",NA
+"582","pennisetum purpureum ground","Poor forage",NA
+"583","pericopis laxiflora leaves and twigs","Good forage",NA
+"584","phoenix dactylifera leaves cellulase treated dried","Good forage",NA
+"585","phoenix dactylifera leaves cellulase treated dried fibrolytic treated","Good forage",NA
+"586","phoenix dactylifera leaves dried fibrolytic treated","Good forage",NA
+"587","phyllanthus amarus dried ground","Good forage",NA
+"588","phytase","Mineral/Vitamin",NA
+"589","pigeon pea dried","Poor forage",NA
+"590","pigeon pea leaves dried","Good forage",NA
+"591","piliostigma reticulatum pods crushed dried","Poor forage",NA
+"592","piliostigma thonningii pods crushed","Poor forage",NA
+"593","pleurotus ostreatus","Protein",NA
+"594","pollard","High-starch",NA
+"595","polyalthia longifolia leaves dried","Good forage",NA
+"596","polyethylene","Mineral/Vitamin",NA
+"597","polyethylene glycol","Mineral/Vitamin",NA
+"598","potassium carbonate","Mineral/Vitamin",NA
+"599","potassium humate","Mineral/Vitamin",NA
+"600","potato hash ensiled","High-starch",NA
+"601","potato processing waste","Good forage",NA
+"602","poultry feed","High-starch",NA
+"603","poultry litter","Good forage",NA
+"604","poultry litter deep stacked dried","Good forage",NA
+"605","poultry litter dried","Poor forage",NA
+"606","poultry litter dried ground","Good forage",NA
+"607","poultry litter ground","Mineral/Vitamin",NA
+"608","prime gluten 60","Protein",NA
+"609","propionibacterium freudenreinchi","Mineral/Vitamin",NA
+"610","prosopis juliflora dried","Good forage",NA
+"611","prosopis juliflora pods dried fermented ground","High-starch",NA
+"612","prosopis juliflora pods dried ground","High-starch",NA
+"613","prosopis juliflora pods ground","Good forage",NA
+"614","protected fat","High-fat",NA
+"615","pterocarpus erinaceus","Poor forage",NA
+"616","pterocarpus erinaceus leaves and twigs","Good forage",NA
+"617","pterocarpus lucens leaves dried","Good forage",NA
+"618","pterocarpus lucens pods dried","Good forage",NA
+"619","pulse hulm","Poor forage",NA
+"620","quercus ilex","Good forage",NA
+"621","rainbow trout oil ensiled","High-fat",NA
+"622","rangeland hay dried","Good forage",NA
+"623","rice grain ground","High-starch",NA
+"624","rice husk","Poor forage",NA
+"625","rice husk dried urea treated","Poor forage",NA
+"626","rice husk ensiled","Poor forage",NA
+"627","rice husk fermented","Poor forage",NA
+"628","rice milling waste","Poor forage",NA
+"629","rice offal","High-fat",NA
+"630","rice offal dried inoculated","High-starch",NA
+"631","rice offal ground","High-fat",NA
+"632","rice polish","High-starch",NA
+"633","rice straw","Poor forage",NA
+"634","rice straw dried","Poor forage",NA
+"635","rice straw dried fermented ground","Poor forage",NA
+"636","rice straw dried fermented ground inoculated","Poor forage",NA
+"637","rice straw dried ground","Poor forage",NA
+"638","rice straw ensiled","Poor forage",NA
+"639","rice straw ensiled urea treated","Poor forage",NA
+"640","rice straw fermented ground","Poor forage",NA
+"641","rice straw ground","Poor forage",NA
+"642","rosemary oil","High-fat",NA
+"643","rosemary residues dried ground","Poor forage",NA
+"644","rumen contents dried ground","High-fat",NA
+"645","rye offal","High-starch","Nearest-window"
+"646","saccharomyces cerevisiae","Protein",NA
+"647","saccharomyces cerevisiae dried","Mineral/Vitamin",NA
+"648","safflower ground","High-fat",NA
+"649","safflower seed","High-fat",NA
+"650","samanea saman dried ground","Good forage",NA
+"651","samanea saman wilted","Good forage",NA
+"652","sand","Mineral/Vitamin",NA
+"653","schoenefeldia gracilis dried","Poor forage",NA
+"654","sclerocarya birrea seed cake ground","Protein",NA
+"655","sesame fermented","Mineral/Vitamin",NA
+"656","sesame ground","High-fat",NA
+"657","sesame residue","High-fat",NA
+"658","sesame seed cake","High-fat",NA
+"659","sesame seed cake autoclaved dried ground","High-fat",NA
+"660","sesame seed cake ground","High-fat",NA
+"661","sesame seed cake ground roasted","High-fat",NA
+"662","sesame seed ground","High-fat",NA
+"663","sesbania dried","Good forage",NA
+"664","sesbania goetzei dried","Good forage",NA
+"665","sesbania sesban","Good forage",NA
+"666","sesbania sesban dried","High-starch",NA
+"667","sesbania sesban ensiled","Good forage",NA
+"668","sesbania sesban leaves and twigs","Good forage",NA
+"669","sesbania sesban leaves and twigs dried","High-starch",NA
+"670","sesbania sesban leaves dried","High-starch",NA
+"671","sesbania sesban leaves dried ground","Good forage",NA
+"672","sesbania sesban seed","High-fat",NA
+"673","sesbania sesban seed roasted","High-fat",NA
+"674","sheanut cake","High-fat",NA
+"675","sheanut cake boiled dried","High-fat",NA
+"676","sheanut cake ground","High-fat",NA
+"677","sheep meal","Protein",NA
+"678","shell ground","Good forage",NA
+"679","shrimp ground","Protein",NA
+"680","shrimp heads ground","Protein",NA
+"681","shrimp hydrolysate","Protein",NA
+"682","siam weed leaves ground","Good forage",NA
+"683","sodium sulfate","Mineral/Vitamin",NA
+"684","sorghum brewers grain dried","Good forage",NA
+"685","sorghum brewers grain dried refermented","Protein",NA
+"686","sorghum dried","Good forage",NA
+"687","sorghum ensiled","Poor forage",NA
+"688","sorghum grain","High-starch",NA
+"689","sorghum ground","High-starch",NA
+"690","sorghum sprout","Good forage",NA
+"691","sorghum straw","Poor forage",NA
+"692","sorghum straw alkali treated dried","Poor forage",NA
+"693","sorghum straw crushed","Poor forage",NA
+"694","sorghum straw crushed dried fermented","Poor forage",NA
+"695","sorghum straw dried ground","Poor forage",NA
+"696","sorghum sudanense","Poor forage",NA
+"697","sorghum sudanense dried","Poor forage",NA
+"698","soybean","High-fat",NA
+"699","soybean cake","High-starch",NA
+"700","soybean cake ground","Protein",NA
+"701","soybean cheese waste crushed ensiled","Protein",NA
+"702","soybean dehulled ground","High-fat",NA
+"703","soybean flakes defatted crushed dehulled dried extruded heated ground","Protein",NA
+"704","soybean flakes defatted crushed dehulled heated","Protein",NA
+"705","soybean flakes defatted extruded","Protein",NA
+"706","soybean full fat","High-fat",NA
+"707","soybean full fat cake","Protein",NA
+"708","soybean full fat ground","High-fat",NA
+"709","soybean full fat heated","High-fat",NA
+"710","soybean ground","Protein",NA
+"711","soybean ground roasted","Protein",NA
+"712","soybean hull","Poor forage",NA
+"713","soybean hull extruded ground","Poor forage",NA
+"714","soybean oil","High-fat",NA
+"715","soybean pulp","Protein",NA
+"716","soybean residue dried","Poor forage",NA
+"717","soybean shell","High-starch",NA
+"718","soybean straw baker s yeast treament dried molasses treated urea treated","Poor forage",NA
+"719","soybean straw dried","Poor forage",NA
+"720","soybean straw dried molasses treated urea treated","Poor forage",NA
+"721","spirulina","Protein",NA
+"722","spirulina dried","Protein",NA
+"723","spirulina ground","Protein",NA
+"724","starch","High-starch",NA
+"725","stipa tenacissima dried","Poor forage",NA
+"726","stylosanthes guianensis dried","Good forage",NA
+"727","stylosanthes guianensis dried ground","Poor forage",NA
+"728","stylosanthes scabra dried","Good forage",NA
+"729","sugar beet crushed","High-starch",NA
+"730","sugar beet leaves ensiled wilted","Good forage",NA
+"731","sugar beet molasses","High-starch",NA
+"732","sugar beet pulp","Good forage",NA
+"733","sugar beet pulp dried","Good forage",NA
+"734","sugarcane bagasse","Poor forage",NA
+"735","sugarcane bagasse ensiled","Poor forage",NA
+"736","sugarcane bagasse fermented","Poor forage",NA
+"737","sugarcane bagasse ground","Poor forage",NA
+"738","sugarcane molasses","High-starch",NA
+"739","sugarcane peel dried ground","Poor forage",NA
+"740","sulphur","Mineral/Vitamin",NA
+"741","sunflower","High-fat",NA
+"742","sunflower ground","High-fat",NA
+"743","sunflower oil","High-fat",NA
+"744","sunflower seed","High-fat",NA
+"745","sunflower seed cake","High-fat",NA
+"746","sunflower seed cake ground","High-fat",NA
+"747","sunflower seed ground","High-fat",NA
+"748","supplement","High-fat",NA
+"749","surplus cafeteria food scf dried ground","High-starch",NA
+"750","sweet basil by product","Good forage",NA
+"751","sweet potato peels dried","Good forage",NA
+"752","sweet potato vine dried","Good forage",NA
+"753","sweet potato vine ensiled wilted","Good forage",NA
+"754","sweet potato vine wilted","Good forage",NA
+"755","tamarind wilted","Good forage",NA
+"756","taro leaves boiled dried","Good forage",NA
+"757","tata dried","High-starch",NA
+"758","tectona grandis leaves wilted","Good forage",NA
+"759","tectona grandis wilted","Good forage",NA
+"760","teff","Poor forage",NA
+"761","teff ground","Poor forage",NA
+"762","teff straw dried","Poor forage",NA
+"763","teff straw ensiled fermented urea treated","Poor forage",NA
+"764","tela","Mineral/Vitamin",NA
+"765","terminalia brownii leaves dried","Good forage",NA
+"766","termite dried ground","Protein",NA
+"767","threonine","Mineral/Vitamin",NA
+"768","tithonia diversifolia","Good forage",NA
+"769","tithonia diversifolia dried","Good forage",NA
+"770","tithonia diversifolia ensiled wilted","Good forage",NA
+"771","tomato pulp","High-fat",NA
+"772","tomato waste dried","Protein",NA
+"773","toxynil ground","Mineral/Vitamin",NA
+"774","tricalcium phosphate","Mineral/Vitamin",NA
+"775","trifolium alexandrinum","Good forage",NA
+"776","trifolium alexandrinum dried","Good forage",NA
+"777","trifolium alexandrinum straw","Poor forage",NA
+"778","trifolium alexandrinum straw dried","Good forage",NA
+"779","tripsacum laxum","Poor forage",NA
+"780","trout ensiled","Protein",NA
+"781","trout oil ensiled","High-fat",NA
+"782","tuna ground","Protein",NA
+"783","typha domingensis ensiled wilted","Poor forage",NA
+"784","ulva rigida dried ground","Mineral/Vitamin",NA
+"785","unspecified forage","Good forage",NA
+"786","unspecified grass","Poor forage",NA
+"787","unspecified grass dried","Poor forage",NA
+"788","unspecified grass dried ground","Poor forage",NA
+"789","unspecified grass urea treated","Poor forage",NA
+"790","unspecified grass urea treated dried","Poor forage",NA
+"791","unspecified molasses ground","High-starch",NA
+"792","unspecified straw","Poor forage",NA
+"793","unspecified straw ground","Poor forage",NA
+"794","unspecified yeast","Protein",NA
+"795","untreated organic waste dried fermented ground","High-starch",NA
+"796","untreated organic waste ground","High-starch",NA
+"797","urea","Mineral/Vitamin",NA
+"798","urochloa hybrid mulato ii dried","Good forage",NA
+"799","urochloa mosambicensis","Poor forage",NA
+"800","vachellia erioloba","Good forage",NA
+"801","vachellia polyacantha","Good forage",NA
+"802","vachellia polyacantha leaves ground","Good forage",NA
+"803","vegetable oil","High-fat",NA
+"804","velvet bean ground","Protein",NA
+"805","velvet bean seeds boiled decorticated dried ground soaked","Protein",NA
+"806","vernonia amygdalina dried ground","Good forage",NA
+"807","vernonia amygdalina ground","Good forage",NA
+"808","vernonia amygdalina leaves crushed dried","Good forage",NA
+"809","vernonia amygdalina wilted","Good forage",NA
+"810","vicia","Good forage",NA
+"811","vicia dried","Good forage",NA
+"812","viscum album dried ground","Good forage",NA
+"813","vitamin ad3e","Mineral/Vitamin",NA
+"814","vitamin c","Mineral/Vitamin",NA
+"815","vitamin mix","Mineral/Vitamin",NA
+"816","vitex doniana ground wilted","Good forage",NA
+"817","vmc","Mineral/Vitamin",NA
+"818","walnut leaves dried ethanol treated ground","Good forage",NA
+"819","water hyacinth dried fermented ground","Good forage",NA
+"820","water hyacinth dried ground","Poor forage",NA
+"821","watermelon seed ground","High-fat",NA
+"822","watermelon vine dried","Good forage",NA
+"823","watermelon vine dried fermented","Good forage",NA
+"824","wheat","High-starch",NA
+"825","wheat crushed","High-starch",NA
+"826","wheat grain","High-starch",NA
+"827","wheat grain ground","High-starch",NA
+"828","wheat ground","High-starch",NA
+"829","wheat offal","Good forage",NA
+"830","wheat offal ground","Good forage",NA
+"831","wheat shorts","Good forage",NA
+"832","wheat straw","Poor forage",NA
+"833","wheat straw effective microbes","Poor forage",NA
+"834","wheat straw ensiled","Poor forage",NA
+"835","wheat straw ensiled fermented","Poor forage",NA
+"836","wheat straw ground","Poor forage",NA
+"837","wheat whole ground","High-starch",NA
+"838","white lupin grain","High-fat",NA
+"839","white lupin grain dehulled dried soaked","High-fat",NA
+"840","white lupin grain dried soaked","High-fat",NA
+"841","white lupin grain roasted","High-fat",NA
+"842","whole milk","High-starch",NA
+"843","winged bean autoclaved ground","Protein",NA
+"844","winged bean ground","Protein",NA
+"845","winged bean ground roasted","Protein",NA
+"846","winged termite dried ground","Protein",NA
+"847","wood charcoal","Mineral/Vitamin",NA
+"848","yam peels dried ground","Poor forage",NA
+"849","zinc","Mineral/Vitamin",NA

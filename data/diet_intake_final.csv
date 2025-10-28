@@ -6,10 +6,10 @@ B.Code,A.Level.Name,diet_intake_kg,Source
 AG0042,60% F SOPM,0.3125,feed_intake
 AG0042,60% UF SOPM,0.29769999999999996,feed_intake
 AG0042,Con,0.31239999999999996,feed_intake
-AG0051,NG,0.0083,feed_intake
-AG0051,NGD,0.008199999999999999,feed_intake
-AG0051,PG,0.0091,feed_intake
-AG0051,PGD,0.0092,feed_intake
+AG0051,NG,8.3,feed_intake
+AG0051,NGD,8.2,feed_intake
+AG0051,PG,9.1,feed_intake
+AG0051,PGD,9.2,feed_intake
 AN0007,T1,0.3301,feed_intake
 AN0007,T2,0.32982,feed_intake
 AN0007,T3,0.34747,feed_intake
@@ -2207,16 +2207,16 @@ NN0211,CON T1,0.482,feed_intake
 NN0211,T2 LOW,0.5685,feed_intake
 NN0211,T3 MEDIUM,0.5696,feed_intake
 NN0211,T4 HIGH,0.6518999999999999,feed_intake
-NN0212,1LSC:2WB,0.0701,feed_intake
-NN0212,2LSC:1WB,0.0701,feed_intake
-NN0212,Control,0.055799999999999995,feed_intake
-NN0212,LSC,0.073,feed_intake
-NN0212,WB,0.0726,feed_intake
-NN0217,C0,685,feed_intake
-NN0217,C20,815,feed_intake
-NN0217,C40,879,feed_intake
-NN0217,C60,907,feed_intake
-NN0217,C80,726,feed_intake
+NN0212,1LSC:2WB,0.5502517934468296,feed_intake
+NN0212,2LSC:1WB,0.5476042267053268,feed_intake
+NN0212,Control,0.43589608916058825,feed_intake
+NN0212,LSC,0.570258324529085,feed_intake
+NN0212,WB,0.5698756091902971,feed_intake
+NN0217,C0,6.478330021671755,feed_intake
+NN0217,C20,0.7565932872025406,feed_intake
+NN0217,C40,0.8166164898066077,feed_intake
+NN0217,C60,0.8537167174964067,feed_intake
+NN0217,C80,0.7007384140239498,feed_intake
 NN0223,Goats diet,0.675,feed_intake
 NN0223,Sheeps diet,0.81,feed_intake
 NN0224,Maize I Hay 0,0.4037349573518102,feed_intake
@@ -3183,10 +3183,10 @@ LM0101,T1 Sorghum treated B2,1,sum_ingredients
 LM0101,T2 Poultry L B2,1.5,sum_ingredients
 LM0101,T2 Poultry L B3,1.5,sum_ingredients
 LM0104,0% A. sieberiana,0.072,sum_ingredients
-LM0104,15% A. sieberiana,0.202,sum_ingredients
-LM0104,30% A. sieberiana,0.348,sum_ingredients
-LM0104,45% A. sieberiana,0.535,sum_ingredients
-LM0104,60% A. sieberiana,1.142,sum_ingredients
+LM0104,15% A. sieberiana,145.057,sum_ingredients
+LM0104,30% A. sieberiana,306.042,sum_ingredients
+LM0104,45% A. sieberiana,508.027,sum_ingredients
+LM0104,60% A. sieberiana,602.54,sum_ingredients
 LM0116,100 g/d CSM,0.1,sum_ingredients
 LM0116,100 g/d CSM Sub 1,0.1,sum_ingredients
 LM0116,100 g/d Maize Diet,0.1,sum_ingredients
@@ -3487,11 +3487,11 @@ NN0207.2,50g Unchopped Sorghum Stover,4.7,sum_ingredients
 NN0211,Base_CON T1,0.0588,sum_ingredients
 NN0211,Base_T2 LOW,0.042,sum_ingredients
 NN0211,Base_T3 MEDIUM,0.0351,sum_ingredients
-NN0212,Base_1LSC:2WB,0.0391,sum_ingredients
-NN0212,Base_2LSC:1WB,0.0385,sum_ingredients
-NN0212,Base_Control,0.055799999999999995,sum_ingredients
-NN0212,Base_LSC,0.0419,sum_ingredients
-NN0212,Base_WB,0.0399,sum_ingredients
+NN0212,Base_1LSC:2WB,0.30691647822783225,sum_ingredients
+NN0212,Base_2LSC:1WB,0.3007526780050654,sum_ingredients
+NN0212,Base_Control,0.43589608916058825,sum_ingredients
+NN0212,Base_LSC,0.3273126547639543,sum_ingredients
+NN0212,Base_WB,0.3131960992657418,sum_ingredients
 NN0214,Acacia albida Treatment,0.194,sum_ingredients
 NN0214,Acacia nilotica Treatment,0.204,sum_ingredients
 NN0214,Acacia sieberiana Treatment,0.531,sum_ingredients
@@ -3527,10 +3527,10 @@ NN0230,Base_Medicago sativa diet,0.369,sum_ingredients
 NN0230,Base_Medicago sativa maize diet,0.396,sum_ingredients
 NN0230,Base_Sesbania sesban diet,0.459,sum_ingredients
 NN0230,Base_Sesbania sesban maizediet,0.395,sum_ingredients
-NN0234,Base_T 1 CON,0.39,sum_ingredients
-NN0234,Base_T 2 74 LUPIN,0.42210000000000003,sum_ingredients
-NN0234,Base_T 3 147 LUPIN,0.4102,sum_ingredients
-NN0234,Base_T 4 219 LUPIN,0.4701,sum_ingredients
+NN0234,Base_T 1 CON,390,sum_ingredients
+NN0234,Base_T 2 74 LUPIN,422.1,sum_ingredients
+NN0234,Base_T 3 147 LUPIN,410.2,sum_ingredients
+NN0234,Base_T 4 219 LUPIN,470.1,sum_ingredients
 NN0236,Base_T1,0.424,sum_ingredients
 NN0236,Base_T2,0.289,sum_ingredients
 NN0236,Base_T3,0.299,sum_ingredients

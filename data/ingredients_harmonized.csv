@@ -69,12 +69,12 @@ AG0050,CSH,Salt,Non-ERA Feed,1,g,NA,NA,Unspecified,NA,Base,livestock,g;NA;NA,20,
 AG0050,CST,Cassava Starch,Crop Product,24,g,NA,NA,Yes,NA,NA,livestock,g;NA;NA,20,0.00688,kg,NA,NA,NA,FALSE,CST,no
 AG0050,CTB,Cassava Tuber Boiled Dried Ground,Crop Product,24,g,NA,NA,No,NA,NA,livestock,g;NA;NA,20,0.00688,kg,NA,NA,NA,FALSE,CTB,no
 AG0050,Control,Maize Ground,Crop Product,24,g,NA,NA,Unspecified,NA,NA,livestock,g;NA;NA,20,0.0069900000000000006,kg,NA,NA,NA,FALSE,CTR,yes
-AG0051,NG,Pennisetum purpureum,Herbaceous Fodders,8.3,g,NA,NA,Yes,NA,NA,livestock,% Diet;NA;NA,10,NA,NA,NA,NA,NA,FALSE,NG,yes
-AG0051,NGD,Desmodium distortum,Herbaceous Fodders,2.4599999999999995,g,NA,NA,Yes,NA,NA,livestock,% Diet;NA;NA,10,NA,NA,NA,NA,NA,FALSE,NGD,no
-AG0051,NGD,Pennisetum purpureum,Herbaceous Fodders,5.739999999999998,g,NA,NA,Yes,NA,NA,livestock,% Diet;NA;NA,10,NA,NA,NA,NA,NA,FALSE,NGD,no
-AG0051,PG,Brachiaria brizantha,Herbaceous Fodders,9.1,g,NA,NA,Yes,NA,NA,livestock,% Diet;NA;NA,10,NA,NA,NA,NA,NA,FALSE,PG,yes
-AG0051,PGD,Desmodium distortum,Herbaceous Fodders,2.76,g,NA,NA,Yes,NA,NA,livestock,% Diet;NA;NA,10,NA,NA,NA,NA,NA,FALSE,PGD,no
-AG0051,PGD,Brachiaria brizantha,Herbaceous Fodders,6.4399999999999995,g,NA,NA,Yes,NA,NA,livestock,% Diet;NA;NA,10,NA,NA,NA,NA,NA,FALSE,PGD,no
+AG0051,NG,Pennisetum purpureum,Herbaceous Fodders,8300,g,NA,NA,Yes,NA,NA,livestock,% Diet;NA;NA,10,NA,NA,NA,NA,NA,FALSE,NG,yes
+AG0051,NGD,Desmodium distortum,Herbaceous Fodders,2459.9999999999995,g,NA,NA,Yes,NA,NA,livestock,% Diet;NA;NA,10,NA,NA,NA,NA,NA,FALSE,NGD,no
+AG0051,NGD,Pennisetum purpureum,Herbaceous Fodders,5739.999999999999,g,NA,NA,Yes,NA,NA,livestock,% Diet;NA;NA,10,NA,NA,NA,NA,NA,FALSE,NGD,no
+AG0051,PG,Brachiaria brizantha,Herbaceous Fodders,9100,g,NA,NA,Yes,NA,NA,livestock,% Diet;NA;NA,10,NA,NA,NA,NA,NA,FALSE,PG,yes
+AG0051,PGD,Desmodium distortum,Herbaceous Fodders,2760,g,NA,NA,Yes,NA,NA,livestock,% Diet;NA;NA,10,NA,NA,NA,NA,NA,FALSE,PGD,no
+AG0051,PGD,Brachiaria brizantha,Herbaceous Fodders,6439.999999999999,g,NA,NA,Yes,NA,NA,livestock,% Diet;NA;NA,10,NA,NA,NA,NA,NA,FALSE,PGD,no
 AG0087,Control,Sorghum Grain,Crop Product,54,% Diet,NA,NA,Yes,NA,NA,livestock,% Diet;NA;NA,10,1.2346400000000002,kg,NA,NA,NA,FALSE,Control,yes
 AG0087,Control,Salt,Non-ERA Feed,0.3,% Diet,NA,NA,Yes,NA,Base,livestock,% Diet;NA;NA,10,1.2346400000000002,kg,NA,NA,NA,FALSE,Control,yes
 AG0087,Control,Lime,Non-ERA Feed,10,% Diet,NA,NA,Yes,NA,Base,livestock,% Diet;NA;NA,10,1.2346400000000002,kg,NA,NA,NA,FALSE,Control,yes
@@ -8608,13 +8608,13 @@ LM0103,5,Salt,Non-ERA Feed,1000,g,day,individual,Yes,No,Base,livestock,g;day;ind
 LM0103,5,Maize Offal,Crop Byproduct,74000,g,day,individual,Yes,No,NA,livestock,g;day;individual,5,26.35,kg,NA,NA,NA,FALSE,5,no
 LM0103,5,Cotton Seed Cake,Crop Byproduct,25000,g,day,individual,Yes,No,Base,livestock,g;day;individual,5,26.35,kg,NA,NA,NA,FALSE,5,no
 LM0104,0% A. sieberiana,Maize Offal,Crop Byproduct,72,% Concentrate,NA,NA,Yes,NA,NA,livestock,% Concentrate;NA;NA,4,20,kg,NA,NA,NA,FALSE,0% A. sieberiana,yes
-LM0104,15% A. sieberiana,Acacia sieberiana Pods,Agroforestry Fodders,145,g,day,individual,Yes,NA,NA,livestock,% Concentrate;NA;NA,4,20,kg,NA,NA,NA,TRUE,15% A. sieberiana,no
+LM0104,15% A. sieberiana,Acacia sieberiana Pods,Agroforestry Fodders,145000,g,day,individual,Yes,NA,NA,livestock,% Concentrate;NA;NA,4,20,kg,NA,NA,NA,TRUE,15% A. sieberiana,no
 LM0104,15% A. sieberiana,Maize Offal,Crop Byproduct,57,% Concentrate,NA,NA,Yes,NA,NA,livestock,% Concentrate;NA;NA,4,20,kg,NA,NA,NA,FALSE,15% A. sieberiana,no
 LM0104,30% A. sieberiana,Maize Offal,Crop Byproduct,42,% Concentrate,NA,NA,Yes,NA,NA,livestock,% Concentrate;NA;NA,4,20,kg,NA,NA,NA,FALSE,30% A. sieberiana,no
-LM0104,30% A. sieberiana,Acacia sieberiana Pods,Agroforestry Fodders,306,g,day,individual,Yes,NA,NA,livestock,% Concentrate;NA;NA,4,20,kg,NA,NA,NA,TRUE,30% A. sieberiana,no
-LM0104,45% A. sieberiana,Acacia sieberiana Pods,Agroforestry Fodders,508,g,day,individual,Yes,NA,NA,livestock,% Concentrate;NA;NA,4,20,kg,NA,NA,NA,TRUE,45% A. sieberiana,no
+LM0104,30% A. sieberiana,Acacia sieberiana Pods,Agroforestry Fodders,306000,g,day,individual,Yes,NA,NA,livestock,% Concentrate;NA;NA,4,20,kg,NA,NA,NA,TRUE,30% A. sieberiana,no
+LM0104,45% A. sieberiana,Acacia sieberiana Pods,Agroforestry Fodders,508000,g,day,individual,Yes,NA,NA,livestock,% Concentrate;NA;NA,4,20,kg,NA,NA,NA,TRUE,45% A. sieberiana,no
 LM0104,45% A. sieberiana,Maize Offal,Crop Byproduct,27,% Concentrate,NA,NA,Yes,NA,NA,livestock,% Concentrate;NA;NA,4,20,kg,NA,NA,NA,FALSE,45% A. sieberiana,no
-LM0104,60% A. sieberiana,Acacia sieberiana Pods,Agroforestry Fodders,602,g,day,individual,Yes,NA,NA,livestock,% Concentrate;NA;NA,4,20,kg,NA,NA,NA,TRUE,60% A. sieberiana,no
+LM0104,60% A. sieberiana,Acacia sieberiana Pods,Agroforestry Fodders,602000,g,day,individual,Yes,NA,NA,livestock,% Concentrate;NA;NA,4,20,kg,NA,NA,NA,TRUE,60% A. sieberiana,no
 LM0104,60% A. sieberiana,Andropogon gayanus,Herbaceous Fodders,500,g,day,individual,Yes,NA,Base,livestock,g;day;individual,4,20,kg,NA,NA,NA,FALSE,60% A. sieberiana,no
 LM0104,60% A. sieberiana,Bone Ground,Other Feed,2,% Concentrate,NA,NA,Yes,NA,Base,livestock,% Concentrate;NA;NA,4,20,kg,NA,NA,NA,FALSE,60% A. sieberiana,no
 LM0104,60% A. sieberiana,Salt,Non-ERA Feed,1,% Concentrate,NA,NA,Yes,NA,Base,livestock,% Concentrate;NA;NA,4,20,kg,NA,NA,NA,FALSE,60% A. sieberiana,no
@@ -11243,8 +11243,8 @@ NN0212,1LSC:2WB,Linseed Cake,Crop Byproduct,100,g,day,individual,Yes,NA,Suppleme
 NN0212,1LSC:2WB,Wheat Bran,Crop Byproduct,200,g,day,individual,Yes,NA,Supplement 1:2,livestock,g;day;individual,6,15.6,kg,NA,NA,NA,FALSE,1LSC:2WB,no
 NN0212,2LSC:1WB,Linseed Cake,Crop Byproduct,200,g,day,individual,Yes,NA,Supplement 2:1,livestock,g;day;individual,6,15.5,kg,NA,NA,NA,FALSE,2LSC:1WB,no
 NN0212,2LSC:1WB,Wheat Bran,Crop Byproduct,100,g,day,individual,Yes,NA,Supplement 2:1,livestock,g;day;individual,6,15.5,kg,NA,NA,NA,FALSE,2LSC:1WB,no
-NN0212,LSC,Linseed Cake,Crop Byproduct,31.1,g,day,individual,Yes,NA,NA,livestock,g;day;individual,6,15.5,kg,NA,NA,NA,TRUE,LSC,no
-NN0212,WB,Wheat Bran,Crop Byproduct,32.8,g,day,individual,Yes,NA,NA,livestock,g;day;individual,6,15.6,kg,NA,NA,NA,TRUE,WB,no
+NN0212,LSC,Linseed Cake,Crop Byproduct,242.94566976513076,g,day,individual,Yes,NA,NA,livestock,g;day;individual,6,15.5,kg,NA,NA,NA,TRUE,LSC,no
+NN0212,WB,Wheat Bran,Crop Byproduct,257.464462554294,g,day,individual,Yes,NA,NA,livestock,g;day;individual,6,15.6,kg,NA,NA,NA,TRUE,WB,no
 NN0214,Acacia albida Treatment,Faidherbia albida,Agroforestry Fodders,194,g,day,individual,Yes,NA,NA,livestock,g;day;individual,8,21,kg,NA,NA,NA,TRUE,Acacia albida Treatment,no
 NN0214,Acacia nilotica Treatment,Acacia nilotica,Agroforestry Fodders,204,g,day,individual,Yes,NA,NA,livestock,g;day;individual,8,21,kg,NA,NA,NA,TRUE,Acacia nilotica Treatment,no
 NN0214,Acacia sieberiana Treatment,Acacia sieberiana,Agroforestry Fodders,211,g,day,individual,Yes,NA,NA,livestock,g;day;individual,8,21,kg,NA,NA,NA,TRUE,Acacia sieberiana Treatment,no
@@ -11253,15 +11253,15 @@ NN0214,Acacia tortilis Treatment,Acacia tortilis,Agroforestry Fodders,206,g,day,
 NN0214,Noug Meal Treatment,Noug Ground,Crop Byproduct,80,g,day,individual,Yes,NA,NA,livestock,g;day;individual,8,21,kg,NA,NA,NA,TRUE,Noug Meal Treatment,yes
 NN0216,supplemented,Wheat Ground,Crop Byproduct,5000,g,day,individual,Yes,No,NA,livestock,g;day;individual,11,NA,NA,NA,NA,NA,FALSE,supplemented suckled,no
 NN0216,supplemented,Wheat Ground,Crop Byproduct,5000,g,day,individual,Yes,No,NA,livestock,g;day;individual,11,NA,NA,NA,NA,NA,FALSE,supplemented milked,no
-NN0217,C0,Unspecified Grass Dried,Herbaceous Fodders,685,g,day,individual,Yes,NA,NA,livestock,g/kg body weight;day;individual,8,20,kg,NA,NA,NA,TRUE,T1,yes
-NN0217,C20,Unspecified Grass Dried,Herbaceous Fodders,573,g,day,individual,Yes,NA,NA,livestock,g/kg body weight;day;individual,8,20,kg,NA,NA,NA,TRUE,T2,no
-NN0217,C20,Opuntia ficus indica Cladode Ground,Agroforestry Fodders,242,g,day,individual,No,NA,NA,livestock,g/kg body weight;day;individual,8,20,kg,NA,NA,NA,TRUE,T2,no
-NN0217,C40,Opuntia ficus indica Cladode Ground,Agroforestry Fodders,422,g,day,individual,No,NA,NA,livestock,g/kg body weight;day;individual,8,19.8,kg,NA,NA,NA,TRUE,T3,no
-NN0217,C40,Unspecified Grass Dried,Herbaceous Fodders,457,g,day,individual,Yes,NA,NA,livestock,g/kg body weight;day;individual,8,19.8,kg,NA,NA,NA,TRUE,T3,no
-NN0217,C60,Unspecified Grass Dried,Herbaceous Fodders,404,g,day,individual,Yes,NA,NA,livestock,g/kg body weight;day;individual,8,19.5,kg,NA,NA,NA,TRUE,T4,no
-NN0217,C60,Opuntia ficus indica Cladode Ground,Agroforestry Fodders,503,g,day,individual,No,NA,NA,livestock,g/kg body weight;day;individual,8,19.5,kg,NA,NA,NA,TRUE,T4,no
-NN0217,C80,Opuntia ficus indica Cladode Ground,Agroforestry Fodders,508,g,day,individual,No,NA,NA,livestock,g/kg body weight;day;individual,8,19,kg,NA,NA,NA,TRUE,T5,no
-NN0217,C80,Unspecified Grass Dried,Herbaceous Fodders,218,g,day,individual,Yes,NA,NA,livestock,g/kg body weight;day;individual,8,19,kg,NA,NA,NA,TRUE,T5,no
+NN0217,C0,Unspecified Grass Dried,Herbaceous Fodders,6478.330021671754,g,day,individual,Yes,NA,NA,livestock,g/kg body weight;day;individual,8,20,kg,NA,NA,NA,TRUE,T1,yes
+NN0217,C20,Unspecified Grass Dried,Herbaceous Fodders,5419.099419588198,g,day,individual,Yes,NA,NA,livestock,g/kg body weight;day;individual,8,20,kg,NA,NA,NA,TRUE,T2,no
+NN0217,C20,Opuntia ficus indica Cladode Ground,Agroforestry Fodders,2288.6946937876855,g,day,individual,No,NA,NA,livestock,g/kg body weight;day;individual,8,20,kg,NA,NA,NA,TRUE,T2,no
+NN0217,C40,Opuntia ficus indica Cladode Ground,Agroforestry Fodders,3961.059295383776,g,day,individual,No,NA,NA,livestock,g/kg body weight;day;individual,8,19.8,kg,NA,NA,NA,TRUE,T3,no
+NN0217,C40,Unspecified Grass Dried,Herbaceous Fodders,4289.583170593331,g,day,individual,Yes,NA,NA,livestock,g/kg body weight;day;individual,8,19.8,kg,NA,NA,NA,TRUE,T3,no
+NN0217,C60,Unspecified Grass Dried,Herbaceous Fodders,3748.9299333537856,g,day,individual,Yes,NA,NA,livestock,g/kg body weight;day;individual,8,19.5,kg,NA,NA,NA,TRUE,T4,no
+NN0217,C60,Opuntia ficus indica Cladode Ground,Agroforestry Fodders,4667.603357616224,g,day,individual,No,NA,NA,livestock,g/kg body weight;day;individual,8,19.5,kg,NA,NA,NA,TRUE,T4,no
+NN0217,C80,Opuntia ficus indica Cladode Ground,Agroforestry Fodders,4623.053432781383,g,day,individual,No,NA,NA,livestock,g/kg body weight;day;individual,8,19,kg,NA,NA,NA,TRUE,T5,no
+NN0217,C80,Unspecified Grass Dried,Herbaceous Fodders,1983.9087565872865,g,day,individual,Yes,NA,NA,livestock,g/kg body weight;day;individual,8,19,kg,NA,NA,NA,TRUE,T5,no
 NN0223,Goats diet,Noug Seed Cake,NA,310.50000000000006,g,NA,NA,Yes,NA,Goats Concentrate,livestock,%;NA;NA,9,20.366666666666667,kg,NA,NA,NA,FALSE,T 50 Boer,no
 NN0223,Goats diet,Noug Seed Cake,NA,310.50000000000006,g,NA,NA,Yes,NA,Goats Concentrate,livestock,%;NA;NA,9,20.366666666666667,kg,NA,NA,NA,FALSE,T Local Goat,yes
 NN0223,Goats diet,Sorghum Grain,Crop Product,162,g,NA,NA,Yes,NA,Goats Concentrate,livestock,%;NA;NA,9,20.366666666666667,kg,NA,NA,NA,FALSE,T 50 Boer,no
@@ -11320,16 +11320,16 @@ NN0233,Diet 5,Dichrostachys cinerea Fruits Dried,Agroforestry Fodders,103.000000
 NN0233,Diet 6,Dichrostachys cinerea Fruits Dried,Agroforestry Fodders,201.99999999999997,g,day,individual,Yes,NA,NA,livestock,% Body Mass;day;individual,4,20.2,kg,NA,NA,NA,FALSE,T6,no
 NN0233,Diet 7,Dexapanthenol,Non-ERA Feed,0.025,g,NA,individual,No,NA,Base,livestock,g;NA;individual,4,19.9,kg,NA,NA,NA,FALSE,T7,no
 NN0233,Diet 7,Dichrostachys cinerea Fruits Dried,Agroforestry Fodders,298.5,g,day,individual,Yes,NA,NA,livestock,% Body Mass;day;individual,4,19.9,kg,NA,NA,NA,FALSE,T7,no
-NN0234,T 1 CON,Concentrate,Other Feed,452.7,g,day,individual,Yes,No,NA,livestock,g;day;individual,1,20.9,kg,NA,NA,NA,TRUE,T CON,yes
+NN0234,T 1 CON,Concentrate,Other Feed,452700,g,day,individual,Yes,No,NA,livestock,g;day;individual,1,20.9,kg,NA,NA,NA,TRUE,T CON,yes
 NN0234,T 2 74 LUPIN,Blue Lupin,Agroforestry Fodders,74,g,day,individual,Yes,No,Supplement T2,livestock,g;day;individual,1,21,kg,NA,NA,NA,FALSE,T 74 L,no
 NN0234,T 2 74 LUPIN,Concentrate,Other Feed,342,g,day,individual,Yes,No,Supplement T2,livestock,g;day;individual,1,21,kg,NA,NA,NA,FALSE,T 74 L,no
 NN0234,T 3 147 LUPIN,Concentrate,Other Feed,228,g,day,individual,Yes,No,Supplement T3,livestock,g;day;individual,1,20.9,kg,NA,NA,NA,FALSE,T 147 L,no
 NN0234,T 3 147 LUPIN,Blue Lupin,Agroforestry Fodders,147,g,day,individual,Yes,No,Supplement T3,livestock,g;day;individual,1,20.9,kg,NA,NA,NA,FALSE,T 147 L,no
 NN0234,T 4 219 LUPIN,Blue Lupin,Agroforestry Fodders,219,g,day,individual,Yes,No,Supplement T4,livestock,g;day;individual,1,21.1,kg,NA,NA,NA,FALSE,T 219 L,no
 NN0234,T 4 219 LUPIN,Concentrate,Other Feed,116,g,day,individual,Yes,No,Supplement T4,livestock,g;day;individual,1,21.1,kg,NA,NA,NA,FALSE,T 219 L,no
-NN0234,T 5 LUPIN ONLY,Natural Pasture Dried,Herbaceous Fodders,457,g,day,individual,Yes,Yes,Base,livestock,NA;NA;NA,1,21,kg,NA,NA,NA,TRUE,T L ONLY,no
+NN0234,T 5 LUPIN ONLY,Natural Pasture Dried,Herbaceous Fodders,457000,g,day,individual,Yes,Yes,Base,livestock,NA;NA;NA,1,21,kg,NA,NA,NA,TRUE,T L ONLY,no
 NN0234,T 5 LUPIN ONLY,Salt,Non-ERA Feed,NA,NA,NA,NA,Yes,Yes,Base,livestock,NA;NA;NA,1,21,kg,NA,NA,NA,FALSE,T L ONLY,no
-NN0234,T 5 LUPIN ONLY,Blue Lupin,Agroforestry Fodders,269.7,g,day,individual,Yes,No,NA,livestock,g;day;individual,1,21,kg,NA,NA,NA,TRUE,T L ONLY,no
+NN0234,T 5 LUPIN ONLY,Blue Lupin,Agroforestry Fodders,269700,g,day,individual,Yes,No,NA,livestock,g;day;individual,1,21,kg,NA,NA,NA,TRUE,T L ONLY,no
 NN0236,T2,Cotton Seed Ground,Crop Product,300,g,day,individual,Yes,NA,NA,livestock,g;day;individual,5,15.6,kg,NA,NA,NA,FALSE,T2,no
 NN0236,T3,Erythrina brucei Leaves Dried,Agroforestry Fodders,99,g,day,individual,Yes,NA,NA,livestock,g;day;individual,5,16,kg,NA,NA,NA,FALSE,T3,no
 NN0236,T3,Cotton Seed Ground,Crop Product,201,g,day,individual,Yes,NA,NA,livestock,g;day;individual,5,16,kg,NA,NA,NA,FALSE,T3,no
@@ -12479,11 +12479,11 @@ NN0205,Base_T6,Grass Dried,Imported_from_feed_intake,431,g,day,individual,NA,NA,
 NN0211,Base_CON T1,Grass Dried,Imported_from_feed_intake,58.8,g,day,individual,NA,NA,NA,feed_intake,NA,6,16,kg,imported,NA,NA,FALSE,NA,NA
 NN0211,Base_T2 LOW,Grass Dried,Imported_from_feed_intake,42,g,day,individual,NA,NA,NA,feed_intake,NA,6,16.6,kg,imported,NA,NA,FALSE,NA,NA
 NN0211,Base_T3 MEDIUM,Grass Dried,Imported_from_feed_intake,35.1,g,day,individual,NA,NA,NA,feed_intake,NA,6,17.3,kg,imported,NA,NA,FALSE,NA,NA
-NN0212,Base_1LSC:2WB,Unspecified Grass Dried,Imported_from_feed_intake,39.1,g,day,individual,NA,NA,NA,feed_intake,NA,6,15.6,kg,imported,NA,NA,FALSE,NA,NA
-NN0212,Base_2LSC:1WB,Unspecified Grass Dried,Imported_from_feed_intake,38.5,g,day,individual,NA,NA,NA,feed_intake,NA,6,15.5,kg,imported,NA,NA,FALSE,NA,NA
-NN0212,Base_Control,Unspecified Grass Dried,Imported_from_feed_intake,55.8,g,day,individual,NA,NA,NA,feed_intake,NA,6,15.5,kg,imported,NA,NA,FALSE,NA,NA
-NN0212,Base_LSC,Unspecified Grass Dried,Imported_from_feed_intake,41.9,g,day,individual,NA,NA,NA,feed_intake,NA,6,15.5,kg,imported,NA,NA,FALSE,NA,NA
-NN0212,Base_WB,Unspecified Grass Dried,Imported_from_feed_intake,39.9,g,day,individual,NA,NA,NA,feed_intake,NA,6,15.6,kg,imported,NA,NA,FALSE,NA,NA
+NN0212,Base_1LSC:2WB,Unspecified Grass Dried,Imported_from_feed_intake,306.9164782278323,g,NA,NA,NA,NA,NA,feed_intake,NA,6,15.6,kg,imported,NA,NA,FALSE,NA,NA
+NN0212,Base_2LSC:1WB,Unspecified Grass Dried,Imported_from_feed_intake,300.7526780050654,g,NA,NA,NA,NA,NA,feed_intake,NA,6,15.5,kg,imported,NA,NA,FALSE,NA,NA
+NN0212,Base_Control,Unspecified Grass Dried,Imported_from_feed_intake,435.89608916058825,g,NA,NA,NA,NA,NA,feed_intake,NA,6,15.5,kg,imported,NA,NA,FALSE,NA,NA
+NN0212,Base_LSC,Unspecified Grass Dried,Imported_from_feed_intake,327.3126547639543,g,NA,NA,NA,NA,NA,feed_intake,NA,6,15.5,kg,imported,NA,NA,FALSE,NA,NA
+NN0212,Base_WB,Unspecified Grass Dried,Imported_from_feed_intake,313.19609926574185,g,NA,NA,NA,NA,NA,feed_intake,NA,6,15.6,kg,imported,NA,NA,FALSE,NA,NA
 NN0214,Base_Acacia albida Treatment,Maize Straw,Imported_from_feed_intake,401,g,day,individual,NA,NA,NA,feed_intake,NA,8,21,kg,imported,NA,NA,FALSE,NA,NA
 NN0214,Base_Acacia nilotica Treatment,Maize Straw,Imported_from_feed_intake,347,g,day,individual,NA,NA,NA,feed_intake,NA,8,21,kg,imported,NA,NA,FALSE,NA,NA
 NN0214,Base_Acacia tortilis Treatment,Maize Straw,Imported_from_feed_intake,430,g,day,individual,NA,NA,NA,feed_intake,NA,8,21,kg,imported,NA,NA,FALSE,NA,NA
@@ -12516,10 +12516,10 @@ NN0230,Base_Medicago sativa diet,Teff Straw,Imported_from_feed_intake,369,g,day,
 NN0230,Base_Medicago sativa maize diet,Teff Straw,Imported_from_feed_intake,396,g,day,individual,NA,NA,NA,feed_intake,NA,4,NA,NA,imported,NA,NA,FALSE,NA,NA
 NN0230,Base_Sesbania sesban diet,Teff Straw,Imported_from_feed_intake,459,g,day,individual,NA,NA,NA,feed_intake,NA,4,NA,NA,imported,NA,NA,FALSE,NA,NA
 NN0230,Base_Sesbania sesban maizediet,Teff Straw,Imported_from_feed_intake,395,g,day,individual,NA,NA,NA,feed_intake,NA,4,NA,NA,imported,NA,NA,FALSE,NA,NA
-NN0234,Base_T 1 CON,Natural Pasture Dried,Imported_from_feed_intake,390,g,day,individual,NA,NA,NA,feed_intake,NA,1,20.9,kg,imported,NA,NA,FALSE,NA,NA
-NN0234,Base_T 2 74 LUPIN,Natural Pasture Dried,Imported_from_feed_intake,422.1,g,day,individual,NA,NA,NA,feed_intake,NA,1,21,kg,imported,NA,NA,FALSE,NA,NA
-NN0234,Base_T 3 147 LUPIN,Natural Pasture Dried,Imported_from_feed_intake,410.2,g,day,individual,NA,NA,NA,feed_intake,NA,1,20.9,kg,imported,NA,NA,FALSE,NA,NA
-NN0234,Base_T 4 219 LUPIN,Natural Pasture Dried,Imported_from_feed_intake,470.1,g,day,individual,NA,NA,NA,feed_intake,NA,1,21.1,kg,imported,NA,NA,FALSE,NA,NA
+NN0234,Base_T 1 CON,Natural Pasture Dried,Imported_from_feed_intake,390000,g,day,individual,NA,NA,NA,feed_intake,NA,1,20.9,kg,imported,NA,NA,FALSE,NA,NA
+NN0234,Base_T 2 74 LUPIN,Natural Pasture Dried,Imported_from_feed_intake,422100,g,day,individual,NA,NA,NA,feed_intake,NA,1,21,kg,imported,NA,NA,FALSE,NA,NA
+NN0234,Base_T 3 147 LUPIN,Natural Pasture Dried,Imported_from_feed_intake,410200,g,day,individual,NA,NA,NA,feed_intake,NA,1,20.9,kg,imported,NA,NA,FALSE,NA,NA
+NN0234,Base_T 4 219 LUPIN,Natural Pasture Dried,Imported_from_feed_intake,470100,g,day,individual,NA,NA,NA,feed_intake,NA,1,21.1,kg,imported,NA,NA,FALSE,NA,NA
 NN0236,Base_T1,Grass Dried,Imported_from_feed_intake,424,g,day,individual,NA,NA,NA,feed_intake,NA,5,15.1,kg,imported,NA,NA,FALSE,NA,NA
 NN0236,Base_T2,Grass Dried,Imported_from_feed_intake,289,g,day,individual,NA,NA,NA,feed_intake,NA,5,15.6,kg,imported,NA,NA,FALSE,NA,NA
 NN0236,Base_T3,Grass Dried,Imported_from_feed_intake,299,g,day,individual,NA,NA,NA,feed_intake,NA,5,16,kg,imported,NA,NA,FALSE,NA,NA

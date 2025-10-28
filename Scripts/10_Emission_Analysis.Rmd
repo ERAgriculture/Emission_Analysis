@@ -12,23 +12,6 @@ author:
     orcid: "0009-0002-8345-7219"
 ---
 
-## Introduction
-
-This notebook provides the analytical workflow used to quantify how observed **diet shifts** alter **enteric methane (CH₄) emission intensity (EI)** across **cattle, sheep, and goats** within African livestock systems.  
-The analyses draw on the **ERA v1.0.1** georeferenced meta-dataset, which compiles more than 500 feeding trials conducted from 1934 to 2024 across the continent. The overarching objective is to link **diet composition**, **feed intake**, and **animal performance** with **Tier-2–based CH₄ emission estimates**, and to identify feeding practices that consistently reduce emission intensity while maintaining or improving productivity.
-
-The workflow harmonizes heterogeneous datasets through a reproducible multi-stage pipeline that integrates:
-
-- **Gross energy (GE) reconstruction:** a five-step cascade combining ERA records, Feedipedia tabulated values, ILRI feed composition libraries, and the Weiss & Tebbe (2019) empirical equation.  
-- **Methane estimation:** application of the **IPCC Tier-2** approach to derive daily CH₄ emissions (g CH₄ animal⁻¹ day⁻¹) from reconstructed GE intake and species-specific methane conversion factors (Ym).  
-- **Emission intensity (EI) computation:** CH₄ emissions expressed per unit of animal output (milk or meat) standardized to daily or annual scales.  
-- **Practice classification:** experimental diets categorized as *Additions*, *Substitutions*, or *No change* based on proportional changes in ingredient-level dry-matter shares.  
-- **Ingredient functional grouping:** feeds harmonized into six categories—high-starch, high-fat, protein, good forage, poor forage, and mineral/vitamin supplements—validated by livestock nutrition experts.
-
-Final analyses compute paired control–treatment differences in emission intensity (ΔEI, %) stratified by **species**, **practice type**, and **ingredient category**.  
-Visual outputs summarize the magnitude and direction of ΔEI responses, highlighting dietary “levers” (e.g., lipid addition, forage substitution) associated with lower CH₄ intensity.
-
-All figures and summary tables produced here are intended to support manuscript preparation, enabling co-authors to review data coverage, classification logic, and reproducible emission-intensity metrics generated from the harmonized dataset.
 
 # ERA Emission Analysis — Context for Co-authors
 
@@ -130,6 +113,8 @@ classif_ing_simple <- classif_ing_simple %>%
 GE_combined<-GE_combined %>%
   filter(B.Code!="EM1047")
 
+yield_data<-yield_data%>%
+  select(-c(P.Product))
 #BO1076 loo at practice tbl becaus esays no change but ther eis 
 
 ```

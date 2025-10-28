@@ -25,6 +25,10 @@ diet_percentages <- read.csv("~/Emission_Analysis/data/diet_percentages.csv")
 
 diets <- ingredients
 
+#remove salt 
+ingredients<-ingredients%>%
+  filter(D.Item!="Salt")
+
 ```
 
 ## 18. Ingredient Classification methods 
@@ -195,6 +199,8 @@ Ing_classif_long <- Ing_classif %>%
   select(B.Code, D.Item, DC.Variable, DC.Value,is_entire_diet,is_group)
 
 
+
+
 ```
 
 
@@ -271,6 +277,8 @@ print(override_counts)
 # Drop helper flag
 Ing_classif$overridden <- NULL
 # ---- end CSV override block ----
+
+  
 ```
 
 
@@ -628,6 +636,84 @@ ingredients <- ingredients %>%
 ```
 
 
+```{r}
+library(dplyr)
+library(readr)
+library(stringr)
+
+# 1) Read the classification file
+csv_path <- "~/Emission_Analysis/classified_ingredients_model.csv"
+ingredient_additional_classif <- read_csv(csv_path, show_col_types = FALSE)
+
+# 2) Clean up text and convert categories
+roman_to_name <- function(x) recode(
+  x,
+  "I"   = "High-starch",
+  "II"  = "High-fat",
+  "III" = "Protein",
+  "IV"  = "Good forage",
+  "V"   = "Poor forage",
+  "VI"  = "Mineral/Vitamin",
+  .default = x,
+  .missing = NA_character_
+)
+
+ingredient_additional_classif <- ingredient_additional_classif %>%
+  mutate(
+    D.Item = D.Item %>%
+      str_to_lower() %>%
+      str_replace_all("[^a-z0-9 ]", " ") %>%  # remove punctuation
+      str_squish(),
+    Predicted_Category = roman_to_name(Predicted_Category)
+  )
+
+# 3) Clean and prepare main dataset (replace ingredient_df with your data)
+ingredients <- ingredients %>%
+  mutate(
+    D.Item_raw = D.Item_raw %>%
+      str_to_lower() %>%
+      str_replace_all("[^a-z0-9 ]", " ") %>%
+      str_squish()
+  )
+
+# 4) Join and fill missing Ingredient_Category
+ingredients <- ingredients %>%
+  left_join(
+    ingredient_additional_classif %>% select(D.Item, Predicted_Category),
+    by = c("D.Item_raw" = "D.Item")
+  ) %>%
+  mutate(
+    Ingredient_Category = coalesce(Ingredient_Category, Predicted_Category)
+  ) %>%
+  select(-Predicted_Category)
+
+
+classif_ing <- classif_ing %>%
+  mutate(
+    D.Item = D.Item%>%
+      str_to_lower() %>%
+      str_replace_all("[^a-z0-9 ]", " ") %>%
+      str_squish()
+  )
+
+# 4) Join and fill missing Ingredient_Category
+classif_ing <- classif_ing %>%
+  left_join(
+    ingredient_additional_classif %>% select(D.Item, Predicted_Category),
+    by = c("D.Item")
+  ) %>%
+  mutate(
+    M7_Category = coalesce(M7_Category, Predicted_Category)
+  ) %>%
+  select(-Predicted_Category)
+
+classif_ing_simple <- classif_ing %>%
+  select(D.Item, Ingredient_Category = M7_Category)%>%
+  mutate(Ingredient_Category=roman_to_name(Ingredient_Category))
+
+
+
+```
 
 
 ```{r}

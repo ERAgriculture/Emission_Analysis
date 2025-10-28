@@ -234,8 +234,7 @@ digest_cols <- c("B.Code","D.Item","is_group","is_entire_diet",
 data_cols <- c("B.Code","A.Level.Name","Out.Code.Joined",
                "ED.Intake.Item","ED.Intake.Item.Raw",
                "ED.Mean.T","ED.Error","Out.Subind","Out.Unit",
-               "Out.WG.Start","Out.WG.Unit",
-               "is_entire_diet","is_group","T.Animals","T.Name")
+               "Out.WG.Start","Out.WG.Unit","P.Product","is_entire_diet","is_group","T.Animals","T.Name")
 
 prod_cols <- c("B.Code","P.Product","P.Variety","P.Practice")
 
