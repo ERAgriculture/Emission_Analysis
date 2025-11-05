@@ -1,0 +1,1262 @@
+---
+title: "8_bis_Emission_Analysis_high_level"
+output: html_document
+date: "2025-10-28"
+---
+
+# A Productivity–Emission Relationship Analysis
+
+
+To characterize the relationship between animal productivity and methane emissions across ruminant production systems, we compiled experimental data from controlled feeding studies reporting both daily product yield and annual methane output per animal. Each observation represented a discrete diet treatment within a study, identified by a unique study identifier code. Productivity metrics were standardized to edible product yield, expressed as either milk yield (kg animal⁻¹ day⁻¹) or meat yield derived from carcass composition or growth rate measurements. Methane emissions were standardized to annual production (kg CH₄ animal⁻¹ yr⁻¹).
+Linear regression models were fitted independently for each species × product combination to quantify the relationship between productivity and absolute methane emissions. This approach captured within-study scaling relationships while maintaining comparability across experimental contexts. The analysis was restricted to genuine production outputs (milk or meat) to exclude potentially confounding metrics such as live weight gain or feed intake. Each regression coefficient therefore represents the empirical association between productivity and emission intensity across dietary treatments within comparable experimental frameworks.
+The resulting relationships (Figure 1) illustrate how improvements in production output correspond to changes in total methane emission at the animal scale, providing cross-species visualization of productivity–emission trade-offs. By employing experimental contrasts rather than aggregated national inventory data, this analytical framework isolated biological variation in feed efficiency from management- or system-level effects.
+```{r include=FALSE}
+
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(readr)
+library(ggplot2)
+library(forcats)
+library(scales)
+
+GE_combined <- read.csv("~/Emission_Analysis/data/GE_Combined.csv")
+merged_metadata <- readRDS("~/Emission_Analysis/data/merged_metadata_nutrition_inference.rds")
+ingredients <- readRDS("~/Emission_Analysis/data/ingredients_harmonized_subset.rds")
+yield_data<- read.csv("~/Emission_Analysis/data/yield_data.csv")%>%select(-c("P.Product"))
+diet_percentages <- read.csv("~/Emission_Analysis/data/diet_percentages_classif.csv")
+total_amounts <- read.csv("~/Emission_Analysis/data/total_amounts.csv")
+ing_classif<-read.csv("~/Emission_Analysis/data/classif_ing_simple.csv")
+
+
+
+```
+
+
+```{r include=FALSE}
+clean_key <- function(x) x %>% str_trim() %>% str_squish() %>% str_to_lower()
+canonicalize_item <- function(x) {
+  clean_key(x) %>%
+    str_replace_all("\\bbran\\b", "offal")
+}
+
+  
+  merged_metadata$Animals.Diet.Comp <- merged_metadata$Animals.Diet.Comp %>%
+  mutate(D.Item = canonicalize_item(D.Item)) 
+  
+    diet_percentages <-diet_percentages %>%
+  mutate(D.Item = canonicalize_item(D.Item)) 
+
+```
+
+
+
+```{r echo=FALSE,fig.width=12, fig.height=7, out.width='100%', fig.align='center'}
+
+# Step 1: Make sure the key columns match (D.Item and A.Level.Name)
+GE_combined_for_merge <- GE_combined %>%
+  filter(!is.na(CH4_kg_year))%>%
+  rename(A.Level.Name = D.Item)%>%
+  select(-"ED.Mean.T")
+
+
+yield_data <- yield_data %>%
+  filter(!is.na(ED.Mean.T))%>%
+  filter(Out.Subind!="Meat Yield-Final Body Weight")
+
+
+# Step 2: Merge yield and emission data
+yield_with_emissions <- GE_combined_for_merge %>%
+  left_join(
+    yield_data,
+    by = c("B.Code", "A.Level.Name")
+  )%>%
+    filter(!is.na(ED.Mean.T))%>%
+  filter(!is.na(CH4_kg_year))%>%
+  distinct()
+
+  
+
+# distinct B.Code per product
+bcode_per_product <- yield_with_emissions %>%          # or yield_data
+  distinct(P.Product, B.Code) %>%                      # keep one row per pair
+  count(P.Product, name = "n_BCodes")                  # tally them
+
+bcode_per_product
+
+
+# Optional: ensure species have readable order
+species_order <- c("Cattle", "Goat", "Sheep")  # adjust to match your data
+yield_with_emissions <- yield_with_emissions %>%
+  mutate(P.Product = factor(P.Product, levels = species_order))
+
+yield_with_emissions <- yield_with_emissions %>%
+  filter(
+    # Keep only real milk or meat yield types
+    (
+      str_detect(Out.Subind, regex("Milk Yield", ignore_case = TRUE)) |
+      str_detect(Out.Subind, regex("Meat Yield", ignore_case = TRUE))
+    ) &
+    !str_detect(Out.Subind, regex("Body Weight|Final", ignore_case = TRUE))
+  ) %>%
+  mutate(
+    Product = case_when(
+      str_detect(Out.Subind, regex("milk", ignore_case = TRUE)) ~ "Milk",
+      str_detect(Out.Subind, regex("meat", ignore_case = TRUE)) ~ "Meat",
+      TRUE ~ NA_character_
+    )
+  )
+
+
+# Plot: one panel per species
+
+
+ggplot(yield_with_emissions,
+       aes(x = ED.Mean.T, y = CH4_kg_year)) +
+  geom_point(
+    color = "grey40", alpha = 0.35, size = 1.8
+  ) +
+  geom_smooth(
+    method = "lm", se = TRUE,
+    color = "grey20", linewidth = 0.5,
+    fill = alpha("lightblue", 0.991)
+  ) +
+  facet_wrap(~ interaction(P.Product, Product, sep = " – "),
+             scales = "free") +
+  scale_y_continuous(
+    "Annual CH₄ emissions (kg CH₄ animal⁻¹ yr⁻¹)",
+    labels = comma_format()
+  ) +
+  scale_x_continuous(
+    "Yield (kg product animal⁻¹ day⁻¹)",
+    labels = comma_format()
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    panel.grid.major = element_line(color = "grey92", linewidth = 0.3),
+    panel.grid.minor = element_blank(),
+    strip.text = element_text(size = 12, face = "bold"),
+    axis.title = element_text(face = "plain"),
+    axis.text = element_text(color = "black"),
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    legend.position = "none"
+  )
+
+length(unique(yield_with_emissions$B.Code))
+
+
+```
+Figure 1 shows the relationship between annual enteric CH₄ emissions and product yield for cattle, goats, and sheep, separated by meat and milk production systems. Across all species, CH₄ emissions increase with yield, indicating that higher-producing animals generally emit more methane per year. However, the magnitude and slope of these relationships differ among species. Cattle have the highest absolute CH₄ emissions, reflecting their larger size and output levels, while goats and sheep emit less overall but follow similar positive trends. The slope of increase appears steeper in goats and sheep, suggesting that small changes in productivity are associated with relatively larger changes in CH₄ output in these smaller ruminants. These species-specific patterns highlight the diversity of emission–yield dynamics captured in African feeding trials and underscore the need to interpret CH₄ responses within the biological and management context of each species.
+
+```{r include=FALSE}
+# --- 2) Ensure we have diet_details and diet_shares (built from your data) ----
+# If you already have these objects, this block will just reuse them.
+
+# Keep only precise outcomes you compare within-paper
+keep_outcomes <- c(
+  "Milk Yield","Meat Yield","Meat Yield-Hot Carcass","Meat Yield-Cold Carcass",
+  "Meat Yield-Slaughter Body","Meat Yield- Carcass","Meat Yield-Empty Carcass Meat Yield"
+)
+
+# Build yield_with_emissions_ranked if not present
+if (!exists("yield_with_emissions_ranked")) {
+  stopifnot(exists("yield_with_emissions"))  # you said this is available
+  yield_with_emissions_ranked <- yield_with_emissions %>%
+    filter(Out.Subind %in% keep_outcomes) %>%
+    mutate(
+      CH4_kg_day = CH4_kg_year/365,
+      EI_kgCH4_per_kgProd = CH4_kg_day / ED.Mean.T
+    ) %>%
+    group_by(P.Product, Product, Out.Subind, B.Code) %>%
+    mutate(
+      yield_scaled = as.numeric(scale(ED.Mean.T)),
+      ch4_scaled   = as.numeric(scale(CH4_kg_year))
+    ) %>%
+    ungroup()}
+
+# Build diet_details from your ingredient shares
+stopifnot(exists("diet_percentages"))
+diet_details <- yield_with_emissions_ranked %>%
+  select(P.Product, Product, Out.Subind, B.Code, A.Level.Name, ED.Mean.T,
+         CH4_kg_year, CH4_kg_day, EI_kgCH4_per_kgProd, T.Control) %>%
+  distinct() %>%
+  left_join(
+    diet_percentages %>%
+      rename(
+        Ingredient.Name = any_of(c("Ingredient.Name","D.Item")),
+        Diet.Percent    = any_of(c("Diet.Percent","Percentage_of_Diet"))
+      ) %>%
+      mutate(Ingredient.Name = tolower(Ingredient.Name)) %>%
+      select(B.Code, A.Level.Name, Ingredient.Name, Diet.Percent),
+    by = c("B.Code","A.Level.Name")
+  )
+
+# Normalize to shares (sums to 1 per diet)
+diet_shares <- diet_details %>%
+  mutate(Ingredient.Name = tolower(Ingredient.Name)) %>%
+  group_by(B.Code, Out.Subind, A.Level.Name) %>%
+  mutate(share = Diet.Percent / sum(Diet.Percent, na.rm = TRUE)) %>%
+  ungroup()
+
+# --- 3) Read model-based nutrient data & standardize names (UPPERCASE) ----
+# -> file: data/ingredients_high_level_model.csv
+model_nutrients <- read_csv("data/ingredients_high_level_model.csv",
+                            show_col_types = FALSE) %>%
+  mutate(across(everything(), ~ ifelse(. == "", NA, .))) %>%
+  mutate(across(where(is.character), tolower))
+
+# normalize column names to lower, then rename to our standards
+names(model_nutrients) <- tolower(names(model_nutrients))
+model_nutrients <- model_nutrients %>%
+  rename(D.Item = any_of(c("ingredient","d.item","item","feed","name"))) %>%
+  mutate(D.Item = tolower(D.Item)) %>%
+  # force nutrients to UPPERCASE names
+  rename_with(~ toupper(.x), .cols = any_of(c("cp","ndf","adf","ee","ash","ge","me"))) %>%
+  select(any_of(c("D.Item","CP","NDF","ADF","EE","ASH","GE","ME")))
+
+# ============================================================
+# 🧩 Empirical + Modeled Nutrient Composition (clean + compact)
+# ============================================================
+
+# --- 1️⃣ Extract empirical ingredient composition ----
+ingredient_compo <- merged_metadata$Animals.Diet.Comp %>%
+  filter(is_entire_diet == "FALSE") %>%
+  mutate(D.Item = tolower(D.Item)) %>%
+  filter(D.Item %in% tolower(diet_details$Ingredient.Name))
+
+
+
+
+# --- 2️⃣ Combine empirical and modeled data ----
+ingredient_compo_combined <- ingredient_compo %>%
+  mutate(
+    DC.Variable = toupper(DC.Variable),
+    DC.Value = suppressWarnings(as.numeric(DC.Value))
+  ) %>%
+  filter(DC.Unit %in% c("g/kg", "MJ/kg"),
+         DC.Variable %in% c("CP", "NDF", "ADF", "EE", "ASH", "GE", "ME")) %>%
+  group_by(D.Item, DC.Variable) %>%
+  summarise(DC.Value = mean(DC.Value, na.rm = TRUE), .groups = "drop") %>%
+  pivot_wider(names_from = DC.Variable, values_from = DC.Value) %>%
+  full_join(model_nutrients, by = "D.Item", suffix = c("", "_MODEL")) %>%
+  mutate(
+    CP  = coalesce(CP,  as.numeric(CP_MODEL)),
+    NDF = coalesce(NDF, as.numeric(NDF_MODEL)),
+    ADF = coalesce(ADF, as.numeric(ADF_MODEL)),
+    EE  = coalesce(EE,  as.numeric(EE_MODEL)),
+    ASH = coalesce(ASH, as.numeric(ASH_MODEL)),
+    GE  = coalesce(GE,  as.numeric(GE_MODEL)),
+    ME  = coalesce(ME,  as.numeric(ME_MODEL))
+  ) %>%
+  select(D.Item, CP, NDF, ADF, EE, ASH, GE, ME)
+
+# --- 3️⃣ Add representative "molasses" nutrient values ----
+molasses_means <- merged_metadata$Animals.Diet.Comp %>%
+  filter(is_entire_diet == FALSE) %>%
+  mutate(
+    D.Item = tolower(D.Item),
+    DC.Variable = toupper(DC.Variable),
+    DC.Value = suppressWarnings(as.numeric(DC.Value))
+  ) %>%
+  filter(str_detect(D.Item, "^unspecified\\s*molasse")) %>%
+  filter(
+    DC.Unit %in% c("g/kg", "MJ/kg"),
+    DC.Variable %in% c("CP", "NDF", "ADF", "EE", "ASH", "GE", "ME")
+  ) %>%
+  group_by(DC.Variable) %>%
+  summarise(value = mean(DC.Value, na.rm = TRUE), .groups = "drop") %>%
+  pivot_wider(names_from = DC.Variable, values_from = value) %>%
+  mutate(D.Item = "molasses")
+
+# Step 2️⃣ – Replace the GE value with the mean GE from *all* molasse-type ingredients
+molasses_GE_mean <- merged_metadata$Animals.Diet.Comp %>%
+  filter(is_entire_diet == FALSE) %>%
+  mutate(D.Item = tolower(D.Item)) %>%
+  filter(str_detect(D.Item, "molasse")) %>%
+  mutate(DC.Variable = toupper(DC.Variable)) %>%
+  filter(DC.Variable == "GE", DC.Unit %in% c("g/kg", "MJ/kg")) %>%
+  summarise(GE_mean = mean(as.numeric(DC.Value), na.rm = TRUE)) %>%
+  pull(GE_mean)
+
+# Step 3️⃣ – Replace GE in the molasses table with the computed mean
+molasses_means <- molasses_means %>%
+  mutate(GE = molasses_GE_mean)
+
+
+# Step 4️⃣ – Add or replace this entry in the full composition table
+ingredient_compo_combined <- ingredient_compo_combined %>%
+  filter(D.Item != "molasses") %>%
+  bind_rows(molasses_means %>% select(names(ingredient_compo_combined)))
+
+
+cat("✅ Combined empirical + modeled composition built, with 'molasses' added.\n")
+
+
+cat("✅ 'molasses' nutrient values set to mean of all ingredients containing 'molasse'.\n")
+
+
+# --- 6) Nutrient coverage across all (used) ingredients ----
+nutrient_coverage <- ingredient_compo_combined %>%
+  pivot_longer(cols = c(CP, NDF, ADF, EE, ASH, GE, ME),
+               names_to = "DC.Variable", values_to = "DC.Value") %>%
+  group_by(DC.Variable) %>%
+  summarize(
+    n_with_value = sum(!is.na(DC.Value)),
+    n_total      = n(),
+    coverage_pct = round(100 * n_with_value / n_total, 1),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(coverage_pct))
+cat("\n✅ Nutrient coverage (ingredients used in diets):\n")
+print(nutrient_coverage)
+
+# --- 7) Define non-nutritional ingredients to ignore for completeness checks ----
+non_nutritional_ingredients <- c(
+  "salt", "urea", "lime", "cement", "alkali", "sulphur",
+  "mineral mix", "minerals and vitamins mix", "mineral lick",
+  "dicalcium phosphate", "monocalcium phosphate",
+  "bone ground", "protected fat", "supplement",
+  "mixture", "commercial feed", "vitamins", "trace minerals",
+  "naoh", "ca(oh)2", "phosphate", "ash", "limestone",
+  "molasses mineral mix", "salt block"
+)
+
+# --- 8) Which ingredients have complete core nutrients? (CP,NDF,ADF,EE,ASH,GE) ----
+ingredient_has_data <- ingredient_compo_combined %>%
+  filter(!D.Item %in% non_nutritional_ingredients) %>%
+  mutate(across(c(CP, NDF, ADF, EE, ASH, ME), ~ !is.na(.))) %>%
+  rename_with(~ paste0("HAS_", .), c(CP, NDF, ADF, EE, ASH, ME)) %>%
+  mutate(ALL_CORE = if_all(starts_with("HAS_"), ~ .x))
+
+# --- 9) Build ingredient nutrient table for joining (prefix with nut_) ----
+ingredient_nut <- ingredient_compo_combined %>%
+  filter(!D.Item %in% non_nutritional_ingredients) %>%   # <-- drop non-nutritional items
+  rename(
+    nut_CP = CP, nut_NDF = NDF, nut_ADF = ADF, nut_EE = EE,
+    nut_ASH = ASH, nut_GE = GE, nut_ME = ME
+  )
+
+# --- 10) Diet-level nutrient composition (weighted by ingredient share) ----
+nut_cols_gkg <- c("nut_CP","nut_NDF","nut_ADF","nut_EE","nut_ASH")
+nut_cols_mj  <- c("nut_ME","nut_GE")
+
+diet_nutrient <- diet_shares %>%
+  left_join(ingredient_nut, by = c("Ingredient.Name" = "D.Item")) %>%
+  group_by(P.Product, Product, Out.Subind, B.Code, A.Level.Name,
+           T.Control, ED.Mean.T, CH4_kg_day, EI_kgCH4_per_kgProd) %>%
+  summarise(across(
+      all_of(c(nut_cols_gkg, nut_cols_mj)),
+      ~ if (all(is.na(.x))) NA_real_ else sum(share * .x, na.rm = TRUE),
+      .names = "{.col}"),
+    n_ing_with_nut = sum(
+      !is.na(nut_CP) | !is.na(nut_NDF) | !is.na(nut_ME) |
+      !is.na(nut_ADF) | !is.na(nut_EE) | !is.na(nut_ASH)),
+    .groups = "drop")
+
+
+
+cat("\n✅ Diet-level nutrient table built. N diets:", nrow(diet_nutrient), "\n")
+
+
+# --- 11) Diet-level nutrient coverage with diagnostics ----
+
+# 1️⃣ Compute diet coverage as before
+diet_coverage <- diet_shares %>%
+  mutate(Ingredient.Name = tolower(Ingredient.Name)) %>%
+  filter(!Ingredient.Name %in% non_nutritional_ingredients) %>%
+  left_join(
+    ingredient_has_data %>%
+      select(D.Item, ALL_CORE, HAS_CP, HAS_NDF, HAS_ADF, HAS_EE, HAS_ASH, HAS_ME),
+    by = c("Ingredient.Name" = "D.Item")
+  ) %>%
+  group_by(B.Code, Out.Subind, P.Product, Product, A.Level.Name) %>%
+  summarize(
+    n_ing_total = n(),
+    n_ing_with_all_nut = sum(ALL_CORE, na.rm = TRUE),
+    pct_with_data = round(100 * n_ing_with_all_nut / n_ing_total, 1),
+    .groups = "drop"
+  )
+
+cat("\n📊 Diet coverage computed for", nrow(diet_coverage), "diets.\n")
+
+# 2️⃣ Identify incomplete diets (<100% nutrient coverage)
+incomplete_diets <- diet_coverage %>%
+  filter(pct_with_data < 100)
+
+cat("\n❗ Incomplete diets found:", nrow(incomplete_diets), "\n")
+
+# 3️⃣ Diagnose *which ingredients* are missing which nutrients
+diet_missing_details <- diet_shares %>%
+  mutate(Ingredient.Name = tolower(Ingredient.Name)) %>%
+  filter(!Ingredient.Name %in% non_nutritional_ingredients) %>%
+  left_join(
+    ingredient_compo_combined %>%
+      select(D.Item, CP, NDF, ADF, EE, ASH, ME),
+    by = c("Ingredient.Name" = "D.Item")
+  ) %>%
+  mutate(
+    missing_CP  = is.na(CP),
+    missing_NDF = is.na(NDF),
+    missing_ADF = is.na(ADF),
+    missing_EE  = is.na(EE),
+    missing_ASH = is.na(ASH),
+    missing_ME  = is.na(ME),
+    missing_any = missing_CP | missing_NDF | missing_ADF | missing_EE | missing_ASH | missing_ME
+  ) %>%
+  filter(missing_any) %>%
+  select(
+    B.Code, Out.Subind, Product, A.Level.Name, Ingredient.Name,
+    missing_CP, missing_NDF, missing_ADF, missing_EE, missing_ASH, missing_ME
+  ) %>%
+  arrange(B.Code, A.Level.Name, Ingredient.Name)
+
+# 4️⃣ Summary of missing ingredients per diet
+missing_summary <- diet_missing_details %>%
+  group_by(B.Code, A.Level.Name) %>%
+  summarize(
+    n_missing_ingredients = n_distinct(Ingredient.Name),
+    .groups = "drop"
+  ) %>%
+  left_join(
+    diet_coverage %>% select(B.Code, A.Level.Name, pct_with_data),
+    by = c("B.Code", "A.Level.Name")
+  ) %>%
+  arrange(B.Code, desc(pct_with_data))
+
+# 5️⃣ Display results
+cat("\n🔍 Missing nutrient details (first 15 rows):\n")
+print(head(diet_missing_details, 15))
+
+cat("\n📈 Summary of incomplete diets:\n")
+print(missing_summary)
+
+# 6️⃣ Fully covered diets (100% of relevant ingredients have all nutrients)
+complete_diets <- diet_coverage %>% filter(pct_with_data == 100)
+cat("\n✅ Fully covered diets (relevant ingredients only):", nrow(complete_diets), "\n")
+
+# Optional: Export diagnostics
+# write_csv(diet_missing_details, "outputs/diet_missing_details.csv")
+# write_csv(missing_summary, "outputs/diet_missing_summary.csv")
+
+
+
+complete_diets <- diet_coverage %>% filter(pct_with_data == 100)
+cat("\n✅ Fully covered diets (relevant ingredients only):", nrow(complete_diets), "\n")
+
+
+# --- 12) Reference diet per paper × outcome (control if present, else lowest EI) ----
+ref_diets <- diet_nutrient %>%
+  group_by(B.Code, Out.Subind) %>%
+  mutate(any_control = any(isTRUE(T.Control))) %>%
+  ungroup() %>%
+  group_by(B.Code, Out.Subind, A.Level.Name) %>%
+  summarize(
+    EI = first(EI_kgCH4_per_kgProd),
+    CH4 = first(CH4_kg_day),
+    Y   = first(ED.Mean.T),
+    is_control = any(isTRUE(T.Control)),
+    .groups = "drop"
+  ) %>%
+  group_by(B.Code, Out.Subind) %>%
+  mutate(
+    EI_rank = rank(EI, ties.method = "first"),
+    ref_flag = if (any(is_control)) is_control else EI_rank == 1L
+  ) %>%
+  filter(ref_flag) %>%
+  arrange(B.Code, Out.Subind, A.Level.Name) %>%
+  slice_head(n = 1) %>%                    # ensure 1 reference per study×outcome
+  ungroup()
+
+# Bring reference nutrient composition and rename to *_ref
+ref_full <- ref_diets %>%
+  left_join(
+    diet_nutrient %>%
+      select(B.Code, Out.Subind, A.Level.Name, all_of(c(nut_cols_gkg, nut_cols_mj))),
+    by = c("B.Code","Out.Subind","A.Level.Name")
+  ) %>%
+  rename(A.Level.Name_ref = A.Level.Name) %>%
+  rename(
+    EI_ref  = EI,
+    CH4_ref = CH4,
+    Y_ref   = Y
+  ) %>%
+  rename_with(~ paste0(.x, "_ref"), all_of(c(nut_cols_gkg, nut_cols_mj)))
+
+# --- 13) Within-study deltas vs reference (no many-to-many join issues) ----
+diet_deltas <- diet_nutrient %>%
+  left_join(ref_full, by = c("B.Code","Out.Subind")) %>%
+  filter(A.Level.Name != A.Level.Name_ref) %>%   # drop the reference rows
+  mutate(
+    dY    = ED.Mean.T - Y_ref,
+    dCH4  = CH4_kg_day - CH4_ref,
+    dEI   = EI_kgCH4_per_kgProd - EI_ref,
+    dY_pct   = 100 * dY / Y_ref,
+    dCH4_pct = 100 * dCH4 / CH4_ref,
+    dEI_pct  = 100 * dEI / EI_ref
+  ) %>%
+  # nutrient deltas (absolute)
+  mutate(
+    across(all_of(c(nut_cols_gkg, nut_cols_mj)),
+           ~ . - get(paste0(cur_column(), "_ref")), .names = "d{.col}")
+  )
+
+cat("\n✅ Delta table built. N within-study pairs:", nrow(diet_deltas), "\n")
+
+# --- 14) Quick reportable counts ----
+counts <- list(
+  diets_total      = nrow(diet_nutrient),
+  papers_total     = dplyr::n_distinct(diet_nutrient$B.Code),
+  outcomes_total   = dplyr::n_distinct(diet_nutrient$Out.Subind),
+  pairs_total      = nrow(diet_deltas),
+  pairs_with_ME    = sum(!is.na(diet_deltas$dnut_ME)),
+  pairs_with_NDF   = sum(!is.na(diet_deltas$dnut_NDF)),
+  pairs_with_CP    = sum(!is.na(diet_deltas$dnut_CP)),
+  pairs_with_EE    = sum(!is.na(diet_deltas$dnut_EE))
+)
+cat("\n✅ Counts:\n"); print(counts)
+
+# --- 15) FIGURE 1 – Coefficient plot (compact) ----
+# Uses base lm; broom::tidy() via namespace to avoid attach
+# --- 15) MODELS + COUNTS (EI, Yield, CH4) -------------------------------
+
+# helper: rescale nutrient deltas to reporting units
+scale_vars <- function(df) {
+  df %>%
+    mutate(
+      dnut_ME_1    = dnut_ME,        # per 1 MJ/kg
+      dnut_NDF_100 = dnut_NDF / 100, # per 100 g/kg
+      dnut_CP_100  = dnut_CP  / 50, # per 50g/kg
+      dnut_EE_10   = dnut_EE  / 10   # per 10 g/kg
+    )
+}
+
+# build a base modeling table; DON'T require all three outcomes simultaneously
+base_data <- diet_deltas %>%
+  scale_vars() %>%
+  mutate(.row_id = dplyr::row_number()) %>%
+  # keep ids you'll use for study counts
+  select(.row_id, B.Code, P.Product, Product,
+         dEI_pct, dY_pct, dCH4_pct,
+         dnut_ME_1, dnut_NDF_100, dnut_CP_100, dnut_EE_10)
+
+# per-outcome modeling data (separate filters)
+mod_ei_data  <- base_data %>% filter(!is.na(dEI_pct))
+mod_y_data   <- base_data %>% filter(!is.na(dY_pct))
+mod_ch4_data <- base_data %>% filter(!is.na(dCH4_pct))
+
+# masks of rows actually used (complete cases on predictors + response)
+preds <- c("dnut_ME_1","dnut_NDF_100","dnut_CP_100","dnut_EE_10","P.Product","Product")
+
+mask_ei  <- stats::complete.cases(mod_ei_data[, c("dEI_pct",  preds)])
+mask_y   <- stats::complete.cases(mod_y_data[,  c("dY_pct",   preds)])
+mask_ch4 <- stats::complete.cases(mod_ch4_data[,c("dCH4_pct", preds)])
+
+# fit models
+m_ei  <- lm(dEI_pct  ~ dnut_ME_1 + dnut_NDF_100 + dnut_CP_100 + dnut_EE_10 + P.Product + Product,
+            data = mod_ei_data[mask_ei, ])
+m_y   <- lm(dY_pct   ~ dnut_ME_1 + dnut_NDF_100 + dnut_CP_100 + dnut_EE_10 + P.Product + Product,
+            data = mod_y_data[mask_y, ])
+m_ch4 <- lm(dCH4_pct ~ dnut_ME_1 + dnut_NDF_100 + dnut_CP_100 + dnut_EE_10 + P.Product + Product,
+            data = mod_ch4_data[mask_ch4, ])
+
+# counts: datapoints (rows) and papers (distinct B.Code) per model
+model_meta <- dplyr::tibble(
+  outcome   = c("ΔEI (%)","ΔYield (%)","ΔCH₄ (%)"),
+  n_obs     = c(sum(mask_ei), sum(mask_y), sum(mask_ch4)),
+  n_papers  = c(
+    dplyr::n_distinct(mod_ei_data$B.Code[mask_ei]),
+    dplyr::n_distinct(mod_y_data$B.Code[mask_y]),
+    dplyr::n_distinct(mod_ch4_data$B.Code[mask_ch4])
+  )
+)
+
+cat("Obs used — EI:", model_meta$n_obs[1],
+    "| Yield:", model_meta$n_obs[2],
+    "| CH4:", model_meta$n_obs[3], "\n")
+cat("Papers used — EI:", model_meta$n_papers[1],
+    "| Yield:", model_meta$n_papers[2],
+    "| CH4:", model_meta$n_papers[3], "\n")
+
+# --- 16) COEFFICIENT TABLE FOR PLOT -------------------------------------
+
+# --- 16) COEFFICIENT TABLE FOR PLOT (with n_obs and n_papers per nutrient) ----
+
+coef_df <- function(m, label, data, outcome) {
+  # keep only the actual rows used for the model
+  complete_data <- data[stats::complete.cases(data[, c(outcome,
+                                                      "dnut_ME_1","dnut_NDF_100",
+                                                      "dnut_CP_100","dnut_EE_10",
+                                                      "P.Product","Product")]), ]
+
+  broom::tidy(m, conf.int = TRUE) %>%
+    dplyr::filter(term %in% c("dnut_ME_1","dnut_NDF_100","dnut_CP_100","dnut_EE_10")) %>%
+    dplyr::mutate(
+      outcome = label,
+      term = dplyr::recode(term,
+        "dnut_ME_1"    = "ΔME (per 1 MJ/kg)",
+        "dnut_NDF_100" = "ΔNDF (per 100 g/kg)",
+        "dnut_CP_100"  = "ΔCP (per 50 g/kg)",
+        "dnut_EE_10"   = "ΔEE (per 10 g/kg)"
+      ),
+      n_obs = nrow(complete_data),
+      n_papers = dplyr::n_distinct(complete_data$B.Code)
+    )
+}
+
+coef_all <- dplyr::bind_rows(
+  coef_df(m_ei,  "ΔEI (%)",   mod_ei_data,  "dEI_pct"),
+  coef_df(m_y,   "ΔYield (%)", mod_y_data,  "dY_pct"),
+  coef_df(m_ch4, "ΔCH4 (%)",  mod_ch4_data, "dCH4_pct")
+)
+
+# --- 17) Pretty coefficient table ----
+coef_table <- coef_all %>%
+  dplyr::select(outcome, term, estimate, conf.low, conf.high,
+                std.error, statistic, p.value, n_obs, n_papers) %>%
+  dplyr::arrange(outcome, term)
+
+cat("\n📊 Coefficient table (with sample size and papers per term):\n")
+print(coef_table, n = Inf)
+
+
+
+# --- 17) FACET LABELS WITH COUNTS ---------------------------------------
+
+# build facet labels "Outcome (n=..., papers=...)"
+lab_map <- setNames(
+  paste0(model_meta$outcome, " (n=", model_meta$n_obs, ", papers=", model_meta$n_papers, ")"),
+  model_meta$outcome
+)
+
+# --- 18) PLOT ------------------------------------------------------------
+```
+
+
+```{r include=FALSE}
+ggplot(coef_all,
+       aes(x = estimate, y = forcats::fct_rev(term), xmin = conf.low, xmax = conf.high)) +
+  geom_vline(xintercept = 0, linetype = 2) +
+  geom_errorbarh(height = 0) +
+  geom_point(size = 2) +
+  facet_wrap(~ outcome, scales = "free_x",
+             labeller = labeller(outcome = lab_map)) +
+  labs(
+    title = "Within-study nutrient shifts vs. ΔEI, ΔYield, and ΔCH4",
+    subtitle = "Facet labels show datapoints (n) and distinct papers used",
+    x = "Estimated effect (95% CI)",
+    y = NULL,
+    caption = paste0("EI n=", model_meta$n_obs[1], " (", model_meta$n_papers[1], " papers); ",
+                     "Yield n=", model_meta$n_obs[2], " (", model_meta$n_papers[2], " papers); ",
+                     "CH4 n=", model_meta$n_obs[3], " (", model_meta$n_papers[3], " papers).")
+  ) +
+  theme_minimal(base_size = 13)
+
+
+
+```
+
+
+```{r include=FALSE}
+# ===== A) LONG TABLE (one row per term × outcome) =====
+# Assumes `coef_all` already exists from your plotting code.
+
+coef_table_long <- coef_all %>%
+  dplyr::select(outcome, term, estimate, conf.low, conf.high, std.error, p.value) %>%
+  dplyr::mutate(
+    dplyr::across(c(estimate, conf.low, conf.high, std.error), ~ round(., 3)),
+    p.value = signif(p.value, 3)
+  ) %>%
+  dplyr::rename(
+    Outcome = outcome,
+    `Nutrient term` = term,
+    Estimate = estimate,
+    `CI low` = conf.low,
+    `CI high` = conf.high,
+    `Std. Error` = std.error,
+    `p-value` = p.value
+  ) %>%
+  dplyr::arrange(Outcome, `Nutrient term`)
+
+# Print nicely (optional)
+if (requireNamespace("knitr", quietly = TRUE)) {
+  knitr::kable(coef_table_long, align = "l", caption = "Coefficients used in the plot")
+} else {
+  print(coef_table_long, n = Inf)
+}
+
+
+```
+
+```{r include=FALSE}
+# --- Mean within-paper nutrient changes + distributions -----------------------
+
+
+# 1️⃣ Remove zero or missing nutrient deltas first
+diet_deltas_nonzero <- diet_deltas %>%
+  mutate(across(starts_with("dnut_"),
+                ~ ifelse(.x == 0, NA, .x))) %>%  # turn zeros to NA
+  filter(
+    !(is.na(dnut_CP) & is.na(dnut_NDF) & is.na(dnut_ADF) &
+      is.na(dnut_EE) & is.na(dnut_ME))
+  )
+
+# 2️⃣ Compute mean absolute nutrient changes per paper × outcome
+nut_delta_summary <- diet_deltas_nonzero %>%
+  group_by(B.Code, Out.Subind) %>%
+  summarise(
+    across(
+      c(dnut_CP, dnut_NDF, dnut_ADF, dnut_EE, dnut_ME),
+      ~ mean(abs(.x), na.rm = TRUE),
+      .names = "mean_abs_{.col}"
+    ),
+    .groups = "drop"
+  ) %>%
+  # 3️⃣ Summarise across all papers to get global averages and spread
+  summarise(
+    across(
+      starts_with("mean_abs_"),
+      list(
+        mean = ~ mean(.x, na.rm = TRUE),
+        sd = ~ sd(.x, na.rm = TRUE),
+        median = ~ median(.x, na.rm = TRUE),
+        q25 = ~ quantile(.x, 0.25, na.rm = TRUE),
+        q75 = ~ quantile(.x, 0.75, na.rm = TRUE)
+      ),
+      .names = "{.col}_{.fn}"
+    )
+  )
+
+# 4️⃣ Print compact table with units
+cat("\n📊 Mean within-paper absolute nutrient changes (excluding zeros):\n")
+nut_table <- data.frame(
+  Nutrient = c("CP (g/kg DM)", "NDF (g/kg DM)", "ADF (g/kg DM)", "EE (g/kg DM)", "ME (MJ/kg DM)"),
+  Mean = round(c(nut_delta_summary$mean_abs_dnut_CP_mean,
+                 nut_delta_summary$mean_abs_dnut_NDF_mean,
+                 nut_delta_summary$mean_abs_dnut_ADF_mean,
+                 nut_delta_summary$mean_abs_dnut_EE_mean,
+                 nut_delta_summary$mean_abs_dnut_ME_mean), 2),
+  SD = round(c(nut_delta_summary$mean_abs_dnut_CP_sd,
+               nut_delta_summary$mean_abs_dnut_NDF_sd,
+               nut_delta_summary$mean_abs_dnut_ADF_sd,
+               nut_delta_summary$mean_abs_dnut_EE_sd,
+               nut_delta_summary$mean_abs_dnut_ME_sd), 2),
+  Median = round(c(nut_delta_summary$mean_abs_dnut_CP_median,
+                   nut_delta_summary$mean_abs_dnut_NDF_median,
+                   nut_delta_summary$mean_abs_dnut_ADF_median,
+                   nut_delta_summary$mean_abs_dnut_EE_median,
+                   nut_delta_summary$mean_abs_dnut_ME_median), 2),
+  Q25 = round(c(nut_delta_summary$mean_abs_dnut_CP_q25,
+                nut_delta_summary$mean_abs_dnut_NDF_q25,
+                nut_delta_summary$mean_abs_dnut_ADF_q25,
+                nut_delta_summary$mean_abs_dnut_EE_q25,
+                nut_delta_summary$mean_abs_dnut_ME_q25), 2),
+  Q75 = round(c(nut_delta_summary$mean_abs_dnut_CP_q75,
+                nut_delta_summary$mean_abs_dnut_NDF_q75,
+                nut_delta_summary$mean_abs_dnut_ADF_q75,
+                nut_delta_summary$mean_abs_dnut_EE_q75,
+                nut_delta_summary$mean_abs_dnut_ME_q75), 2)
+)
+print(nut_table)
+
+# 5️⃣ Histogram plot (excluding zeros)
+diet_deltas_nonzero %>%
+  pivot_longer(c(dnut_CP, dnut_NDF, dnut_EE, dnut_ME, dnut_ADF),
+               names_to = "nutrient", values_to = "delta") %>%
+  filter(!is.na(delta) & delta != 0) %>%
+  mutate(nutrient = str_remove(nutrient, "dnut_")) %>%
+  ggplot(aes(x = abs(delta))) +
+  geom_histogram(bins = 30, fill = "grey70", color = "white") +
+  facet_wrap(~ nutrient, scales = "free_x") +
+  theme_minimal(base_size = 13) +
+  labs(
+    title = "Distribution of within-study nutrient differences across diets",
+    subtitle = "Zero nutrient changes removed",
+    x = "Absolute within-study nutrient change",
+    y = "Count"
+  )
+
+```
+```{r include=FALSE}
+# --- Mean and absolute within-study nutrient changes --------------------------
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(stringr)
+
+# 1️⃣ Remove zero or missing nutrient deltas (keep only diets that changed)
+diet_deltas_nonzero <- diet_deltas %>%
+  mutate(across(starts_with("dnut_"), ~ ifelse(.x == 0, NA, .x))) %>%
+  filter(
+    !(is.na(dnut_CP) & is.na(dnut_NDF) & is.na(dnut_ADF) &
+      is.na(dnut_EE) & is.na(dnut_ME))
+  )
+
+# 2️⃣ Compute within-study nutrient changes (mean per paper × outcome)
+nut_deltas_summary <- diet_deltas_nonzero %>%
+  group_by(B.Code, Out.Subind) %>%
+  summarise(
+    across(
+      c(dnut_CP, dnut_NDF, dnut_ADF, dnut_EE, dnut_ME),
+      list(
+        mean = ~ mean(.x, na.rm = TRUE),
+        abs_mean = ~ mean(abs(.x), na.rm = TRUE)
+      ),
+      .names = "{.col}_{.fn}"
+    ),
+    .groups = "drop"
+  )
+
+# 3️⃣ Aggregate across studies to global summaries (mean, sd, median, IQR)
+nut_delta_global <- nut_deltas_summary %>%
+  select(where(is.numeric)) %>%
+  summarise(
+    across(
+      everything(),
+      list(
+        mean = ~ mean(.x, na.rm = TRUE),
+        sd   = ~ sd(.x, na.rm = TRUE),
+        median = ~ median(.x, na.rm = TRUE),
+        q25 = ~ quantile(.x, 0.25, na.rm = TRUE),
+        q75 = ~ quantile(.x, 0.75, na.rm = TRUE)
+      ),
+      .names = "{.col}_{.fn}"
+    )
+  )
+
+# 4️⃣ Build compact summary tables
+## Absolute changes
+nut_table_abs <- data.frame(
+  Nutrient = c("CP (g/kg DM)", "NDF (g/kg DM)", "ADF (g/kg DM)",
+               "EE (g/kg DM)", "ME (MJ/kg DM)"),
+  Mean_abs = round(c(nut_delta_global$dnut_CP_abs_mean_mean,
+                     nut_delta_global$dnut_NDF_abs_mean_mean,
+                     nut_delta_global$dnut_ADF_abs_mean_mean,
+                     nut_delta_global$dnut_EE_abs_mean_mean,
+                     nut_delta_global$dnut_ME_abs_mean_mean), 2),
+  SD_abs = round(c(nut_delta_global$dnut_CP_abs_mean_sd,
+                   nut_delta_global$dnut_NDF_abs_mean_sd,
+                   nut_delta_global$dnut_ADF_abs_mean_sd,
+                   nut_delta_global$dnut_EE_abs_mean_sd,
+                   nut_delta_global$dnut_ME_abs_mean_sd), 2),
+  Median_abs = round(c(nut_delta_global$dnut_CP_abs_mean_median,
+                       nut_delta_global$dnut_NDF_abs_mean_median,
+                       nut_delta_global$dnut_ADF_abs_mean_median,
+                       nut_delta_global$dnut_EE_abs_mean_median,
+                       nut_delta_global$dnut_ME_abs_mean_median), 2),
+  Q25_abs = round(c(nut_delta_global$dnut_CP_abs_mean_q25,
+                    nut_delta_global$dnut_NDF_abs_mean_q25,
+                    nut_delta_global$dnut_ADF_abs_mean_q25,
+                    nut_delta_global$dnut_EE_abs_mean_q25,
+                    nut_delta_global$dnut_ME_abs_mean_q25), 2),
+  Q75_abs = round(c(nut_delta_global$dnut_CP_abs_mean_q75,
+                    nut_delta_global$dnut_NDF_abs_mean_q75,
+                    nut_delta_global$dnut_ADF_abs_mean_q75,
+                    nut_delta_global$dnut_EE_abs_mean_q75,
+                    nut_delta_global$dnut_ME_abs_mean_q75), 2)
+)
+
+## Signed changes
+nut_table_signed <- data.frame(
+  Nutrient = c("CP (g/kg DM)", "NDF (g/kg DM)", "ADF (g/kg DM)",
+               "EE (g/kg DM)", "ME (MJ/kg DM)"),
+  Mean_signed = round(c(nut_delta_global$dnut_CP_mean_mean,
+                        nut_delta_global$dnut_NDF_mean_mean,
+                        nut_delta_global$dnut_ADF_mean_mean,
+                        nut_delta_global$dnut_EE_mean_mean,
+                        nut_delta_global$dnut_ME_mean_mean), 2),
+  SD_signed = round(c(nut_delta_global$dnut_CP_mean_sd,
+                      nut_delta_global$dnut_NDF_mean_sd,
+                      nut_delta_global$dnut_ADF_mean_sd,
+                      nut_delta_global$dnut_EE_mean_sd,
+                      nut_delta_global$dnut_ME_mean_sd), 2),
+  Median_signed = round(c(nut_delta_global$dnut_CP_mean_median,
+                          nut_delta_global$dnut_NDF_mean_median,
+                          nut_delta_global$dnut_ADF_mean_median,
+                          nut_delta_global$dnut_EE_mean_median,
+                          nut_delta_global$dnut_ME_mean_median), 2),
+  Q25_signed = round(c(nut_delta_global$dnut_CP_mean_q25,
+                       nut_delta_global$dnut_NDF_mean_q25,
+                       nut_delta_global$dnut_ADF_mean_q25,
+                       nut_delta_global$dnut_EE_mean_q25,
+                       nut_delta_global$dnut_ME_mean_q25), 2),
+  Q75_signed = round(c(nut_delta_global$dnut_CP_mean_q75,
+                       nut_delta_global$dnut_NDF_mean_q75,
+                       nut_delta_global$dnut_ADF_mean_q75,
+                       nut_delta_global$dnut_EE_mean_q75,
+                       nut_delta_global$dnut_ME_mean_q75), 2)
+)
+
+# 5️⃣ Print both tables
+cat("\n📊 Mean absolute within-study nutrient changes (excluding zeros):\n")
+print(nut_table_abs)
+cat("\n📈 Mean signed within-study nutrient changes (directional, excluding zeros):\n")
+print(nut_table_signed)
+
+# 6️⃣ Optional histogram for visual check (zeros removed)
+diet_deltas_nonzero %>%
+  pivot_longer(c(dnut_CP, dnut_NDF, dnut_EE, dnut_ME, dnut_ADF),
+               names_to = "nutrient", values_to = "delta") %>%
+  filter(!is.na(delta) & delta != 0) %>%
+  mutate(nutrient = str_remove(nutrient, "dnut_")) %>%
+  ggplot(aes(x = delta)) +
+  geom_histogram(bins = 30, fill = "grey75", color = "white") +
+  facet_wrap(~ nutrient, scales = "free_x") +
+  theme_minimal(base_size = 13) +
+  labs(
+    title = "Distribution of within-study nutrient shifts (zeros excluded)",
+    x = "Within-study change (signed, g/kg or MJ/kg DM)",
+    y = "Count"
+  )
+
+```
+
+# B Nutrient–Response Model Development
+
+## Within-Study Comparative Framework
+
+
+To quantify the effects of dietary composition on productivity and methane emissions, we employed a within-study comparative framework that controlled for study-specific experimental conditions. For each study included in the emission–yield database, the diet designated as the reference or control treatment was used as the baseline. All alternative dietary treatments within that study were expressed relative to this reference, yielding within-study percentage changes in methane output (ΔCH₄ %), product yield (ΔYield %), and calculated energy intake (ΔEI %).
+Corresponding within-study changes in dietary composition were computed for metabolizable energy (ΔME), neutral detergent fiber (ΔNDF), crude protein (ΔCP), and ether extract (ΔEE). Nutrient concentrations were standardized to comparable reporting units: MJ kg⁻¹ dry matter (DM) for ΔME and g kg⁻¹ DM for ΔNDF, ΔCP, and ΔEE. This normalization procedure ensured that all regression coefficients represented biological responses to nutritional variation observed within identical experimental contexts, thereby minimizing confounding effects associated with between-study heterogeneity in animal genetics, environmental conditions, and management practices.
+
+##Statistical Modeling Approach
+
+Separate linear regression models were fitted for each combination of species (cattle, sheep, goat) and production system (meat or milk). Within each subset, changes in methane emissions, energy intake, and product yield were modeled as linear functions of the nutrient deltas, with independent slope coefficients estimated for each nutrient–outcome pair. These coefficients quantify the proportional change in response variables (methane, intake, or yield) associated with unit increases in dietary nutrient concentrations relative to the reference diet. Only species × production system combinations with sufficient within-study dietary contrasts were retained to ensure reliable parameter estimation.
+
+## Presentation of Species-Specific Response Patterns
+
+Figures 3 and 4 present estimated coefficients as species-specific response patterns for meat and milk production systems, respectively. Each column corresponds to a species and each row to an outcome variable (ΔCH₄ %, ΔYield %, or ΔEI %). Independent x-axis scaling was applied across panels to preserve the true magnitude of effects and enable comparison among systems.
+
+Nutrient predictors were standardized to realistic unit changes—1 MJ/kg for metabolizable energy (ME), 100 g/kg for neutral detergent fibre (NDF), 50 g/kg for crude protein (CP), and 10 g/kg for ether extract (EE)—based on the median within-study diet contrasts observed in our dataset. These increments reflect typical formulation ranges used in African feeding trials and ensure that coefficients correspond to nutritionally meaningful differences.
+```{r,echo=FALSE,fig.width=12, fig.height=7, out.width='100%', fig.align='center'}
+# ============================================================
+# 🔍 Within-study nutrient shifts vs ΔEI, ΔYield, and ΔCH₄
+#     One column per Species (Cattle, Sheep, Goat)
+#     Nutrient variables shown once (left), Δ outcomes shown once (right)
+# ============================================================
+
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(forcats)
+library(broom)
+library(purrr)
+library(patchwork)
+library(ggforce)  # for flexible faceting
+
+# 0) Safety checks ---------------------------------------------------------
+stopifnot(exists("diet_deltas"))
+
+# 1) Scale helper ----------------------------------------------------------
+scale_vars <- function(df) {
+  df %>%
+    mutate(
+      dnut_ME_1    = dnut_ME,         # per 1 MJ/kg
+      dnut_NDF_100 = dnut_NDF / 100,  # per 100 g/kg
+      dnut_CP_50   = dnut_CP  / 50,   # per 50 g/kg
+      dnut_EE_10   = dnut_EE  / 10    # per 10 g/kg
+    )
+}
+
+# 2) Base data -------------------------------------------------------------
+base_data <- diet_deltas %>%
+  scale_vars() %>%
+  transmute(
+    B.Code,
+    Species = P.Product,
+    Product,
+    dEI_pct, dY_pct, dCH4_pct,
+    dnut_ME_1, dnut_NDF_100, dnut_CP_50, dnut_EE_10
+  ) %>%
+  mutate(
+    Species = factor(Species, levels = c("Cattle", "Sheep", "Goat")),
+    Product = factor(Product, levels = c("Milk", "Meat"))
+  )
+
+# 3) Fit models ------------------------------------------------------------
+fit_one <- function(sp, prd, n_min = 20) {
+  dat <- base_data %>% filter(Species == sp, Product == prd)
+  if (nrow(dat) < n_min) return(NULL)
+
+  fit_outcome <- function(y, label) {
+    preds <- c("dnut_ME_1","dnut_NDF_100","dnut_CP_50","dnut_EE_10")
+    keep  <- stats::complete.cases(dat[, c(y, preds)])
+    d     <- dat[keep, , drop = FALSE]
+    if (nrow(d) < n_min) return(NULL)
+
+    m <- lm(stats::as.formula(
+      paste0(y, " ~ dnut_ME_1 + dnut_NDF_100 + dnut_CP_50 + dnut_EE_10")), data = d)
+
+    broom::tidy(m, conf.int = TRUE) %>%
+      filter(term %in% preds) %>%
+      mutate(
+        Species = sp,
+        Product = prd,
+        outcome = label,
+        term = recode(term,
+                      "dnut_ME_1"    = "ΔME (per 1 MJ/kg)",
+                      "dnut_NDF_100" = "ΔNDF (per 100 g/kg)",
+                      "dnut_CP_50"   = "ΔCP (per 50 g/kg)",
+                      "dnut_EE_10"   = "ΔEE (per 10 g/kg)")
+      )
+  }
+
+  bind_rows(
+    fit_outcome("dEI_pct",  "ΔEI (%)"),
+    fit_outcome("dY_pct",   "ΔYield (%)"),
+    fit_outcome("dCH4_pct", "ΔCH4 (%)")
+  )
+}
+
+# 4) Run across all Species × Product combos -------------------------------
+all_combos <- tidyr::expand_grid(
+  Species = levels(base_data$Species),
+  Product = levels(base_data$Product)
+)
+
+coef_species_prod <- purrr::pmap_dfr(
+  list(all_combos$Species, all_combos$Product),
+  ~ fit_one(..1, ..2)
+)
+
+if (nrow(coef_species_prod) == 0) {
+  stop("No Species × Product combinations had enough complete data to fit models.")
+}
+
+# 5) Prepare data ----------------------------------------------------------
+# ============================================================
+# 🔍 Within-study nutrient shifts vs. ΔEI, ΔYield, and ΔCH₄
+#     One column per Species (Cattle, Sheep, Goat)
+#     Nutrient variables shown once on left, Δ labels once on right
+# ============================================================
+
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(forcats)
+library(broom)
+library(purrr)
+library(patchwork)
+
+# --- assume coef_species_prod already created as before ---
+
+# Ensure factors are tidy and consistent
+coef_species_prod <- coef_species_prod %>%
+  mutate(
+    outcome = factor(outcome, levels = c("ΔCH4 (%)", "ΔEI (%)", "ΔYield (%)")),
+    panel   = interaction(Product, outcome, sep = " – ", drop = TRUE)
+  )
+
+# Split by species
+cattle_df <- coef_species_prod %>% filter(Species == "Cattle")
+sheep_df  <- coef_species_prod %>% filter(Species == "Sheep")
+goat_df   <- coef_species_prod %>% filter(Species == "Goat")
+
+# ------------------------------------------------------------------
+# Plot function: free x-scales per small panel, hide duplicate labels
+# ------------------------------------------------------------------
+# Define custom soft, semi-transparent colors
+nutrient_colors <- c(
+  "ΔCP (per 50 g/kg)"  = "blue4",
+  "ΔEE (per 10 g/kg)"  = "darkorange",
+  "ΔME (per 1 MJ/kg)"  = "seagreen3",
+  "ΔNDF (per 100 g/kg)"= "plum3"
+)
+
+# Updated plotting function
+plot_species <- function(data, sp_name, show_y = TRUE, show_right = FALSE) {
+  ggplot(data,
+         aes(x = estimate, y = fct_rev(term), color = term)) +
+    geom_vline(xintercept = 0, linetype = 2, color = "grey70") +
+    geom_errorbarh(aes(xmin = conf.low, xmax = conf.high),
+                   height = 0.15, linewidth = 1.1, alpha = 0.7) +
+    geom_point(size = 3.2, alpha = 0.8) +
+    facet_grid(
+      rows = vars(outcome),
+      cols = vars(Product),
+      scales = "free_x",
+      switch = if (show_right) "both" else "y"
+    ) +
+    scale_color_manual(values = nutrient_colors, name = "Nutrient variable") +
+    labs(
+      subtitle = sp_name,
+      x = "Estimated effect (95% CI)",
+      y = NULL
+    ) +
+    theme_minimal(base_size = 13) +
+    theme(
+      strip.text.x  = element_text(face = "bold", size = 11),
+      strip.text.y  = element_text(face = "bold", size = 11),
+      strip.placement = "outside",
+      panel.spacing = unit(1.2, "lines"),
+      plot.subtitle = element_text(face = "bold", size = 13, hjust = 0.5),
+      axis.text.y   = if (show_y) element_text(face = "bold") else element_blank(),
+      axis.ticks.y  = if (show_y) element_line() else element_blank(),
+      legend.position = "none"
+    )
+}
+
+
+# ------------------------------------------------------------------
+# Build species plots
+# ------------------------------------------------------------------
+p_cattle <- plot_species(cattle_df, "Cattle", show_y = TRUE,  show_right = FALSE)
+p_sheep  <- plot_species(sheep_df,  "Sheep",  show_y = FALSE, show_right = FALSE)
+p_goat   <- plot_species(goat_df,   "Goat",   show_y = FALSE, show_right = TRUE)
+
+# ------------------------------------------------------------------
+# Combine horizontally with patchwork
+# ------------------------------------------------------------------
+final_plot <- p_cattle | p_sheep | p_goat +
+  plot_annotation(
+    title = "Within-study nutrient shifts vs. ΔEI, ΔYield, and ΔCH₄",
+  )
+
+final_plot
+
+
+```
+
+```{r,echo=FALSE,fig.width=12, fig.height=7, out.width='100%', fig.align='center'}
+# ============================================================
+# 🔍 Within-study nutrient shifts vs ΔEI, ΔYield, and ΔCH₄ (Milk only)
+#     One column per Species (Cattle, Sheep, Goat)
+#     Nutrient variables shown once (left), Δ outcomes once (right)
+# ============================================================
+
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(forcats)
+library(broom)
+library(purrr)
+library(patchwork)
+
+# 1️⃣ Prepare scaled data --------------------------------------------------
+base_data_milk <- diet_deltas %>%
+  mutate(
+    Species = factor(P.Product, levels = c("Cattle", "Sheep", "Goat")),
+    Product = factor(Product, levels = c("Milk", "Meat"))
+  ) %>%
+  filter(Product == "Milk") %>%   # keep Milk systems only
+  mutate(
+    dnut_ME_1    = dnut_ME,
+    dnut_NDF_100 = dnut_NDF / 100,
+    dnut_CP_50   = dnut_CP  / 50,
+    dnut_EE_10   = dnut_EE  / 10
+  ) %>%
+  select(B.Code, Species, Product,
+         dEI_pct, dY_pct, dCH4_pct,
+         dnut_ME_1, dnut_NDF_100, dnut_CP_50, dnut_EE_10)
+
+# 2️⃣ Model-fitting helper -------------------------------------------------
+fit_one_milk <- function(sp, n_min = 10) {
+  dat <- base_data_milk %>% filter(Species == sp)
+  if (nrow(dat) < n_min) return(NULL)
+
+  fit_outcome <- function(y, label) {
+    preds <- c("dnut_ME_1","dnut_NDF_100","dnut_CP_50","dnut_EE_10")
+    keep  <- complete.cases(dat[, c(y, preds)])
+    d     <- dat[keep, , drop = FALSE]
+    if (nrow(d) < n_min) return(NULL)
+
+    m <- lm(as.formula(paste0(y, " ~ ", paste(preds, collapse = " + "))), data = d)
+
+    broom::tidy(m, conf.int = TRUE) %>%
+      filter(term %in% preds) %>%
+      mutate(
+        Species = sp,
+        Product = "Milk",
+        outcome = label,
+        term = recode(term,
+                      "dnut_ME_1"    = "ΔME (per 1 MJ/kg)",
+                      "dnut_NDF_100" = "ΔNDF (per 100 g/kg)",
+                      "dnut_CP_50"   = "ΔCP (per 50 g/kg)",
+                      "dnut_EE_10"   = "ΔEE (per 10 g/kg)")
+      )
+  }
+
+  bind_rows(
+    fit_outcome("dEI_pct",  "ΔEI (%)"),
+    fit_outcome("dY_pct",   "ΔYield (%)"),
+    fit_outcome("dCH4_pct", "ΔCH4 (%)")
+  )
+}
+
+# 3️⃣ Fit models for all milk species -------------------------------------
+milk_species <- levels(base_data_milk$Species)
+coef_species_milk <- map_dfr(milk_species, fit_one_milk)
+
+if (nrow(coef_species_milk) == 0) {
+  stop("No milk species had enough data to fit models.")
+}
+
+# 4️⃣ Prepare data ---------------------------------------------------------
+coef_species_milk <- coef_species_milk %>%
+  mutate(outcome = factor(outcome, levels = c("ΔCH4 (%)", "ΔEI (%)", "ΔYield (%)")))
+
+# Split by species
+cattle_df <- coef_species_milk %>% filter(Species == "Cattle")
+sheep_df  <- coef_species_milk %>% filter(Species == "Sheep")
+goat_df   <- coef_species_milk %>% filter(Species == "Goat")
+
+# 5️⃣ Plot helper ----------------------------------------------------------
+# 5️⃣ Plot helper ----------------------------------------------------------
+# Use same transparent colors and remove legend
+nutrient_colors <- c(
+  "ΔCP (per 50 g/kg)"  = "blue4",
+  "ΔEE (per 10 g/kg)"  = "darkorange",
+  "ΔME (per 1 MJ/kg)"  = "seagreen3",
+  "ΔNDF (per 100 g/kg)"= "plum3"
+)
+
+plot_species_milk <- function(data, sp_name, show_y = TRUE, show_right = FALSE) {
+  ggplot(data,
+         aes(x = estimate, y = forcats::fct_rev(term), color = term)) +
+    geom_vline(xintercept = 0, linetype = 2, color = "grey70") +
+    geom_errorbarh(aes(xmin = conf.low, xmax = conf.high),
+                   height = 0.15, linewidth = 1.1, alpha = 0.5) +  # transparent bars
+    geom_point(size = 3, alpha = 0.6) +                          # transparent points
+    facet_wrap(
+      ~ outcome,
+      scales = "free_x",
+      ncol = 1,
+      strip.position = if (show_right) "right" else "top"
+    ) +
+    scale_color_manual(values = nutrient_colors) +                # same palette
+    labs(
+      subtitle = sp_name,
+      x = "Estimated effect (95% CI)",
+      y = NULL
+    ) +
+    theme_minimal(base_size = 13) +
+    theme(
+      strip.text    = element_text(face = "bold", size = 11),
+      strip.placement = "outside",
+      panel.spacing = unit(1.2, "lines"),
+      plot.subtitle = element_text(face = "bold", size = 13, hjust = 0.5),
+      axis.text.y   = if (show_y) element_text(face = "bold") else element_blank(),
+      axis.ticks.y  = if (show_y) element_line() else element_blank(),
+      strip.text.y.right = element_text(face = "bold", angle = -90),
+      legend.position = "none"    # remove legend
+    )
+}
+
+
+# 6️⃣ Build plots ----------------------------------------------------------
+p_cattle <- plot_species_milk(cattle_df, "Cattle (Milk)", show_y = TRUE,  show_right = FALSE)
+p_sheep  <- plot_species_milk(sheep_df,  "Sheep (Milk)",  show_y = FALSE, show_right = FALSE)
+p_goat   <- plot_species_milk(goat_df,   "Goat (Milk)",   show_y = FALSE, show_right = TRUE)
+
+# 7️⃣ Combine horizontally -------------------------------------------------
+final_milk_plot <- p_cattle | p_sheep | p_goat +
+  plot_annotation(
+    title = "Within-study nutrient shifts vs. ΔEI, ΔYield, and ΔCH₄ (Milk systems)",
+    subtitle = "Columns = Species; Rows = Δ outcomes; each facet has its own x-scale",
+    caption = "Models use within-study differences; CP per 50 g/kg, NDF per 100 g/kg, EE per 10 g/kg, ME per 1 MJ/kg."
+  )
+
+# 8️⃣ Show ----------------------------------------------------------------
+final_milk_plot
+
+```
+
