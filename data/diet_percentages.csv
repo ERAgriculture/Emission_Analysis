@@ -30,23 +30,23 @@
 "29","AG0018","UTS","Salt","Non-ERA Feed",14.2857142857143,"g",1.36986301369863
 "30","AG0018","UTS","Unspecified Molasses","Crop Byproduct",28.5714285714286,"g",2.73972602739726
 "31","AG0018","UTS","Maize Stover Urea Treated","Crop Byproduct",1000,"g",95.8904109589041
-"32","AG0042","60% F SOPM","Soybean Ground","Crop Product",39.48,"g",12.6336
-"33","AG0042","60% F SOPM","Bone Ground","Other Feed",4,"g",1.28
-"34","AG0042","60% F SOPM","Maize Offal","Crop Byproduct",45.8,"g",14.656
-"35","AG0042","60% F SOPM","Salt","Non-ERA Feed",2,"g",0.64
-"36","AG0042","60% F SOPM","Orange Peels Dried Fermented Ground","Byproduct Fodders",68.72,"g",21.9904
-"37","AG0042","60% F SOPM","Rice Offal","Byproduct Fodders",40,"g",12.8
-"38","AG0042","60% UF SOPM","Salt","Non-ERA Feed",2,"g",0.671817265703729
-"39","AG0042","60% UF SOPM","Maize Offal","Crop Byproduct",45.8,"g",15.3846153846154
-"40","AG0042","60% UF SOPM","Rice Offal","Byproduct Fodders",40,"g",13.4363453140746
-"41","AG0042","60% UF SOPM","Soybean Ground","Crop Product",39.48,"g",13.2616728249916
-"42","AG0042","60% UF SOPM","Bone Ground","Other Feed",4,"g",1.34363453140746
-"43","AG0042","60% UF SOPM","Orange Dried","Byproduct Fodders",68.72,"g",23.0836412495801
-"44","AG0042","Con","Salt","Non-ERA Feed",2,"g",0.640204865556978
-"45","AG0042","Con","Soybean Ground","Crop Product",39.48,"g",12.6376440460948
-"46","AG0042","Con","Rice Offal","Byproduct Fodders",40,"g",12.8040973111396
-"47","AG0042","Con","Maize Offal","Crop Byproduct",114.52,"g",36.6581306017926
-"48","AG0042","Con","Bone Ground","Other Feed",4,"g",1.28040973111396
+"32","AG0042","60% F SOPM","Soybean Ground","Crop Product",39.48,"g",17.3006134969325
+"33","AG0042","60% F SOPM","Bone Ground","Other Feed",4,"g",1.75284837861525
+"34","AG0042","60% F SOPM","Maize Offal","Crop Byproduct",45.8,"g",20.0701139351446
+"35","AG0042","60% F SOPM","Salt","Non-ERA Feed",2,"g",0.876424189307625
+"36","AG0042","60% F SOPM","Orange Peels Dried Fermented Ground","Byproduct Fodders",68.72,"g",30.11393514461
+"37","AG0042","60% F SOPM","Rice Offal","Byproduct Fodders",40,"g",17.5284837861525
+"38","AG0042","60% UF SOPM","Salt","Non-ERA Feed",2,"g",0.831117021276596
+"39","AG0042","60% UF SOPM","Maize Offal","Crop Byproduct",45.8,"g",19.032579787234
+"40","AG0042","60% UF SOPM","Rice Offal","Byproduct Fodders",40,"g",16.6223404255319
+"41","AG0042","60% UF SOPM","Soybean Ground","Crop Product",39.48,"g",16.40625
+"42","AG0042","60% UF SOPM","Bone Ground","Other Feed",4,"g",1.66223404255319
+"43","AG0042","60% UF SOPM","Orange Dried","Byproduct Fodders",68.72,"g",28.5571808510638
+"44","AG0042","Con","Salt","Non-ERA Feed",2,"g",0.731662703493689
+"45","AG0042","Con","Soybean Ground","Crop Product",39.48,"g",14.4430217669654
+"46","AG0042","Con","Rice Offal","Byproduct Fodders",40,"g",14.6332540698738
+"47","AG0042","Con","Maize Offal","Crop Byproduct",114.52,"g",41.8950064020487
+"48","AG0042","Con","Bone Ground","Other Feed",4,"g",1.46332540698738
 "49","AG0050","CPL","Cassava Peel","Crop Byproduct",24,"g",100
 "50","AG0050","CST","Cassava Starch","Crop Product",24,"g",100
 "51","AG0051","NG","Pennisetum purpureum","Herbaceous Fodders",8300,"g",100
@@ -308,30 +308,30 @@
 "307","BO1011","Diet 1","Barley Grain Sprouted","Crop Product",337.5,"g",50
 "308","BO1011","Diet 2","Barley Grain Sprouted","Crop Product",337.5,"g",50
 "309","BO1011","Diet 3","Barley Grain Sprouted","Crop Product",162.5,"g",25
-"310","BO1012","DLL0","Linseed Cake","Crop Byproduct",67.47,"g",7.58942632170979
-"311","BO1012","DLL0","Salt","Other Ingredients",1.73,"g",0.194600674915636
-"312","BO1012","DLL0","Wheat Bran","Crop Byproduct",138.4,"g",15.5680539932508
-"313","BO1012","DLL0","Maize Grain Ground","Crop Product",138.4,"g",15.5680539932508
-"314","BO1012","DLL10","Wheat Bran","Crop Byproduct",124.4,"g",13.7306843267108
-"315","BO1012","DLL10","Maize Grain Ground","Crop Product",124.4,"g",13.7306843267108
-"316","BO1012","DLL10","Salt","Other Ingredients",1.555,"g",0.171633554083885
-"317","BO1012","DLL10","Leucaena Leaves Dried","Forage Plants",33.8,"g",3.73068432671082
-"318","BO1012","DLL10","Linseed Cake","Crop Byproduct",60.645,"g",6.69370860927152
-"319","BO1012","DLL15","Wheat Bran","Crop Byproduct",117.6,"g",13.2432432432432
-"320","BO1012","DLL15","Salt","Other Ingredients",1.47,"g",0.165540540540541
-"321","BO1012","DLL15","Maize Grain Ground","Crop Product",117.6,"g",13.2432432432432
-"322","BO1012","DLL15","Leucaena Leaves Dried","Forage Plants",50.8,"g",5.72072072072072
-"323","BO1012","DLL15","Linseed Cake","Crop Byproduct",57.33,"g",6.45608108108108
-"324","BO1012","DLL20","Salt","Other Ingredients",1.385,"g",0.159378596087457
-"325","BO1012","DLL20","Wheat Bran","Crop Byproduct",110.8,"g",12.7502876869965
-"326","BO1012","DLL20","Maize Grain Ground","Crop Product",110.8,"g",12.7502876869965
-"327","BO1012","DLL20","Linseed Cake","Crop Byproduct",54.015,"g",6.21576524741082
-"328","BO1012","DLL20","Leucaena Leaves Dried","Forage Plants",67.7,"g",7.79056386651323
-"329","BO1012","DLL5","Wheat Bran","Crop Byproduct",131.6,"g",15.0228310502283
-"330","BO1012","DLL5","Linseed Cake","Crop Byproduct",64.155,"g",7.3236301369863
-"331","BO1012","DLL5","Maize Grain Ground","Crop Product",131.6,"g",15.0228310502283
-"332","BO1012","DLL5","Salt","Other Ingredients",1.645,"g",0.187785388127854
-"333","BO1012","DLL5","Leucaena Leaves Dried","Forage Plants",16.9,"g",1.92922374429224
+"310","BO1012","DLL0","Linseed Cake","Crop Byproduct",67.47,"g",20.3222891566265
+"311","BO1012","DLL0","Salt","Other Ingredients",1.73,"g",0.521084337349398
+"312","BO1012","DLL0","Wheat Bran","Crop Byproduct",138.4,"g",41.6867469879518
+"313","BO1012","DLL0","Maize Grain Ground","Crop Product",138.4,"g",41.6867469879518
+"314","BO1012","DLL10","Wheat Bran","Crop Byproduct",124.4,"g",41.744966442953
+"315","BO1012","DLL10","Maize Grain Ground","Crop Product",124.4,"g",41.744966442953
+"316","BO1012","DLL10","Salt","Other Ingredients",1.555,"g",0.521812080536913
+"317","BO1012","DLL10","Leucaena Leaves Dried","Forage Plants",33.8,"g",11.3422818791946
+"318","BO1012","DLL10","Linseed Cake","Crop Byproduct",60.645,"g",20.3506711409396
+"319","BO1012","DLL15","Wheat Bran","Crop Byproduct",117.6,"g",41.7021276595745
+"320","BO1012","DLL15","Salt","Other Ingredients",1.47,"g",0.521276595744681
+"321","BO1012","DLL15","Maize Grain Ground","Crop Product",117.6,"g",41.7021276595745
+"322","BO1012","DLL15","Leucaena Leaves Dried","Forage Plants",50.8,"g",18.0141843971631
+"323","BO1012","DLL15","Linseed Cake","Crop Byproduct",57.33,"g",20.3297872340426
+"324","BO1012","DLL20","Salt","Other Ingredients",1.385,"g",0.520676691729323
+"325","BO1012","DLL20","Wheat Bran","Crop Byproduct",110.8,"g",41.6541353383459
+"326","BO1012","DLL20","Maize Grain Ground","Crop Product",110.8,"g",41.6541353383459
+"327","BO1012","DLL20","Linseed Cake","Crop Byproduct",54.015,"g",20.3063909774436
+"328","BO1012","DLL20","Leucaena Leaves Dried","Forage Plants",67.7,"g",25.4511278195489
+"329","BO1012","DLL5","Wheat Bran","Crop Byproduct",131.6,"g",41.6455696202532
+"330","BO1012","DLL5","Linseed Cake","Crop Byproduct",64.155,"g",20.3022151898734
+"331","BO1012","DLL5","Maize Grain Ground","Crop Product",131.6,"g",41.6455696202532
+"332","BO1012","DLL5","Salt","Other Ingredients",1.645,"g",0.520569620253165
+"333","BO1012","DLL5","Leucaena Leaves Dried","Forage Plants",16.9,"g",5.34810126582278
 "334","BO1013","Diet 2","Commelina imberbis Dried","Forage Plants",300,"g",38.1645400536848
 "335","BO1013","Diet 3","Commelina benghalensis Dried","Forage Plants",300,"g",37.6232160325065
 "336","BO1013","Diet 4","Maize","Crop Product",200,"g",22.0351681283328
@@ -672,15 +672,15 @@
 "671","BO1048","90;10 ratio","Salt","Other Ingredients",0.04011,"g",0.1
 "672","BO1048","90;10 ratio","Brachiaria ruziziensis Dried","Forage Plants",36.099,"g",90
 "673","BO1048","90;10 ratio","Bone Ground","Animal Byproduct",0.08022,"g",0.2
-"674","BO1049","CFM + BH","Trifolium alexandrinum Dried","Forage Plants",525.99,"g",49.9995247103109
-"675","BO1049","CFM + Cellulase & fibrolytic treated DPL + BH","Trifolium alexandrinum","Forage Plants",444.472,"g",40
-"676","BO1049","CFM + Cellulase & fibrolytic treated DPL + BH","Phoenix dactylifera Leaves Cellulase Treated Dried Fibrolytic Treated","Forage Plants",111.118,"g",10
-"677","BO1049","CFM + Cellulase treated DPL +BH","Trifolium alexandrinum","Forage Plants",482.764,"g",40
-"678","BO1049","CFM + Cellulase treated DPL +BH","Phoenix dactylifera Leaves Cellulase Treated Dried","Forage Plants",482.76,"g",39.9996685751216
-"679","BO1049","CFM + Fibrolytic treated DPL + BH","Trifolium alexandrinum","Forage Plants",448.744,"g",40
-"680","BO1049","CFM + Fibrolytic treated DPL + BH","Phoenix dactylifera Leaves Dried Fibrolytic Treated","Forage Plants",448.75,"g",40.0005348260924
-"681","BO1049","CFM + untreated DPL + BH","Date Leaves Dried","Forage Plants",405.53,"g",40.0001972736778
-"682","BO1049","CFM + untreated DPL + BH","Trifolium alexandrinum","Forage Plants",405.528,"g",40
+"674","BO1049","CFM + BH","Trifolium alexandrinum Dried","Forage Plants",525.99,"g",41.2505587753214
+"675","BO1049","CFM + Cellulase & fibrolytic treated DPL + BH","Trifolium alexandrinum","Forage Plants",541.612,"g",40
+"676","BO1049","CFM + Cellulase & fibrolytic treated DPL + BH","Phoenix dactylifera Leaves Cellulase Treated Dried Fibrolytic Treated","Forage Plants",135.403,"g",10
+"677","BO1049","CFM + Cellulase treated DPL +BH","Trifolium alexandrinum","Forage Plants",550.36,"g",40
+"678","BO1049","CFM + Cellulase treated DPL +BH","Phoenix dactylifera Leaves Cellulase Treated Dried","Forage Plants",482.76,"g",35.0868522421688
+"679","BO1049","CFM + Fibrolytic treated DPL + BH","Trifolium alexandrinum","Forage Plants",465.812,"g",40
+"680","BO1049","CFM + Fibrolytic treated DPL + BH","Phoenix dactylifera Leaves Dried Fibrolytic Treated","Forage Plants",448.75,"g",38.5348595570745
+"681","BO1049","CFM + untreated DPL + BH","Date Leaves Dried","Forage Plants",405.53,"g",31.4759620608827
+"682","BO1049","CFM + untreated DPL + BH","Trifolium alexandrinum","Forage Plants",515.352,"g",40
 "683","BO1051","Citrus pulp treated","Citrus Pulp","Crop Byproduct",8333.33333333333,"g",1121.66976247521
 "684","BO1051","Grape seeds treated","Grape Seeds","Crop Byproduct",8333.33333333333,"g",1129.7596775214
 "685","BO1051","Jojoba meal treated","Jojoba Ground","Crop Byproduct",8333.33333333333,"g",1415.86104173392
@@ -701,18 +701,18 @@
 "700","BO1054","10 PCK","Poultry Litter","Animal Manures",1881.25,"g",21.5
 "701","BO1054","10 PCK","Maize Offal","Crop Byproduct",3500,"g",40
 "702","BO1054","10 PCK","Palm Kernel Cake","Crop Byproduct",875,"g",10
-"703","BO1054","20 PCK","Palm Kernel Cake","Crop Byproduct",1734,"g",20
-"704","BO1054","20 PCK","Poultry Litter","Animal Manures",1734,"g",20
-"705","BO1054","20 PCK","Maize Offal","Crop Byproduct",3034.5,"g",35
-"706","BO1054","20 PCK","Cotton Seed Cake","Crop Byproduct",1040.4,"g",12
-"707","BO1054","30 PCK","Cotton Seed Cake","Crop Byproduct",811.8,"g",9
-"708","BO1054","30 PCK","Poultry Litter","Animal Manures",1623.6,"g",18
-"709","BO1054","30 PCK","Palm Kernel Cake","Crop Byproduct",2706,"g",30
-"710","BO1054","30 PCK","Maize Offal","Crop Byproduct",2706,"g",30
-"711","BO1054","40 PCK","Cotton Seed Cake","Crop Byproduct",529.8,"g",6
-"712","BO1054","40 PCK","Palm Kernel Cake","Crop Byproduct",3532,"g",40
-"713","BO1054","40 PCK","Maize Offal","Crop Byproduct",2207.5,"g",25
-"714","BO1054","40 PCK","Poultry Litter","Animal Manures",1412.8,"g",16
+"703","BO1054","20 PCK","Palm Kernel Cake","Crop Byproduct",1640,"g",20
+"704","BO1054","20 PCK","Poultry Litter","Animal Manures",1640,"g",20
+"705","BO1054","20 PCK","Maize Offal","Crop Byproduct",2870,"g",35
+"706","BO1054","20 PCK","Cotton Seed Cake","Crop Byproduct",984,"g",12
+"707","BO1054","30 PCK","Cotton Seed Cake","Crop Byproduct",764.1,"g",9
+"708","BO1054","30 PCK","Poultry Litter","Animal Manures",1528.2,"g",18
+"709","BO1054","30 PCK","Palm Kernel Cake","Crop Byproduct",2547,"g",30
+"710","BO1054","30 PCK","Maize Offal","Crop Byproduct",2547,"g",30
+"711","BO1054","40 PCK","Cotton Seed Cake","Crop Byproduct",501.6,"g",6
+"712","BO1054","40 PCK","Palm Kernel Cake","Crop Byproduct",3344,"g",40
+"713","BO1054","40 PCK","Maize Offal","Crop Byproduct",2090,"g",25
+"714","BO1054","40 PCK","Poultry Litter","Animal Manures",1337.6,"g",16
 "715","BO1055","Cassava meal D3","Sunflower Seed Cake","Crop Byproduct",957.6,"g",14
 "716","BO1055","Cassava meal D3","Cassava Tuber Dried Grated Fermented Peeled","Crop Product",1026,"g",15
 "717","BO1055","Cassava meal D3","Maize Bran Alkali Treated Ground","Crop Product",3488.4,"g",51
@@ -785,17 +785,17 @@
 "784","BO1064","Vachellia Diet","Bracharia decumbens Dried","Forage Plants",435,"g",10
 "785","BO1064","Vachellia Diet","Chloris gayana Dried","Forage Plants",435,"g",10
 "786","BO1064","Vachellia Diet","Vachellia polyacantha Leaves Ground","Forage Plants",2175,"g",50
-"787","BO1065","MOLM0","Oat Ground","Crop Product",51.86,"g",20
-"788","BO1065","MOLM0","Rice Bran","Crop Byproduct",103.72,"g",40
-"789","BO1065","MOLM0","Palm Kernel Cake","Crop Byproduct",49.91525,"g",19.25
-"790","BO1065","MOLM100","Rice Bran","Crop Byproduct",87.395,"g",35
-"791","BO1065","MOLM100","Moringa oleifera Leaves Dried Ground","Forage Plants",24.97,"g",10
-"792","BO1065","MOLM100","Palm Kernel Cake","Crop Byproduct",41.92463,"g",16.79
-"793","BO1065","MOLM100","Oat Ground","Crop Product",43.59762,"g",17.46
-"794","BO1065","MOLM50","Moringa oleifera Leaves Dried Ground","Forage Plants",13.345,"g",5
-"795","BO1065","MOLM50","Palm Kernel Cake","Crop Byproduct",48.73594,"g",18.26
-"796","BO1065","MOLM50","Oat Ground","Crop Product",50.68431,"g",18.99
-"797","BO1065","MOLM50","Rice Bran","Crop Byproduct",98.753,"g",37
+"787","BO1065","MOLM0","Oat Ground","Crop Product",49.78,"g",20
+"788","BO1065","MOLM0","Rice Bran","Crop Byproduct",99.56,"g",40
+"789","BO1065","MOLM0","Palm Kernel Cake","Crop Byproduct",47.91325,"g",19.25
+"790","BO1065","MOLM100","Rice Bran","Crop Byproduct",85.12,"g",35
+"791","BO1065","MOLM100","Moringa oleifera Leaves Dried Ground","Forage Plants",24.32,"g",10
+"792","BO1065","MOLM100","Palm Kernel Cake","Crop Byproduct",40.83328,"g",16.79
+"793","BO1065","MOLM100","Oat Ground","Crop Product",42.46272,"g",17.46
+"794","BO1065","MOLM50","Moringa oleifera Leaves Dried Ground","Forage Plants",11.265,"g",5
+"795","BO1065","MOLM50","Palm Kernel Cake","Crop Byproduct",41.13978,"g",18.26
+"796","BO1065","MOLM50","Oat Ground","Crop Product",42.78447,"g",18.99
+"797","BO1065","MOLM50","Rice Bran","Crop Byproduct",83.361,"g",37
 "798","BO1066","Control","Barley","Crop Product",120,"g",21.0526315789474
 "799","BO1066","Control","Maize","Crop Product",180,"g",31.5789473684211
 "800","BO1066","Control","Soybean Ground","Crop Product",45,"g",7.89473684210526
@@ -1036,31 +1036,31 @@
 "1035","BO1093","60 CPM","Cassava Peel Ground","Crop Byproduct",382.5,"g",68.6985883113618
 "1036","BO1093","80 CPM","Maize Offal","Crop Byproduct",127.5,"g",32.7839345864082
 "1037","BO1093","80 CPM","Cassava Peel Ground","Crop Byproduct",510,"g",131.135738345633
-"1038","BO1096","0% Sweet Potato Peels","Groundnut Haulm","Crop Byproduct",148.2,"g",19
-"1039","BO1096","0% Sweet Potato Peels","Wheat Offal","Crop Byproduct",234,"g",30
-"1040","BO1096","0% Sweet Potato Peels","Rice Milling Waste","Crop Byproduct",124.8,"g",16
-"1041","BO1096","0% Sweet Potato Peels","Cowpea Husk","Crop Byproduct",148.2,"g",19
-"1042","BO1096","0% Sweet Potato Peels","Soybean Ground","Crop Product",117,"g",15
-"1043","BO1096","10% Sweet Potato Peels","Cowpea Husk","Crop Byproduct",145.5,"g",15
-"1044","BO1096","10% Sweet Potato Peels","Rice Milling Waste","Crop Byproduct",97,"g",10
-"1045","BO1096","10% Sweet Potato Peels","Soybean Ground","Crop Product",174.6,"g",18
-"1046","BO1096","10% Sweet Potato Peels","Maize","Crop Product",67.9,"g",7
-"1047","BO1096","10% Sweet Potato Peels","Wheat Offal","Crop Byproduct",194,"g",20
-"1048","BO1096","10% Sweet Potato Peels","Sweet Potato Peels Dried","Crop Byproduct",97,"g",10
-"1049","BO1096","10% Sweet Potato Peels","Groundnut Haulm","Crop Byproduct",184.3,"g",19
-"1050","BO1096","20% Sweet Potato Peels","Groundnut Haulm","Crop Byproduct",127.5,"g",17
-"1051","BO1096","20% Sweet Potato Peels","Soybean Ground","Crop Product",142.5,"g",19
-"1052","BO1096","20% Sweet Potato Peels","Cowpea Husk","Crop Byproduct",120,"g",16
-"1053","BO1096","20% Sweet Potato Peels","Rice Milling Waste","Crop Byproduct",75,"g",10
-"1054","BO1096","20% Sweet Potato Peels","Maize","Crop Product",52.5,"g",7
-"1055","BO1096","20% Sweet Potato Peels","Wheat Offal","Crop Byproduct",75,"g",10
-"1056","BO1096","20% Sweet Potato Peels","Sweet Potato Peels Dried","Crop Byproduct",150,"g",20
-"1057","BO1096","30% Sweet Potato Peels","Maize","Crop Product",23.7,"g",3
-"1058","BO1096","30% Sweet Potato Peels","Soybean Ground","Crop Product",150.1,"g",19
-"1059","BO1096","30% Sweet Potato Peels","Sweet Potato Peels Dried","Crop Byproduct",237,"g",30
-"1060","BO1096","30% Sweet Potato Peels","Rice Milling Waste","Crop Byproduct",79,"g",10
-"1061","BO1096","30% Sweet Potato Peels","Groundnut Haulm","Crop Byproduct",173.8,"g",22
-"1062","BO1096","30% Sweet Potato Peels","Cowpea Husk","Crop Byproduct",118.5,"g",15
+"1038","BO1096","0% Sweet Potato Peels","Groundnut Haulm","Crop Byproduct",139.555,"g",19
+"1039","BO1096","0% Sweet Potato Peels","Wheat Offal","Crop Byproduct",220.35,"g",30
+"1040","BO1096","0% Sweet Potato Peels","Rice Milling Waste","Crop Byproduct",117.52,"g",16
+"1041","BO1096","0% Sweet Potato Peels","Cowpea Husk","Crop Byproduct",139.555,"g",19
+"1042","BO1096","0% Sweet Potato Peels","Soybean Ground","Crop Product",110.175,"g",15
+"1043","BO1096","10% Sweet Potato Peels","Cowpea Husk","Crop Byproduct",135.615,"g",15
+"1044","BO1096","10% Sweet Potato Peels","Rice Milling Waste","Crop Byproduct",90.41,"g",10
+"1045","BO1096","10% Sweet Potato Peels","Soybean Ground","Crop Product",162.738,"g",18
+"1046","BO1096","10% Sweet Potato Peels","Maize","Crop Product",63.287,"g",7
+"1047","BO1096","10% Sweet Potato Peels","Wheat Offal","Crop Byproduct",180.82,"g",20
+"1048","BO1096","10% Sweet Potato Peels","Sweet Potato Peels Dried","Crop Byproduct",90.41,"g",10
+"1049","BO1096","10% Sweet Potato Peels","Groundnut Haulm","Crop Byproduct",171.779,"g",19
+"1050","BO1096","20% Sweet Potato Peels","Groundnut Haulm","Crop Byproduct",114.852,"g",17
+"1051","BO1096","20% Sweet Potato Peels","Soybean Ground","Crop Product",128.364,"g",19
+"1052","BO1096","20% Sweet Potato Peels","Cowpea Husk","Crop Byproduct",108.096,"g",16
+"1053","BO1096","20% Sweet Potato Peels","Rice Milling Waste","Crop Byproduct",67.56,"g",10
+"1054","BO1096","20% Sweet Potato Peels","Maize","Crop Product",47.292,"g",7
+"1055","BO1096","20% Sweet Potato Peels","Wheat Offal","Crop Byproduct",67.56,"g",10
+"1056","BO1096","20% Sweet Potato Peels","Sweet Potato Peels Dried","Crop Byproduct",135.12,"g",20
+"1057","BO1096","30% Sweet Potato Peels","Maize","Crop Product",21.576,"g",3
+"1058","BO1096","30% Sweet Potato Peels","Soybean Ground","Crop Product",136.648,"g",19
+"1059","BO1096","30% Sweet Potato Peels","Sweet Potato Peels Dried","Crop Byproduct",215.76,"g",30
+"1060","BO1096","30% Sweet Potato Peels","Rice Milling Waste","Crop Byproduct",71.92,"g",10
+"1061","BO1096","30% Sweet Potato Peels","Groundnut Haulm","Crop Byproduct",158.224,"g",22
+"1062","BO1096","30% Sweet Potato Peels","Cowpea Husk","Crop Byproduct",107.88,"g",15
 "1063","BO1097","0% Alfafa","Noug Seed Cake","Crop Byproduct",49,"% Diet",100
 "1064","BO1097","100% Alfafa","Alfalfa Dried","Forage Plants",49,"% Diet",100
 "1065","BO1097","25% Alfafa","Noug Seed Cake","Crop Byproduct",36.75,"% Diet",75
@@ -3597,11 +3597,11 @@
 "3596","JO1001","SAM","Samanea saman Wilted","Forage Plants",130.72,"g",22.968793927467
 "3597","JO1002","M30","Moringa oleifera","Forage Plants",30,"g",0.232558139534884
 "3598","JO1002","M60","Moringa oleifera","Forage Plants",60,"g",0.476190476190476
-"3599","JO1003","CG AS","Acacia seyal Wilted","Forage Plants",100,"g",16.1812297734628
-"3600","JO1003","CG ASG","Acacia senegal Leaves Wilted","Forage Plants",100,"g",16.7224080267559
-"3601","JO1003","CG AT","Acacia tortilis Leaves Wilted","Forage Plants",100,"g",15.6739811912226
-"3602","JO1003","CG MF","Millettia ferruginea Wilted","Forage Plants",100,"g",17.0241743275451
-"3603","JO1003","CG VA","Vernonia amygdalina Wilted","Forage Plants",100,"g",17.9856115107914
+"3599","JO1003","CG AS","Acacia seyal Wilted","Forage Plants",100,"g",17.3991717994223
+"3600","JO1003","CG ASG","Acacia senegal Leaves Wilted","Forage Plants",100,"g",17.9810838997375
+"3601","JO1003","CG AT","Acacia tortilis Leaves Wilted","Forage Plants",100,"g",16.8634064080944
+"3602","JO1003","CG MF","Millettia ferruginea Wilted","Forage Plants",100,"g",18.3220652631965
+"3603","JO1003","CG VA","Vernonia amygdalina Wilted","Forage Plants",100,"g",19.3914948903411
 "3604","JO1004","10% cactus","Opuntia ficus indica Cladode Dried Ground","Forage Plants",89.75,"g",1.38076923076923
 "3605","JO1004","10% cactus","Maize","Crop Product",829.75,"g",12.7653846153846
 "3606","JO1004","10% cactus","Soybean Full Fat Cake","Crop Byproduct",13.875,"g",0.213461538461538
@@ -3784,12 +3784,12 @@
 "3783","JO1022","Feed 4","Alfalfa Dried","Forage Plants",294,"g",39.1321709037668
 "3784","JO1022","Feed 4","Wheat Bran","Crop Byproduct",105,"g",13.9757753227739
 "3785","JO1022","Feed 5","Alfalfa Dried","Forage Plants",392,"g",52.972972972973
-"3786","JO1023","Cowpea 100g Lablab 225g NF","Cowpea Leaves","Crop Byproduct",100,"g",12.9634430904848
-"3787","JO1023","Cowpea 100g Lablab 225g NF","Lablab purpureus","Crop Product",225,"g",29.1677469535909
-"3788","JO1023","Cowpea 267g Lablab 100g NF","Lablab purpureus","Crop Product",100,"g",15.124016938899
-"3789","JO1023","Cowpea 267g Lablab 100g NF","Cowpea Leaves","Crop Byproduct",267,"g",40.3811252268603
-"3790","JO1023","Cowpea 400g NF","Cowpea Leaves","Crop Byproduct",400,"g",54.421768707483
-"3791","JO1023","Lablab 300g NF","Lablab purpureus","Crop Product",300,"g",38.0228136882129
+"3786","JO1023","Cowpea 100g Lablab 225g NF","Cowpea Leaves","Crop Byproduct",100,"g",2816.9014084507
+"3787","JO1023","Cowpea 100g Lablab 225g NF","Lablab purpureus","Crop Product",225,"g",6338.02816901408
+"3788","JO1023","Cowpea 267g Lablab 100g NF","Lablab purpureus","Crop Product",100,"g",2754.82093663912
+"3789","JO1023","Cowpea 267g Lablab 100g NF","Cowpea Leaves","Crop Byproduct",267,"g",7355.37190082645
+"3790","JO1023","Cowpea 400g NF","Cowpea Leaves","Crop Byproduct",400,"g",11428.5714285714
+"3791","JO1023","Lablab 300g NF","Lablab purpureus","Crop Product",300,"g",8356.54596100279
 "3792","JO1024","T1 300CPH","Cowpea Haulm Dried","Crop Byproduct",300,"g",43.6611314054518
 "3793","JO1024","T2 225CPH 75WB","Wheat Bran","Crop Byproduct",75,"g",11.2038959680913
 "3794","JO1024","T2 225CPH 75WB","Cowpea Haulm Dried","Crop Byproduct",225,"g",33.6116879042739
@@ -4075,13 +4075,13 @@
 "4074","JO1048","F4 75","Cotton Seed Cake","Crop Byproduct",34.698,"g",10
 "4075","JO1048","F5 100","Poultry Litter","Animal Manures",127.452,"g",40
 "4076","JO1049","P0M100 T5","Morus alba","Forage Plants",100,"%",100
-"4077","JO1049","P100M0 T1","Panicum maximum","Forage Plants",596.13,"g",100
-"4078","JO1049","P25M75 T4","Panicum maximum","Forage Plants",150.575,"g",25
-"4079","JO1049","P25M75 T4","Morus alba","Forage Plants",451.725,"g",75
-"4080","JO1049","P50M50 T3","Panicum maximum","Forage Plants",310.25,"g",50
-"4081","JO1049","P50M50 T3","Morus alba","Forage Plants",310.25,"g",50
-"4082","JO1049","P75M25 T2","Morus alba","Forage Plants",151.025,"g",25
-"4083","JO1049","P75M25 T2","Panicum maximum","Forage Plants",453.075,"g",75
+"4077","JO1049","P100M0 T1","Panicum maximum","Forage Plants",338.45,"g",100
+"4078","JO1049","P25M75 T4","Panicum maximum","Forage Plants",81.225,"g",25
+"4079","JO1049","P25M75 T4","Morus alba","Forage Plants",243.675,"g",75
+"4080","JO1049","P50M50 T3","Panicum maximum","Forage Plants",178.3,"g",50
+"4081","JO1049","P50M50 T3","Morus alba","Forage Plants",178.3,"g",50
+"4082","JO1049","P75M25 T2","Morus alba","Forage Plants",82.975,"g",25
+"4083","JO1049","P75M25 T2","Panicum maximum","Forage Plants",248.925,"g",75
 "4084","JO1050","CSC33 WB66 Salt1","Wheat Bran","Crop Byproduct",2000,"g",51.0204081632653
 "4085","JO1050","CSC33 WB66 Salt1","Salt","Other Ingredients",30,"g",0.76530612244898
 "4086","JO1050","CSC33 WB66 Salt1","Cotton Seed Cake","Crop Byproduct",1000,"g",25.5102040816327
@@ -4744,10 +4744,10 @@
 "4743","JO1090","SIL100 BAM0","Maize Whole Ensiled","Crop Product",8500,"g",68
 "4744","JO1090","SIL100 BAM0","Groundnut Cake","Crop Byproduct",1000,"g",8
 "4745","JO1090","SIL100 BAM0","Maize Grain","Crop Product",3000,"g",24
-"4746","JO1091","CDC","Maize Germ","Crop Byproduct",2240,"g",5.62814070351759
-"4747","JO1091","CDC","Cotton Seed Cake","Crop Byproduct",770,"g",1.93467336683417
-"4748","JO1091","CDC","Sunflower Seed Cake","Crop Byproduct",490,"g",1.23115577889447
-"4749","JO1091","CDC","Wheat Bran","Crop Byproduct",2100,"g",5.27638190954774
+"4746","JO1091","CDC","Maize Germ","Crop Byproduct",2240,"g",17.2706245181187
+"4747","JO1091","CDC","Cotton Seed Cake","Crop Byproduct",770,"g",5.93677717810332
+"4748","JO1091","CDC","Sunflower Seed Cake","Crop Byproduct",490,"g",3.77794911333847
+"4749","JO1091","CDC","Wheat Bran","Crop Byproduct",2100,"g",16.1912104857363
 "4750","JO1092","Diet 1","Lime","Supplement",8.86255165238401,"g",0.66
 "4751","JO1092","Diet 1","Minerals and Vitamins Mix","Supplement",2.954183884128,"g",0.22
 "4752","JO1092","Diet 1","Sunflower Seed Cake Ground","Crop Byproduct",0,"g",0
@@ -6425,58 +6425,58 @@
 "6424","NJ0047","T4","Wheat Offal","Crop Byproduct",2.89116279069767,"g",3
 "6425","NJ0047","T4","Maize Grain","Crop Product",53.0046511627907,"g",55
 "6426","NJ0047","T4","Soybean Ground","Crop Product",22.6956279069767,"g",23.55
-"6427","NJ0052","CON","Sunflower Oil","Crop Product",9.8,"g",0.7
-"6428","NJ0052","CON","Sunflower Oil","Crop Product",9.8,"g",0.7
-"6429","NJ0052","CON","Lime","Non-ERA Feed",8.4,"g",0.6
-"6430","NJ0052","CON","Lime","Non-ERA Feed",8.4,"g",0.6
-"6431","NJ0052","CON","Lysine - HCl","Non-ERA Feed",5.6,"g",0.4
-"6432","NJ0052","CON","Lysine - HCl","Non-ERA Feed",5.6,"g",0.4
-"6433","NJ0052","CON","Maize Ground","Crop Product",935.2,"g",66.8
-"6434","NJ0052","CON","Maize Ground","Crop Product",935.2,"g",66.8
-"6435","NJ0052","CON","Monocalcium Phosphate","Non-ERA Feed",22.4,"g",1.6
-"6436","NJ0052","CON","Monocalcium Phosphate","Non-ERA Feed",22.4,"g",1.6
-"6437","NJ0052","CON","Salt","Non-ERA Feed",5.6,"g",0.4
-"6438","NJ0052","CON","Salt","Non-ERA Feed",5.6,"g",0.4
-"6439","NJ0052","CON","Soybean Cake","Crop Byproduct",280,"g",20
-"6440","NJ0052","CON","Soybean Cake","Crop Byproduct",280,"g",20
-"6441","NJ0052","CON","Soybean Full Fat Cake","Crop Byproduct",98,"g",7
-"6442","NJ0052","CON","Soybean Full Fat Cake","Crop Byproduct",98,"g",7
-"6443","NJ0052","HMC","Lime","Non-ERA Feed",5.2,"g",0.4
-"6444","NJ0052","HMC","Lime","Non-ERA Feed",5.2,"g",0.4
-"6445","NJ0052","HMC","Lysine - HCl","Non-ERA Feed",6.5,"g",0.5
-"6446","NJ0052","HMC","Lysine - HCl","Non-ERA Feed",6.5,"g",0.5
-"6447","NJ0052","HMC","Maize Ground","Crop Product",516.1,"g",39.7
-"6448","NJ0052","HMC","Maize Ground","Crop Product",516.1,"g",39.7
-"6449","NJ0052","HMC","Sunflower Oil","Crop Product",26,"g",2
-"6450","NJ0052","HMC","Sunflower Oil","Crop Product",26,"g",2
-"6451","NJ0052","HMC","Monocalcium Phosphate","Non-ERA Feed",23.4,"g",1.8
-"6452","NJ0052","HMC","Monocalcium Phosphate","Non-ERA Feed",23.4,"g",1.8
-"6453","NJ0052","HMC","Salt","Non-ERA Feed",3.9,"g",0.3
-"6454","NJ0052","HMC","Salt","Non-ERA Feed",3.9,"g",0.3
-"6455","NJ0052","HMC","Maize Cob Ensiled","Crop Byproduct",260,"g",20
-"6456","NJ0052","HMC","Maize Cob Ensiled","Crop Byproduct",260,"g",20
-"6457","NJ0052","HMC","Soybean Cake","Crop Byproduct",226.2,"g",17.4
-"6458","NJ0052","HMC","Soybean Cake","Crop Byproduct",226.2,"g",17.4
-"6459","NJ0052","HMC","Soybean Full Fat Cake","Crop Byproduct",201.5,"g",15.5
-"6460","NJ0052","HMC","Soybean Full Fat Cake","Crop Byproduct",201.5,"g",15.5
-"6461","NJ0052","LMC","Maize Cob Ensiled","Crop Byproduct",140,"g",10
-"6462","NJ0052","LMC","Maize Cob Ensiled","Crop Byproduct",140,"g",10
-"6463","NJ0052","LMC","Maize Ground","Crop Product",736.4,"g",52.6
-"6464","NJ0052","LMC","Maize Ground","Crop Product",736.4,"g",52.6
-"6465","NJ0052","LMC","Soybean Cake","Crop Byproduct",257.6,"g",18.4
-"6466","NJ0052","LMC","Soybean Cake","Crop Byproduct",257.6,"g",18.4
-"6467","NJ0052","LMC","Soybean Full Fat Cake","Crop Byproduct",161,"g",11.5
-"6468","NJ0052","LMC","Soybean Full Fat Cake","Crop Byproduct",161,"g",11.5
-"6469","NJ0052","LMC","Sunflower Oil","Crop Product",28,"g",2
-"6470","NJ0052","LMC","Sunflower Oil","Crop Product",28,"g",2
-"6471","NJ0052","LMC","Salt","Non-ERA Feed",4.2,"g",0.3
-"6472","NJ0052","LMC","Salt","Non-ERA Feed",4.2,"g",0.3
-"6473","NJ0052","LMC","Lysine - HCl","Non-ERA Feed",7,"g",0.5
-"6474","NJ0052","LMC","Lysine - HCl","Non-ERA Feed",7,"g",0.5
-"6475","NJ0052","LMC","Lime","Non-ERA Feed",7,"g",0.5
-"6476","NJ0052","LMC","Lime","Non-ERA Feed",7,"g",0.5
-"6477","NJ0052","LMC","Monocalcium Phosphate","Non-ERA Feed",23.8,"g",1.7
-"6478","NJ0052","LMC","Monocalcium Phosphate","Non-ERA Feed",23.8,"g",1.7
+"6427","NJ0052","CON","Sunflower Oil","Crop Product",8.4,"g",0.7
+"6428","NJ0052","CON","Sunflower Oil","Crop Product",8.4,"g",0.7
+"6429","NJ0052","CON","Lime","Non-ERA Feed",7.2,"g",0.6
+"6430","NJ0052","CON","Lime","Non-ERA Feed",7.2,"g",0.6
+"6431","NJ0052","CON","Lysine - HCl","Non-ERA Feed",4.8,"g",0.4
+"6432","NJ0052","CON","Lysine - HCl","Non-ERA Feed",4.8,"g",0.4
+"6433","NJ0052","CON","Maize Ground","Crop Product",801.6,"g",66.8
+"6434","NJ0052","CON","Maize Ground","Crop Product",801.6,"g",66.8
+"6435","NJ0052","CON","Monocalcium Phosphate","Non-ERA Feed",19.2,"g",1.6
+"6436","NJ0052","CON","Monocalcium Phosphate","Non-ERA Feed",19.2,"g",1.6
+"6437","NJ0052","CON","Salt","Non-ERA Feed",4.8,"g",0.4
+"6438","NJ0052","CON","Salt","Non-ERA Feed",4.8,"g",0.4
+"6439","NJ0052","CON","Soybean Cake","Crop Byproduct",240,"g",20
+"6440","NJ0052","CON","Soybean Cake","Crop Byproduct",240,"g",20
+"6441","NJ0052","CON","Soybean Full Fat Cake","Crop Byproduct",84,"g",7
+"6442","NJ0052","CON","Soybean Full Fat Cake","Crop Byproduct",84,"g",7
+"6443","NJ0052","HMC","Lime","Non-ERA Feed",4.4,"g",0.4
+"6444","NJ0052","HMC","Lime","Non-ERA Feed",4.4,"g",0.4
+"6445","NJ0052","HMC","Lysine - HCl","Non-ERA Feed",5.5,"g",0.5
+"6446","NJ0052","HMC","Lysine - HCl","Non-ERA Feed",5.5,"g",0.5
+"6447","NJ0052","HMC","Maize Ground","Crop Product",436.7,"g",39.7
+"6448","NJ0052","HMC","Maize Ground","Crop Product",436.7,"g",39.7
+"6449","NJ0052","HMC","Sunflower Oil","Crop Product",22,"g",2
+"6450","NJ0052","HMC","Sunflower Oil","Crop Product",22,"g",2
+"6451","NJ0052","HMC","Monocalcium Phosphate","Non-ERA Feed",19.8,"g",1.8
+"6452","NJ0052","HMC","Monocalcium Phosphate","Non-ERA Feed",19.8,"g",1.8
+"6453","NJ0052","HMC","Salt","Non-ERA Feed",3.3,"g",0.3
+"6454","NJ0052","HMC","Salt","Non-ERA Feed",3.3,"g",0.3
+"6455","NJ0052","HMC","Maize Cob Ensiled","Crop Byproduct",220,"g",20
+"6456","NJ0052","HMC","Maize Cob Ensiled","Crop Byproduct",220,"g",20
+"6457","NJ0052","HMC","Soybean Cake","Crop Byproduct",191.4,"g",17.4
+"6458","NJ0052","HMC","Soybean Cake","Crop Byproduct",191.4,"g",17.4
+"6459","NJ0052","HMC","Soybean Full Fat Cake","Crop Byproduct",170.5,"g",15.5
+"6460","NJ0052","HMC","Soybean Full Fat Cake","Crop Byproduct",170.5,"g",15.5
+"6461","NJ0052","LMC","Maize Cob Ensiled","Crop Byproduct",130,"g",10
+"6462","NJ0052","LMC","Maize Cob Ensiled","Crop Byproduct",130,"g",10
+"6463","NJ0052","LMC","Maize Ground","Crop Product",683.8,"g",52.6
+"6464","NJ0052","LMC","Maize Ground","Crop Product",683.8,"g",52.6
+"6465","NJ0052","LMC","Soybean Cake","Crop Byproduct",239.2,"g",18.4
+"6466","NJ0052","LMC","Soybean Cake","Crop Byproduct",239.2,"g",18.4
+"6467","NJ0052","LMC","Soybean Full Fat Cake","Crop Byproduct",149.5,"g",11.5
+"6468","NJ0052","LMC","Soybean Full Fat Cake","Crop Byproduct",149.5,"g",11.5
+"6469","NJ0052","LMC","Sunflower Oil","Crop Product",26,"g",2
+"6470","NJ0052","LMC","Sunflower Oil","Crop Product",26,"g",2
+"6471","NJ0052","LMC","Salt","Non-ERA Feed",3.9,"g",0.3
+"6472","NJ0052","LMC","Salt","Non-ERA Feed",3.9,"g",0.3
+"6473","NJ0052","LMC","Lysine - HCl","Non-ERA Feed",6.5,"g",0.5
+"6474","NJ0052","LMC","Lysine - HCl","Non-ERA Feed",6.5,"g",0.5
+"6475","NJ0052","LMC","Lime","Non-ERA Feed",6.5,"g",0.5
+"6476","NJ0052","LMC","Lime","Non-ERA Feed",6.5,"g",0.5
+"6477","NJ0052","LMC","Monocalcium Phosphate","Non-ERA Feed",22.1,"g",1.7
+"6478","NJ0052","LMC","Monocalcium Phosphate","Non-ERA Feed",22.1,"g",1.7
 "6479","NN0005","0 M","Barley Ground","Crop Product",740,"g/kg",33.3333333333333
 "6480","NN0005","0 M","Barley Ground","Crop Product",740,"g/kg",33.3333333333333
 "6481","NN0005","0 M","Barley Ground","Crop Product",740,"g/kg",33.3333333333333
@@ -7147,7 +7147,7 @@
 "7146","NN0214","Noug Meal Treatment","Noug Ground","Crop Byproduct",80,"g",100
 "7147","NN0216","supplemented","Wheat Ground","Crop Byproduct",5000,"g",50
 "7148","NN0216","supplemented","Wheat Ground","Crop Byproduct",5000,"g",50
-"7149","NN0217","C0","Unspecified Grass Dried","Herbaceous Fodders",6478.33002167175,"g",100
+"7149","NN0217","C0","Unspecified Grass Dried","Herbaceous Fodders",685,"g",100
 "7150","NN0223","Goats diet","Noug Seed Cake",NA,310.5,"g",46
 "7151","NN0223","Goats diet","Noug Seed Cake",NA,310.5,"g",46
 "7152","NN0223","Goats diet","Sorghum Grain","Crop Product",162,"g",24
@@ -7202,14 +7202,14 @@
 "7201","NN0233","Diet 4","Acacia etbaica Fruits Dried","Agroforestry Fodders",297,"g",43.5833828182159
 "7202","NN0233","Diet 5","Dichrostachys cinerea Fruits Dried","Agroforestry Fodders",103,"g",12.5911804018583
 "7203","NN0233","Diet 6","Dichrostachys cinerea Fruits Dried","Agroforestry Fodders",202,"g",25.2984447774218
-"7204","NN0234","T 1 CON","Concentrate","Other Feed",452700,"g",53.7201851192595
-"7205","NN0234","T 2 74 LUPIN","Blue Lupin","Agroforestry Fodders",74,"g",0.00882528324388789
-"7206","NN0234","T 2 74 LUPIN","Concentrate","Other Feed",342,"g",0.0407871198568873
-"7207","NN0234","T 3 147 LUPIN","Concentrate","Other Feed",228,"g",0.0290668026517083
-"7208","NN0234","T 3 147 LUPIN","Blue Lupin","Agroforestry Fodders",147,"g",0.0187404385517593
-"7209","NN0234","T 4 219 LUPIN","Blue Lupin","Agroforestry Fodders",219,"g",0.0272117296222664
-"7210","NN0234","T 4 219 LUPIN","Concentrate","Other Feed",116,"g",0.0144135188866799
-"7211","NN0234","T 5 LUPIN ONLY","Blue Lupin","Agroforestry Fodders",269700,"g",36.1189232623544
+"7204","NN0234","T 1 CON","Concentrate","Other Feed",452.7,"g",53.7201851192595
+"7205","NN0234","T 2 74 LUPIN","Blue Lupin","Agroforestry Fodders",74,"g",8.8252832438879
+"7206","NN0234","T 2 74 LUPIN","Concentrate","Other Feed",342,"g",40.7871198568873
+"7207","NN0234","T 3 147 LUPIN","Concentrate","Other Feed",228,"g",29.0668026517083
+"7208","NN0234","T 3 147 LUPIN","Blue Lupin","Agroforestry Fodders",147,"g",18.7404385517593
+"7209","NN0234","T 4 219 LUPIN","Blue Lupin","Agroforestry Fodders",219,"g",27.2117296222664
+"7210","NN0234","T 4 219 LUPIN","Concentrate","Other Feed",116,"g",14.4135188866799
+"7211","NN0234","T 5 LUPIN ONLY","Blue Lupin","Agroforestry Fodders",269.7,"g",36.1189232623544
 "7212","NN0236","T2","Cotton Seed Ground","Crop Product",300,"g",50.9337860780985
 "7213","NN0236","T3","Erythrina brucei Leaves Dried","Agroforestry Fodders",99,"g",16.5275459098497
 "7214","NN0236","T3","Cotton Seed Ground","Crop Product",201,"g",33.5559265442404

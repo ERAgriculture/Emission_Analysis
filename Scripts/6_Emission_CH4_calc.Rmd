@@ -7,7 +7,7 @@ date: "2025-09-26"
 ```{r}
 Gross_energy <- read.csv("~/Emission_Analysis/data/Gross_energy.csv")
 merged_metadata <- readRDS("~/Emission_Analysis/data/merged_metadata_nutrition_inference.rds")
-ingredients <- readRDS("~/Emission_Analysis/data/ingredients_harmonized_subset.rds")
+ingredients <- read.csv("~/Emission_Analysis/data/ingredients_harmonized_subset.csv")
 total_amounts <- read.csv("~/Emission_Analysis/data/total_amounts.csv")
 feed_intake_ingredients <- read.csv("~/Emission_Analysis/data/feed_intake_ingredients_harmonized.csv")
 feed_intake_diet <- read.csv("~/Emission_Analysis/data/feed_intake_diet_harmonized.csv")
@@ -53,8 +53,6 @@ kable(
 ### 17.1) Ym estimations 
 
 ```{r}
-
-
 # ── Catch ALL meat-yield outcomes (final BW, carcass, slaughter body, etc.) ──
 meat_regex <- paste0(
   "(?i)",                                     # case-insensitive
@@ -70,7 +68,129 @@ yield_data <- merged_metadata$Data.Out %>%
     Out.Subind == "Milk Yield" |
     str_detect(Out.Subind, meat_regex)
   )
+```
 
+```{r}
+
+#correcting extraction erros 
+
+
+# 1. Define the missing data for CJ1017
+new_rows <- tibble::tibble(
+  B.Code = "CJ1017",
+  A.Level.Name = c("Control", "25% AFH", "50% AFH", "75% AFH"),
+  Out.Code.Joined = paste0(c("Control", "25% AFH", "50% AFH", "75% AFH"), "||Ewes"),
+  ED.Intake.Item = NA_character_,
+  ED.Intake.Item.Raw = NA_character_,
+  ED.Mean.T = c(800, 850, 900, 950),           # daily milk yield (g)
+  ED.Error = NA_real_,
+  Out.Subind = "Milk Yield",
+  Out.Unit = "g/individual/day",
+  Out.WG.Start = NA_real_,
+  Out.WG.Unit = NA_character_,
+  is_entire_diet = FALSE,
+  is_group = NA,
+  T.Animals = NA,
+  T.Name = NA_character_,
+  Source = "Added from publication (Daily milk yield)",
+  D.Item.Root.Comp.Proc_Major = "camel",
+  ED.Intake.Item.is_entire_diet = FALSE,
+  n_ing = NA_real_,
+  n_tar = NA_real_
+)
+
+# 2. Append these rows to your existing yield_data
+yield_data <- bind_rows(yield_data, new_rows)
+
+new_rows_JO1017 <- tibble(
+  B.Code = "JO1017",
+  A.Level.Name = c("R1", "R2", "R3", "R4"),
+  Out.Code.Joined = paste0(c("R1", "R2", "R3", "R4"), "||Adults"),
+  ED.Intake.Item = NA_character_,
+  ED.Intake.Item.Raw = NA_character_,
+  ED.Mean.T = c(413.88, 400.71, 388.85, 374.94),   # daily milk yield (g)
+  ED.Error = 9.30,                                 # ±SE from paper (constant here)
+  Out.Subind = "Milk Yield",
+  Out.Unit = "g/individual/day",
+  Out.WG.Start = NA_real_,
+  Out.WG.Unit = NA_character_,
+  P.Product = NA_character_,
+  is_entire_diet = FALSE,
+  is_group = NA,
+  T.Animals = NA,
+  T.Name = NA_character_,
+  Source = "Added from publication (Daily milk yield)",
+  D.Item.Root.Comp.Proc_Major = "camel",
+  ED.Intake.Item.is_entire_diet = FALSE,
+  n_ing = NA_real_,
+  n_tar = NA_real_
+)
+
+# 2. Append to your main yield_data
+yield_data <- bind_rows(yield_data, new_rows_JO1017)
+
+```
+
+
+
+```{r}
+
+
+yield_data <- yield_data %>%
+  group_by(B.Code, A.Level.Name, Out.Subind) %>%
+  # keep the row with the highest yield value within that diet & outcome
+  slice_max(order_by = ED.Mean.T, n = 1, with_ties = FALSE) %>%
+  ungroup()
+
+
+
+multi_unit_papers <- yield_data %>%
+  mutate(
+    Out.Unit = tolower(trimws(Out.Unit))  # clean unit strings
+  ) %>%
+  group_by(B.Code, Out.Subind) %>%        # same paper, same outcome
+  summarize(
+    n_units = n_distinct(Out.Unit),
+    units_list = paste(unique(Out.Unit), collapse = "; "),
+    .groups = "drop"
+  ) %>%
+  filter(n_units > 1)  
+
+unit_priority <- c(
+  "kg/individual/day" = 1,
+  "g/individual/day"     = 2,
+  "kg/day"            = 3,
+  "kg"                = 4,
+  "l/individual/day"  = 5,
+  "ml/individual/day" =6,
+  "l/individual"      = 7,
+  "kg/individual"  = 8,
+  "g/individual"      = 9,
+  "g/kg/individual"   = 10,
+  "g/100g bw"         = 11,
+  "%"                 = 12
+)
+
+# 2. Clean and select the most logical unit
+yield_data_clean <- yield_data %>%
+  mutate(
+    Out.Unit = tolower(trimws(Out.Unit)),
+    priority = unit_priority[Out.Unit]
+  )
+
+# Step 2: identify preferred unit per paper/outcome
+preferred_units <- yield_data_clean %>%
+  group_by(B.Code, Out.Subind) %>%
+  summarize(preferred_priority = min(priority, na.rm = TRUE), .groups = "drop")
+
+# Step 3: keep only rows with the preferred unit
+yield_data<- yield_data_clean %>%
+  left_join(preferred_units, by = c("B.Code", "Out.Subind")) %>%
+  filter(priority == preferred_priority | is.na(preferred_priority)) %>%
+  select(-priority, -preferred_priority)
+```
+
+```{r}
 # 2) Normalize units to a small canonical set (same behavior as before)
 yield_data <- yield_data %>%
   mutate(
@@ -511,8 +631,7 @@ ingredients_view <- ingredients_enriched %>%
   select(
     B.Code, A.Level.Name, D.Item, D.Type, D.Amount, D.Unit.Amount, D.Unit.Time,
     D.Unit.Animals, DC.Is.Dry, D.Ad.lib, D.Item.Group, Source, Units,
-    T.Animals, Out.WG.Start, Out.WG.Unit, basal_intake_status,
-    Prediction_Source, Prediction_Source.from_AName, from_feed_intake,
+    T.Animals, Out.WG.Start, Out.WG.Unit,
     # New appended columns:
     GE_MJ_per_kg, GE_source, Amount_kg_day, GE_MJ_day
   )

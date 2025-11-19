@@ -45,6 +45,16 @@ merged_metadata <- readRDS("~/Emission_Analysis/data/merged_metadata.rds")
 ```
 
 
+##duplicate code 
+
+```{r}
+merged_metadata$Animals.Diet<-merged_metadata$Animals.Diet%>%
+  filter(B.Code!="0")
+
+merged_metadata$Data.Out<-merged_metadata$Data.Out%>%
+  filter(B.Code!="0")
+```
+
 ## 1.1 Correct T.Control
 
 When t control is yes for one of the diets then automatically enter No for the other diets of the same paper. Also for missing t control if the name of the diet contains control or Con or Zero then automatically deduce this is a control diet and others are treatment diets. 
@@ -1419,7 +1429,7 @@ library(purrr)
 ### 0) Load master-sheet
 ###############################################################################
 
-url <- "https://github.com/Mlolita26/ERA_Docs/raw/main/era_master_sheet(15).xlsx"
+url <- "https://github.com/Mlolita26/ERA_Docs/raw/main/era_master_sheet(17).xlsx"
 temp_file <- tempfile(fileext = ".xlsx")
 
 download.file(url, destfile = temp_file, mode = "wb")
@@ -1602,80 +1612,314 @@ ingredients <- ingredients_expanded_clean %>%
 
 ```
 
-
-
-### 4.2) Use Feed intake at the diet level  
+### 4.2) Estimate total feed intake at the diet level to deduce missing ingredients intake. 
 
 added a final step that automatically fills exactly one missing ingredient amount per diet by subtracting the sum of known ingredient amounts from the total diet intake, ensuring every diet is mass-balanced when complete feed-intake data exist.
 So when amount is missing use complete diet feed intake info 
 
+OR 
+
+use Andy equations from https://www.cambridge.org/core/journals/animal/article/abs/nutritional-requirements-of-sheep-goats-and-cattle-in-warm-climates-a-metaanalysis/FBD20A80D070721414426A94E87888B8 
+then we could get total estimated intake for the missing ones and deduce the missing ingredients. That could also work for the diets for which we only have % and no mentioned amount or intake. 
+
+
 ```{r}
-
 ###############################################################################
-###  COMPLEMENT FILL FOR MISSING INGREDIENT AMOUNTS
-###  (Place this at the very END of the script, after you create `ingredients`)
+### 4.2bis) Use Archimède et al. (2014) to estimate total DMI
+### and (a) convert % / g·kg⁻¹ diets with no FI,
+### (b) complement-fill exactly ONE missing ingredient per diet,
+### (c) evaluate prediction vs measured FI where available.
+###
+### Eq. (1) Archimède et al. 2014, Animal 8:1439–1447:
+###   log10(DMI_kg_d) = -1.27 + 0.862 * log10(LW_kg)
 ###############################################################################
 
-# --- 1) Prepare diet-level intake lookup ------------------------------------
-diet_intake_lookup <- feed_intake %>%
-  filter(is_entire_diet=="TRUE")%>%
-  select(B.Code, A.Level.Name, ED.Mean.T)
-
-# --- 2) Identify diets with exactly ONE missing ingredient amount ------------
-
-complement_info <- ingredients %>%
-  group_by(B.Code, A.Level.Name) %>%
-  # attach total intake
-  left_join(diet_intake_lookup,
-            by = c("B.Code","A.Level.Name")) %>%
-  summarise(
-    total_intake = first(na.omit(ED.Mean.T)),        # kg/day
-    n_missing    = sum(is.na(D.Amount)),
-    missing_item = first(D.Item[is.na(D.Amount)]),
-    sum_known    = sum(D.Amount, na.rm = TRUE),
-    .groups = "drop"
-  ) %>%
-  # Only fill when exactly ONE missing entry AND total intake exists
-  filter(!is.na(total_intake), n_missing == 1) %>%
-  mutate(
-    complement_value = total_intake - sum_known,
-    complement_value = ifelse(complement_value < 0, 0, complement_value)
-  )
-
-# --- 3) Merge complement back into `ingredients` -----------------------------
+## ---------------------------------------------------------------------------
+## 0) Helper: ignore minerals, salt, water in mass-balance steps
+## ---------------------------------------------------------------------------
+ignore_pattern <- "(?i)mineral|minerals|salt|water"
 
 ingredients <- ingredients %>%
-  left_join(
-    complement_info %>%
-      select(B.Code, A.Level.Name, missing_item, complement_value),
-    by = c("B.Code", "A.Level.Name", "D.Item" = "missing_item")
-  ) %>%
   mutate(
-    # fill missing amount
-    D.Amount = ifelse(is.na(D.Amount) & !is.na(complement_value),
-                      complement_value,
-                      D.Amount),
-    
-    # set harmonized units for the filled amount
-    D.Unit.Amount  = ifelse(!is.na(complement_value), "kg", D.Unit.Amount),
-    D.Unit.Time    = ifelse(!is.na(complement_value), "day", D.Unit.Time),
-    D.Unit.Animals = ifelse(!is.na(complement_value), "individual", D.Unit.Animals),
+    ignore_for_balance = grepl(ignore_pattern, D.Item)
+  )
 
-    # flag the origin of these values
-    D.Type = ifelse(!is.na(complement_value),
-                           "complement_filled",
-                           D.Type)
+## ---------------------------------------------------------------------------
+## 1) Diet-level intake from measured feed intake (already harmonised to kg/d)
+## ---------------------------------------------------------------------------
+diet_intake_measured <- feed_intake %>%
+  filter(is_entire_diet) %>%                       # only "Entire Diet" rows
+  transmute(
+    B.Code,
+    A.Level.Name,
+    P.Product,
+    diet_intake_kg      = ED.Mean.T,               # already in kg/d
+    diet_intake_source  = "measured_feed_intake"
   ) %>%
-  select(-complement_value)
+  distinct()%>%
+  filter(P.Product %in% c("Cattle","Sheep","Goat"))
 
-###############################################################################
-### END COMPLEMENT BLOCK
-###############################################################################
+## ---------------------------------------------------------------------------
+## 2) Predicted DMI using Archimède eq. for ALL diets with BW
+##    log10(DMI_kg_d) = -1.27 + 0.862 * log10(LW_kg)
+## ---------------------------------------------------------------------------
 
+# weights_unique already has Out.WG.Start in kg per (B.Code, A.Level.Name)
+archimede_dmi_all <- ingredients %>%
+  distinct(B.Code, A.Level.Name) %>%
+  left_join(
+    weights_unique %>%
+      select(B.Code, A.Level.Name, Out.WG.Start),
+    by = c("B.Code", "A.Level.Name")
+  ) %>%
+  filter(!is.na(Out.WG.Start) & Out.WG.Start > 0) %>%
+  mutate(
+    pred_diet_intake_kg = 10^(-1.27 + 0.862 * log10(Out.WG.Start)),
+    pred_source         = "pred_archimede2014"
+  )
+
+# subset used for IMPUTATION: only diets WITHOUT measured intake
+archimede_dmi_missing <- archimede_dmi_all %>%
+  anti_join(diet_intake_measured, by = c("B.Code", "A.Level.Name")) %>%
+  transmute(
+    B.Code,
+    A.Level.Name,
+    diet_intake_kg     = pred_diet_intake_kg,
+    diet_intake_source = "pred_archimede2014"
+  )
+
+## ---------------------------------------------------------------------------
+## 3) Combine measured and predicted diet intakes
+##    (measured has precedence; we never overwrite it)
+## ---------------------------------------------------------------------------
+diet_intake_all <- bind_rows(
+  diet_intake_measured,
+  archimede_dmi_missing
+) %>%
+  arrange(
+    B.Code, A.Level.Name,
+    desc(diet_intake_source == "measured_feed_intake")
+  ) %>%
+  distinct(B.Code, A.Level.Name, .keep_all = TRUE)
+
+## ---------------------------------------------------------------------------
+## 3bis) Evaluate Archimède predictions vs measured FI (diagnostics only)
+##       (does NOT affect diet_intake_all)
+## ---------------------------------------------------------------------------
+
+dmi_eval <- diet_intake_measured %>%
+  left_join(
+    archimede_dmi_all %>%
+      select(B.Code, A.Level.Name, pred_diet_intake_kg),
+    by = c("B.Code", "A.Level.Name")
+  ) %>%
+  filter(!is.na(pred_diet_intake_kg)) %>%
+  mutate(
+    error_kg      = pred_diet_intake_kg - diet_intake_kg,
+    abs_error_kg  = abs(error_kg),
+    rel_error     = error_kg / diet_intake_kg,
+    abs_rel_error = abs(rel_error)
+  ) %>%
+  left_join(
+    merged_metadata$Prod.Out %>%
+      distinct(B.Code, P.Product),
+    by = "B.Code"
+  )
+
+dmi_eval_overall <- dmi_eval %>%
+  summarise(
+    n_diets    = n(),
+    mean_obs   = mean(diet_intake_kg, na.rm = TRUE),
+    mean_pred  = mean(pred_diet_intake_kg, na.rm = TRUE),
+    bias_kg    = mean(error_kg, na.rm = TRUE),
+    mae_kg     = mean(abs_error_kg, na.rm = TRUE),
+    mape_pct   = mean(abs_rel_error, na.rm = TRUE) * 100
+  )
+
+dmi_eval_by_species <- dmi_eval %>%
+  group_by(P.Product.x) %>%
+  summarise(
+    n_diets    = n(),
+    mean_obs   = mean(diet_intake_kg, na.rm = TRUE),
+    mean_pred  = mean(pred_diet_intake_kg, na.rm = TRUE),
+    bias_kg    = mean(error_kg, na.rm = TRUE),
+    mae_kg     = mean(abs_error_kg, na.rm = TRUE),
+    mape_pct   = mean(abs_rel_error, na.rm = TRUE) * 100,
+    .groups    = "drop"
+  )
+
+
+library(ggplot2)
+
+dmi_eval_plot <- dmi_eval %>%
+  filter(P.Product.x %in% c("Cattle", "Sheep", "Goat"))
+
+p_dmi <- ggplot(
+  dmi_eval_plot,
+  aes(x = diet_intake_kg,
+      y = pred_diet_intake_kg)
+) +
+  geom_point(alpha = 0.6) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
+  facet_wrap(~ P.Product.x, scales = "free") +
+  labs(
+    x = "Measured DMI (kg / animal / day)",
+    y = "Predicted DMI (kg / animal / day)",
+    title = "DMI prediction vs measured",
+    subtitle = "Faceted by species"
+  ) +
+  theme_bw()
+
+p_dmi
 
 ```
 
 
+```{r}
+# ## ---------------------------------------------------------------------------
+# ## 4) Use diet_intake_all to convert diets defined ONLY in relative units
+# ##    (% / % Diet / g·kg⁻¹) where NO absolute amount exists.
+# ##    These are typically the "we only have %" + no feed intake cases.
+# ## ---------------------------------------------------------------------------
+# 
+# # Identify diets where:
+# #  - we have diet_intake (measured OR predicted),
+# #  - at least one relative unit (% or g/kg),
+# #  - NO absolute (g or kg) ingredient amount yet.
+# rel_only_diets <- ingredients %>%
+#   left_join(diet_intake_all, by = c("B.Code", "A.Level.Name")) %>%
+#   group_by(B.Code, A.Level.Name) %>%
+#   summarise(
+#     has_diet_intake = any(!is.na(diet_intake_kg)),
+#     has_abs = any(D.Unit.Amount %in% c("g", "kg") & !is.na(D.Amount)),
+#     has_rel = any(D.Unit.Amount %in% c("%", "% Diet", "g/kg") & !is.na(D.Amount)),
+#     .groups = "drop"
+#   ) %>%
+#   filter(has_diet_intake, !has_abs, has_rel)
+# 
+# rel_key <- rel_only_diets %>%
+#   mutate(key = paste(B.Code, A.Level.Name)) %>%
+#   pull(key)
+# 
+# ingredients <- ingredients %>%
+#   left_join(diet_intake_all, by = c("B.Code", "A.Level.Name")) %>%
+#   mutate(
+#     diet_key      = paste(B.Code, A.Level.Name),
+#     use_rel_pred  = diet_key %in% rel_key
+#   ) %>%
+#   mutate(
+#     # Convert relative units to kg/day using diet_intake_kg
+#     D.Amount = case_when(
+#       use_rel_pred & D.Unit.Amount %in% c("%", "% Diet") &
+#         !is.na(D.Amount) & !is.na(diet_intake_kg) ~
+#         (D.Amount / 100) * diet_intake_kg,                     # kg/d
+# 
+#       use_rel_pred & D.Unit.Amount == "g/kg" &
+#         !is.na(D.Amount) & !is.na(diet_intake_kg) ~
+#         (D.Amount * diet_intake_kg) / 1000,                    # g/kg * kg = g -> /1000 -> kg
+# 
+#       TRUE ~ D.Amount
+#     ),
+#     D.Unit.Amount = case_when(
+#       use_rel_pred & D.Unit.Amount %in% c("%", "% Diet", "g/kg") &
+#         !is.na(diet_intake_kg) ~ "kg",
+#       TRUE ~ D.Unit.Amount
+#     ),
+#     # Flag provenance of these amounts
+#     D.Type = dplyr::case_when(
+#       use_rel_pred & !is.na(diet_intake_kg) &
+#         (D.Unit.Amount == "kg") ~
+#         ifelse(is.na(D.Type),
+#                "from_predicted_DMI_Archimede2014",
+#                paste0(D.Type, ";from_predicted_DMI_Archimede2014")),
+#       TRUE ~ D.Type
+#     )
+#   ) %>%
+#   select(-diet_key)
+# 
+# ## ---------------------------------------------------------------------------
+# ## ---------------------------------------------------------------------------
+# ## 5) COMPLEMENT FILL:
+# ##    For diets where we know total intake (measured or predicted)
+# ##    and EXACTLY ONE non-mineral/salt/water ingredient still has NA D.Amount,
+# ##    compute that missing amount as:
+# ##      total_intake_kg - sum_known_ingredients_kg
+# ## ---------------------------------------------------------------------------
+# 
+# # First, attach diet_intake_kg cleanly (avoid .x/.y suffixes)
+# ingredients_with_dietintake <- ingredients %>%
+#   # drop any previous diet_intake columns if they exist
+#   dplyr::select(-dplyr::any_of(c("diet_intake_kg", "diet_intake_source"))) %>%
+#   left_join(diet_intake_all, by = c("B.Code", "A.Level.Name"))
+# 
+# # Compute complement values at diet level
+# complement_info <- ingredients_with_dietintake %>%
+#   group_by(B.Code, A.Level.Name) %>%
+#   summarise(
+#     # take first non-NA diet_intake_kg, or NA if none
+#     total_intake = {
+#       x <- diet_intake_kg[!is.na(diet_intake_kg)]
+#       if (length(x) == 0) NA_real_ else x[1]
+#     },                                                  # kg/d
+#     n_missing    = sum(is.na(D.Amount) & !ignore_for_balance),
+#     missing_item = {
+#       idx <- which(is.na(D.Amount) & !ignore_for_balance)
+#       if (length(idx) == 0) NA_character_ else D.Item[idx[1]]
+#     },
+#     sum_known    = sum(D.Amount[!is.na(D.Amount) & !ignore_for_balance],
+#                        na.rm = TRUE),
+#     .groups      = "drop"
+#   ) %>%
+#   # Only fill when: we know total intake AND exactly one missing amount
+#   filter(!is.na(total_intake), n_missing == 1) %>%
+#   mutate(
+#     complement_value = total_intake - sum_known,
+#     complement_value = ifelse(complement_value < 0, 0, complement_value)  # avoid negative
+#   )
+# 
+# # Merge complement back into the original `ingredients` table
+# ingredients <- ingredients %>%
+#   left_join(
+#     complement_info %>%
+#       select(B.Code, A.Level.Name, missing_item, complement_value),
+#     by = c("B.Code", "A.Level.Name", "D.Item" = "missing_item")
+#   ) %>%
+#   mutate(
+#     # Fill missing amount where complement_value is available
+#     D.Amount = ifelse(is.na(D.Amount) & !is.na(complement_value),
+#                       complement_value,
+#                       D.Amount),
+# 
+#     # Standardise units for complemented amount
+#     D.Unit.Amount  = ifelse(!is.na(complement_value), "kg", D.Unit.Amount),
+#     D.Unit.Time    = ifelse(!is.na(complement_value), "day", D.Unit.Time),
+#     D.Unit.Animals = ifelse(!is.na(complement_value), "individual", D.Unit.Animals),
+# 
+#     # Flag provenance
+#     D.Type = ifelse(!is.na(complement_value),
+#                     ifelse(is.na(D.Type),
+#                            "complement_from_total_intake",
+#                            paste0(D.Type, ";complement_from_total_intake")),
+#                     D.Type)
+#   ) %>%
+#   select(-complement_value)
+# 
+# # Clean helper column
+# ingredients <- ingredients %>%
+#   select(-ignore_for_balance)
+
+
+###############################################################################
+### END Archimède-based DMI + complement + evaluation block
+###############################################################################
+
+```
+
+
+BO1017 remove the ones with NA because the data is here -> extraction pb 
+remove all the mineral and salt and water 
+
+BO1018
 
 ## 9) Tagg ingredient with control or trt 
 

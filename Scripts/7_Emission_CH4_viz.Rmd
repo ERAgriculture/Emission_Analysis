@@ -7,7 +7,7 @@ date: "2025-09-26"
 ```{r}
 GE_combined <- read.csv("~/Emission_Analysis/data/GE_Combined.csv")
 merged_metadata <- readRDS("~/Emission_Analysis/data/merged_metadata_nutrition_inference.rds")
-ingredients <- readRDS("~/Emission_Analysis/data/ingredients_harmonized_subset.rds")
+ingredients <- read.csv("~/Emission_Analysis/data/ingredients_harmonized_subset.csv")
 Gross_energy <- read.csv("~/Emission_Analysis/data/gross_energy.csv")
 
 ```
@@ -317,16 +317,5 @@ message("Ingredients total: ", n_total_ing,
         " | with GE (MJ/kg): ", n_with_GE,
         " | with GE intake (MJ/day): ", n_with_GEint)
 
-# If you want to keep only your original columns + added GE columns in a view:
-ingredients_view <- ingredients_enriched %>%
-  select(
-    B.Code, A.Level.Name, D.Item, D.Type, D.Amount, D.Unit.Amount, D.Unit.Time,
-    D.Unit.Animals, DC.Is.Dry, D.Ad.lib, D.Item.Group, Source, Units,
-    T.Animals, Out.WG.Start, Out.WG.Unit, basal_intake_status,
-    Prediction_Source, Prediction_Source.from_AName, from_feed_intake,
-    T.Name, T.Control,
-    # New appended columns:
-    GE_MJ_per_kg, GE_source, Amount_kg_day, GE_MJ_day
-  )
 
 ```

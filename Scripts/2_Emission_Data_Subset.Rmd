@@ -115,41 +115,16 @@ papers_after <- ingredients %>%
 
 ## 3) Subset data
 
-## 3.1) Take out basal diets 
 
-We excluded the basal diets because, in most of the livestock trials in our database, the basal ration is offered ad libitum and therefore lacks two pieces of information that are essential for a fair, productivity-based comparison: (i) actual feed-intake measurements and (ii) corresponding enteric-methane estimates. Without intake data we cannot convert emissions—or, in many cases, even estimate them—on a per-kilogram-of-product basis, and retaining these records would artificially inflate the number of “treatments” while contributing no usable information to the efficiency analyses. By focusing on the control diet (with measured intake) and the formulated treatment diets, we keep a coherent set of observations in which every data point can be expressed as both absolute emissions and emission intensity, allowing robust, like-for-like comparisons across studies.
-
-```{r,message=FALSE,warning=FALSE}
-
-
-ingredients <- ingredients %>%
-  filter(!str_starts(A.Level.Name, "Base"))
-
-ingredients <- ingredients %>%
-  filter(is.na(D.Item.Group) | !str_starts(D.Item.Group, "Base"))
-
-
-merged_metadata$Animals.Diet.Comp <- merged_metadata$Animals.Diet.Comp %>%
-  filter(!str_starts(D.Item, "Base"))
-
-
-```
 
 
 ```{r}
 
-# Ensure folders exist
-dir.create(file.path("data"), showWarnings = FALSE, recursive = TRUE)
 
-# 1) merged metadata after all corrections
-saveRDS(merged_metadata,
-        file.path("data","merged_metadata_harmonized_subset.rds"))
+write.csv(ingredients, "~/Emission_Analysis/data/ingredients_harmonized_subset.csv")
 
-# 2) harmonised ingredients (key input for later)
-if (exists("ingredients")) {
-  saveRDS(ingredients, file.path("data","ingredients_harmonized_subset.rds"))
-  
-}
+saveRDS(merged_metadata, "~/Emission_Analysis/data/merged_metadata_harmonized_subset.rds")
+
 ```
 
 ## number of papers 

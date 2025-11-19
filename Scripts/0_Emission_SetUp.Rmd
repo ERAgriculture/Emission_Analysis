@@ -218,7 +218,7 @@ fill in feed intakes
 ##############################################################################
 diet_cols   <- c("B.Code","A.Level.Name","D.Item",
                  "D.Type","D.Amount","D.Unit.Amount","D.Unit.Time",
-                 "D.Unit.Animals","DC.Is.Dry","D.Ad.lib","D.Item.Group")
+                 "D.Unit.Animals","DC.Is.Dry","D.Ad.lib","D.Item.Group","D.Item.AOM","AOM.Scientific.Name")
 
 diet_cols_ext <- c(diet_cols, "D.Item.Root.Comp.Proc_Major")   # keep root too
 
@@ -234,7 +234,7 @@ digest_cols <- c("B.Code","D.Item","is_group","is_entire_diet",
 data_cols <- c("B.Code","A.Level.Name","Out.Code.Joined",
                "ED.Intake.Item","ED.Intake.Item.Raw",
                "ED.Mean.T","ED.Error","Out.Subind","Out.Unit",
-               "Out.WG.Start","Out.WG.Unit","P.Product","is_entire_diet","is_group","T.Animals","T.Name")
+               "Out.WG.Start","Out.WG.Unit","P.Product","is_entire_diet","is_group","T.Animals","T.Name","Country")
 
 prod_cols <- c("B.Code","P.Product","P.Variety","P.Practice")
 
@@ -429,7 +429,8 @@ data_camel <- data_camel[
       ED.Mean.T, ED.Error, Out.Unit, Out.Subind,
       Out.WG.Start = as.numeric(Herd.Start.Weight),
       Out.WG.Unit  = as.character(Herd.Start.Weight.Unit),
-      T.Animals)
+      T.Animals,
+      Country)
 ][
   # Boolean-only tagging: if camel says entire diet, force the token
   , ED.Intake.Item := fifelse(ED.Intake.Item.is_entire_diet == TRUE,

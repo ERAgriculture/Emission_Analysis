@@ -1188,45 +1188,17 @@ coverage_summary_wide <- coverage_summary_wide %>%
   arrange(desc(raw))
 ```
 
-```{r}
-ingredients<-ingredients%>%
-  filter(D.Item!="Salt")%>%
-  filter(D.Item!="Water")
-```
 
 
-## 9) Tagg ingredient with control or trt 
 
-```{r}
-##— build the control key from your merged MT.Out
-ctrl_key <- merged_metadata$MT.Out[, .(
-  B.Code,
-  A.Level.Name,
-  T.Name,
-  T.Control
-)]
 
-##— example join back onto your ingredient table
-# (assuming your ingredients DT has B.Code + A.Level.Name)
-ingredients <- merge(
-  x = ingredients, 
-  y = ctrl_key, 
-  by = c("B.Code","A.Level.Name"), 
-  all.x = TRUE, 
-  sort = FALSE
-)
-
-```
 
 
 ```{r}
 
-# Ensure folders exist
-dir.create(file.path("data"), showWarnings = FALSE, recursive = TRUE)
 
-# 1) merged metadata after all corrections
-saveRDS(merged_metadata,
-        file.path("data","merged_metadata_nutrition_inference.rds"))
+
+saveRDS(merged_metadata, "~/Emission_Analysis/data/merged_metadata_nutrition_inference.rds")
 
 
 ```

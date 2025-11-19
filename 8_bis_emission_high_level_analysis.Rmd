@@ -22,7 +22,7 @@ library(scales)
 
 GE_combined <- read.csv("~/Emission_Analysis/data/GE_Combined.csv")
 merged_metadata <- readRDS("~/Emission_Analysis/data/merged_metadata_nutrition_inference.rds")
-ingredients <- readRDS("~/Emission_Analysis/data/ingredients_harmonized_subset.rds")
+ingredients <- read.csv("~/Emission_Analysis/data/ingredients_harmonized_subset.csv")
 yield_data<- read.csv("~/Emission_Analysis/data/yield_data.csv")%>%select(-c("P.Product"))
 diet_percentages <- read.csv("~/Emission_Analysis/data/diet_percentages_classif.csv")
 total_amounts <- read.csv("~/Emission_Analysis/data/total_amounts.csv")
@@ -843,6 +843,8 @@ diet_deltas_nonzero %>%
   )
 
 ```
+
+
 ```{r include=FALSE}
 # --- Mean and absolute within-study nutrient changes --------------------------
 library(dplyr)
@@ -1289,7 +1291,7 @@ base_data_milk <- diet_deltas %>%
   )
 
 # --- Fit log-outcome models for one species; return % effects + R² ----------
-fit_one_milk <- function(sp, n_min = 10) {
+fit_one_milk <- function(sp, n_min = 5) {
   dat <- base_data_milk %>% dplyr::filter(Species == sp)
   if (nrow(dat) < n_min) return(NULL)
 
