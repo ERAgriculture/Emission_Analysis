@@ -5,7 +5,22 @@ date: "2025-09-26"
 ---
 ```{r}
 
-merged_metadata <- readRDS("~/Emission_Analysis/data/merged_metadata_harmonized_subset.rds")
+merged_metadata <- readRDS("C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/merged_metadata_harmonized_subset.rds")
+
+library(readxl)
+library(ERAg)
+library(stringr)
+library(knitr)
+library(dplyr)
+library(DT)
+library(readxl)
+library(tidyr)
+library(arrow)
+library(ggplot2)
+library(data.table)
+library(purrr)
+library(janitor)
+library(ggalt)
 
 ```
 
@@ -201,7 +216,7 @@ print(table_units)
 # write_csv(table_units, "variable_units_lookup.csv")   # if you want a file
 
 ```
-
+## fix extraction errors
 
 ```{r}
 ###############################################################################
@@ -210,7 +225,7 @@ print(table_units)
 ###############################################################################
 
 bad_items <- c(
-  "Biscuit Waste Meal Dried(Sun)",
+  "Biscuit Waste Dried Ground",
   "Leucaena leucocephala Leaves Dried",
   "Maize",
   "Wheat Offal"
@@ -227,6 +242,191 @@ merged_metadata$Animals.Diet.Comp <- merged_metadata$Animals.Diet.Comp %>%
       DC.Unit                             
     )
   )
+
+# Fix mis-labelled GE unit for BO1019 (values like 4.15 etc.)
+merged_metadata$Animals.Diet.Comp <- merged_metadata$Animals.Diet.Comp %>% 
+  dplyr::mutate(
+    DC.Unit = dplyr::if_else(
+      B.Code      == "BO1019"    &   # this paper
+        DC.Variable == "GE"      &   # only Gross Energy
+        DC.Unit     == "MJ/g",       # mis-labelled unit
+      "kcal/g",                     # correct label
+      DC.Unit                        # otherwise leave as-is
+    )
+  )
+
+
+merged_metadata$Animals.Diet.Comp <- merged_metadata$Animals.Diet.Comp %>%
+  mutate(
+    # ensure unit is character
+    DC.Unit = as.character(DC.Unit),
+
+    # correct the mis-reported GE values for BO1019
+    DC.Value = if_else(
+      B.Code == "NN0383" &
+      DC.Variable == "GE" &
+      DC.Unit == "MJ/kg",          # wrong unit printed in paper
+      DC.Value / 100,             # fix: divide by 100
+      DC.Value
+    ),
+
+    # correct the unit label
+    DC.Unit = if_else(
+      B.Code == "NN0383" &
+      DC.Variable == "GE" &
+      DC.Unit == "MJ/kg",
+      "MJ/kg",                    # correct label
+      DC.Unit
+    )
+  )
+
+
+
+merged_metadata$Animals.Diet.Comp <- merged_metadata$Animals.Diet.Comp %>%
+  mutate(
+    DC.Value = if_else(
+      B.Code      == "NN0384" &
+      DC.Variable == "GE" &
+      DC.Unit     == "MJ/kg" &
+      DC.Value    > 100 & DC.Value < 3000,   # catch the 1700-ish values
+      DC.Value / 100,                        # fix factor-100 error
+      DC.Value
+    )
+    # DC.Unit stays "MJ/kg", which matches the corrected numeric value
+  )
+
+merged_metadata$Animals.Diet.Comp <- merged_metadata$Animals.Diet.Comp %>% 
+  dplyr::mutate(
+    # make sure DC.Value is numeric
+    DC.Value = as.numeric(DC.Value),
+    
+    DC.Value = dplyr::if_else(
+      B.Code      == "JS0134"    &   # this paper
+        DC.Variable == "GE"      &   # only Gross Energy rows
+        DC.Unit     == "MJ/kg",      # as currently recorded
+      DC.Value / 10,                # fix: values were 10× too big
+      DC.Value                       # otherwise leave unchanged
+    )
+    # we *keep* DC.Unit = "MJ/kg"
+  )
+
+
+merged_metadata$Animals.Diet.Comp <- merged_metadata$Animals.Diet.Comp %>% 
+  mutate(
+    DC.Unit = as.character(DC.Unit),
+
+    DC.Unit = if_else(
+      B.Code == "NN0367" &     # replace with actual paper code
+      DC.Variable == "GE" &
+      DC.Unit =="MJ/100g",
+      "MJ/kg",                 # correct unit
+      DC.Unit
+    )
+  )
+
+merged_metadata$Animals.Diet.Comp <- merged_metadata$Animals.Diet.Comp %>%
+  mutate(
+    DC.Unit = as.character(DC.Unit),
+
+    # Fix mislabelled GE unit for this study
+    DC.Unit = if_else(
+      B.Code == "HK0098" &         # <-- replace with actual B.Code
+      DC.Variable == "GE" &
+      DC.Unit =="J/mg",
+      "MJ/kg",                     # correct interpretation
+      DC.Unit
+    )
+  )
+
+merged_metadata$Animals.Diet.Comp <- merged_metadata$Animals.Diet.Comp %>% 
+  dplyr::mutate(
+    DC.Unit = dplyr::if_else(
+      B.Code      == "HK0029" &
+        DC.Variable == "GE",
+      "kcal/g DM",
+      DC.Unit
+    )
+  )
+
+merged_metadata$Animals.Diet.Comp <- merged_metadata$Animals.Diet.Comp %>%
+  mutate(
+    # fix mislabelled GE unit for this study
+    DC.Unit = if_else(
+      B.Code == "BO1083" &     # replace with the real code for this table
+        DC.Variable == "GE" &
+        DC.Unit == "kcal/kg",
+      "kcal/g",
+      DC.Unit
+    )
+  )
+
+
+animals <- merged_metadata$Animals.Diet.Comp
+
+# Fix BO1059 GE values: interpret DC.Value as kcal/g DM and convert to MJ/kg DM
+animals_BO1059_fixed <- animals %>%
+  mutate(
+    DC.Value = if_else(
+      B.Code == "BO1059" &
+      DC.Variable == "GE" &
+      DC.Unit == "MJ/kg",
+      as.numeric(DC.Value) * 4.184,      # convert kcal/g → MJ/kg DM
+      as.numeric(DC.Value)
+    ),
+    DC.Unit = if_else(
+      B.Code == "BO1059" &
+      DC.Variable == "GE" &
+      DC.Unit == "MJ/kg",
+      "MJ/kg DM",
+      DC.Unit
+    )
+  )
+
+# Save back
+merged_metadata$Animals.Diet.Comp <- animals_BO1059_fixed
+
+animals <- merged_metadata$Animals.Diet.Comp
+
+animals_JS0139_fixed <- animals %>%
+  mutate(
+    # Identify the mis-entered GE rows
+    DC.Unit = if_else(
+      B.Code == "JS0139" &
+      DC.Variable == "GE" &
+      DC.Unit == "kJ/kg DM",
+      "MJ/kg DM",                     # correct the unit
+      DC.Unit
+    ),
+    DC.Value = if_else(
+      B.Code == "JS0139" &
+      DC.Variable == "GE" &
+      DC.Unit == "MJ/kg DM",          # after unit correction
+      as.numeric(DC.Value),           # value stays exactly the same
+      as.numeric(DC.Value)
+    )
+  )
+
+merged_metadata$Animals.Diet.Comp <- animals_JS0139_fixed
+
+animals <- merged_metadata$Animals.Diet.Comp %>%
+  mutate(
+    DC.Value = if_else(
+      DC.Variable == "GE" &
+      D.Item == "Concentrate",
+      18,
+      as.numeric(DC.Value)
+    ),
+    DC.Unit = if_else(
+      DC.Variable == "GE" &
+      D.Item == "Concentrate",
+      "MJ/kg",
+      DC.Unit
+    )
+  )
+
+
+merged_metadata$Animals.Diet.Comp <- animals
+
 
 ```
 
@@ -947,6 +1147,7 @@ ge_species_feedipedia <- ge_filled_by_feedipedia %>%
 # print(ge_species_counts)
 
 ```
+
 ```{r}
 # Step 1: Get species for each B.Code
 species_by_bcode <- merged_metadata$Prod.Out %>%
@@ -1198,7 +1399,7 @@ coverage_summary_wide <- coverage_summary_wide %>%
 
 
 
-saveRDS(merged_metadata, "~/Emission_Analysis/data/merged_metadata_nutrition_inference.rds")
+saveRDS(merged_metadata, "C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/merged_metadata_nutrition_inference.rds")
 
 
 ```

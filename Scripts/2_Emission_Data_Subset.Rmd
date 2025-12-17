@@ -6,9 +6,9 @@ date: "2025-09-26"
 
 ```{r}
 
-merged_metadata <- readRDS("~/Emission_Analysis/data/merged_metadata_harmonized.rds")
+merged_metadata <- readRDS("C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/merged_metadata_harmonized.rds")
 
-ingredients <- readRDS("~/Emission_Analysis/data/ingredients_harmonized.rds")
+ingredients <- readRDS("C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/ingredients_harmonized.rds")
 
 
 
@@ -121,16 +121,16 @@ papers_after <- ingredients %>%
 ```{r}
 
 
-write.csv(ingredients, "~/Emission_Analysis/data/ingredients_harmonized_subset.csv")
+write.csv(ingredients, "C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/ingredients_harmonized_subset.csv")
 
-saveRDS(merged_metadata, "~/Emission_Analysis/data/merged_metadata_harmonized_subset.rds")
+saveRDS(merged_metadata, "C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/merged_metadata_harmonized_subset.rds")
 
 ```
 
 ## number of papers 
 ```{r}
 
-GE_combined <- read.csv("~/Emission_Analysis/data/GE_Combined.csv")
+GE_combined <- read.csv("C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/GE_Combined.csv")
 
 GE_combined<-GE_combined%>%
   filter(!is.na(CH4_kg_year))

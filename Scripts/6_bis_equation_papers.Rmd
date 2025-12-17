@@ -1,0 +1,2005 @@
+---
+title: "6_bis_ch4_equations"
+output: html_document
+date: "2025-12-08"
+---
+
+
+
+## Choice of methane prediction equations (Option 2: "lean but practical" set)
+
+Our goal is to replace fixed IPCC Ym classes with **empirical CH₄ production equations** that:
+1. Perform at least as well as the IPCC Tier-2 defaults in the original meta-analyses.
+2. Use **simple intake-based predictors** (and only a few diet/animal covariates).
+3. Can be implemented with the variables available in our database for most studies.
+
+We therefore adopt, per species/product, **one primary intake-based equation**, plus, where useful, **one alternative non-linear or multi-covariate equation** for sensitivity analyses.
+
+### 1. Dairy cattle (Niu et al., 2018)
+
+We use the **all-data DMI_C CH₄ production equation** from Niu et al. (2018) as our main dairy equation. It predicts methane production from dry matter intake only:
+
+- **Equation (Eq. DMI_C, Table 3):**
+  $$
+  \text{CH}_4\,(g/d) = 124 + 13.3 \times \text{DMI}\,(kg/d)
+  $$
+
+- **Predictors needed:** DMI (kg/d)  
+- **Performance vs IPCC:**  
+  In the Niu database, DMI_C improved goodness-of-fit compared to IPCC 2006/2019 Tier-2 equations based on fixed Ym (lower RMSPE and higher concordance correlation coefficient, CCC).
+- **Geography / context:** Intercontinental dairy database (North America, Europe, Oceania, some other regions), largely temperate systems but covering a broad range of diets and production levels.
+- **Rationale:**  
+  * Pros: very simple (only DMI), comparable or better predictive performance than IPCC fixed-Ym; maximises coverage in our data.  
+  * Cons: does not explicitly account for diet composition or body weight; potential bias when extrapolating to extreme tropical forages, which we will discuss as a limitation.
+
+We will compute daily CH₄ (g/d) using this equation and then convert to annual CH₄ (kg/yr) for Tier-2 EI.
+
+### 2. Beef cattle (van Lingen et al., 2019)
+
+For beef cattle we prioritise **higher-forage equations**, because most of our African systems are forage-based. We use:
+
+1. **Primary equation: Higher-forage Animal_C (Eq. 17, Table 4)**
+
+   $$
+   \text{CH}_4\,(g/d) = -6.41 + 11.3 \times \text{DMI} + 0.557 \times \text{For} + 0.0996 \times \text{BW}
+   $$
+
+   where  
+   – DMI = dry matter intake (kg/d)  
+   – For = dietary forage proportion (% of DM)  
+   – BW = body weight (kg)
+
+   - **Predictors needed:** DMI (kg/d), forage % of diet DM, BW (kg).  
+   - **Performance vs IPCC:**  
+     RMSPE ≈ 24.6%, CCC ≈ 0.80 on the higher-forage subset, compared with GLOBAL NETWORK Tier-2 and IPCC Tier-2 equations which had similar or slightly lower CCC but higher mean bias in some subsets.
+   - **Geography:** Intercontinental "higher-forage" database (Europe, North America, Brazil).  
+   - **Rationale:** Good balance between performance and variable availability; explicitly accounts for forage level and BW and outperforms simple DMI-only and fixed-Ym IPCC equations in precision.
+
+2. **Backup equation when BW or forage % is missing: Higher-forage DMI_C (Eq. 12, Table 4)**
+
+   $$
+   \text{CH}_4\,(g/d) = 52.8 + 13.8 \times \text{DMI}\,(kg/d)
+   $$
+
+   - **Predictors:** DMI (kg/d)  
+   - **Performance:** RMSPE ≈ 29.3%, CCC ≈ 0.68 on the higher-forage subset.
+   - **Performance vs IPCC:** Higher-forage DMI_C improves RSR and CCC compared to the IPCC Tier-2 higher-forage equation for beef when evaluated on the same dataset.
+
+### 3. Sheep (Patra et al., 2016)
+
+We use one **simple linear** and one **non-linear (monomolecular)** equation from Patra et al. (2016):
+
+1. **Primary simple intake equation (Eq. 3, Table 3):**
+
+   $$
+   \text{EME}\,(MJ/d) = 0.208 + 0.049 \times \text{GEI}\,(MJ/d)
+   $$
+
+   - **Predictors:** GEI (MJ/d)  
+   - **Performance:** R² = 0.68, RMSPE ≈ 14% (reported as RMSPE 0.27 MJ/d).  
+   - **vs IPCC:** Better precision (lower RMSE/RMSPE) than IPCC-style fixed-Ym equations for sheep in the Patra dataset.  
+   - **Geography:** Global sheep database, mainly temperate but including some tropical diets.
+
+2. **Alternative non-linear MEI monomolecular equation (Model 3, Table 3):**
+
+   $$
+   \text{EME}\,(MJ/d) = 5.699 - (5.699 - 0.133) \times \exp(-0.021 \times \text{MEI})
+   $$
+
+   where MEI = metabolizable energy intake (MJ/d).
+
+   - **Predictors:** MEI (MJ/d)  
+   - **Performance:** R² = 0.82, lowest RMSE among tested models (best overall in the paper).  
+   - **Use in our project:** Sensitivity analysis where MEI can be reliably derived; main analyses will favour the simpler GEI-based linear model for coverage.
+
+We convert EME (MJ/d) to CH₄ (g/d) via the standard 55.65 kJ/g CH₄ factor and then to kg/yr.
+
+### 4. Goats (Patra & Lalhriatpuii, 2015)
+
+We use two **simple linear models** (GEI-based and DEI-based) plus one non-linear MEI model:
+
+1. **Primary simple linear equation — GEI-based (Eq. 3, Table 3):**
+
+   $$
+   \text{EME}\,(MJ/d) = 0.265 + 0.0333 \times \text{GEI}\,(MJ/d)
+   $$
+
+   - **Predictors:** GEI (MJ/d)  
+   - **Performance:** R² = 0.78, RMSE = 0.34 MJ/d.  
+   - **vs IPCC:** Better fit than fixed-Ym goat equations when evaluated on the same dataset.  
+   - **Geography:** Goats fed a wide range of diets, primarily Indian / tropical and subtropical conditions (good match to our context).
+   - **Rationale:** Chosen as primary because GEI is more commonly available in our database than DEI.
+
+2. **Alternative simple linear equation — DEI-based (Eq. 4, Table 3):**
+
+   $$
+   \text{EME}\,(MJ/d) = 0.242 + 0.0511 \times \text{DEI}\,(MJ/d)
+   $$
+
+   - **Predictors:** DEI (MJ/d)  
+   - **Performance:** R² = 0.83, RMSE = 0.31 MJ/d (best simple linear model in the paper).  
+   - **Use in our project:** Used when DEI is available; slightly better fit than GEI model.
+
+3. **Alternative non-linear MEI equation (Mitscherlich 2, Table 3):**
+
+   $$
+   \text{EME}\,(MJ/d) = 1.721 \times \left[ 1 - \exp(-0.0721 \times \text{MEI}) \right]
+   $$
+
+   - **Predictors:** MEI (MJ/d)  
+   - **Performance:** R² = 0.79, RMSE = 0.17 MJ/d; similar or slightly better fit than the linear models.  
+   - **Use in our project:** Sensitivity analysis where MEI is available or can be derived with confidence.
+
+We convert EME (MJ/d) → CH₄ (g/d) via the standard 55.65 kJ/g CH₄ factor → CH₄ (kg/yr).
+
+---
+
+### Summary table of equations to be implemented (Option 2)
+
+| Species / product | Equation ID (paper) | Equation (as used here) | Predictors required | Reported performance (paper) | Better than IPCC? | Geography / data context |
+|-------------------|---------------------|--------------------------|---------------------|------------------------------|-------------------|--------------------------|
+| Dairy cattle | DMI_C (all-data), Niu et al. 2018 | CH₄ (g/d) = 124 + 13.3 × DMI | DMI (kg/d) | Lower RMSPE and higher CCC than IPCC fixed-Ym dairy equations | Yes, on Niu dataset | Intercontinental dairy database (mainly temperate) |
+| Beef cattle | Animal_C (higher-forage, Eq. 17), van Lingen et al. 2019 | CH₄ (g/d) = –6.41 + 11.3 × DMI + 0.557 × For + 0.0996 × BW | DMI (kg/d), forage % of DM, BW (kg) | RMSPE ≈ 24.6%, CCC ≈ 0.80 | Yes, for higher-forage subsets | Higher-forage beef, multi-region (EU, NA, Brazil) |
+| Beef cattle | DMI_C (higher-forage, Eq. 12), van Lingen et al. 2019 | CH₄ (g/d) = 52.8 + 13.8 × DMI | DMI (kg/d) | RMSPE ≈ 29.3%, CCC ≈ 0.68 | Yes, for higher-forage subset | Same as above |
+| Sheep | Eq. 3 (linear GEI), Patra et al. 2016 | EME (MJ/d) = 0.208 + 0.049 × GEI | GEI (MJ/d) | R² = 0.68, RMSPE ≈ 14% | Better precision than IPCC-style Ym | Global sheep dataset, mostly temperate |
+| Sheep | Monomolecular Model 3 (MEI), Patra et al. 2016 | EME (MJ/d) = 5.699 − 5.566 × exp(−0.021 × MEI) | MEI (MJ/d) | R² = 0.82, lowest RMSE | Yes | Same as above |
+| Goats | Eq. 3 (linear GEI), Patra & Lalhriatpuii 2015 | EME (MJ/d) = 0.265 + 0.0333 × GEI | GEI (MJ/d) | R² = 0.78, RMSE = 0.34 MJ/d | Better than IPCC goat Ym | Indian / tropical & subtropical goat systems |
+| Goats | Eq. 4 (linear DEI), Patra & Lalhriatpuii 2015 | EME (MJ/d) = 0.242 + 0.0511 × DEI | DEI (MJ/d) | R² = 0.83, RMSE = 0.31 MJ/d | Yes | Same as above |
+| Goats | Mitscherlich 2 (MEI), Patra & Lalhriatpuii 2015 | EME (MJ/d) = 1.721 × [1 − exp(−0.0721 × MEI)] | MEI (MJ/d) | R² = 0.79, RMSE = 0.17 MJ/d | Yes | Same as above |
+
+```{r,echo=FALSE}
+## ---------------------------------------------------------------------------
+## Load libraries
+## ---------------------------------------------------------------------------
+
+library(ERAg)
+library(stringr)
+library(knitr)
+library(dplyr)
+library(DT)
+library(readxl)
+library(tidyr)
+library(arrow)
+library(ggplot2)
+library(data.table)
+library(purrr)
+library(janitor)
+library(ggalt)
+```
+
+```{r,echo=FALSE}
+## =============================================================================
+## Methane Prediction Equations - Improved Script with Forage Reclassification
+## =============================================================================
+
+## ---------------------------------------------------------------------------
+## Load data
+## ---------------------------------------------------------------------------
+
+Gross_energy <- read.csv("C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/Gross_energy.csv")
+merged_metadata <- readRDS("C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/merged_metadata_nutrition_inference.rds")
+ingredients <- read.csv("C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/ingredients_harmonized_subset.csv")
+total_amounts <- read.csv("C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/total_amounts.csv")
+feed_intake_ingredients <- read.csv("C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/feed_intake_ingredients_harmonized.csv")%>%
+  filter(is_entire_diet==FALSE)
+feed_intake_diet <- read.csv("C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/feed_intake_diet_harmonized.csv")%>%
+  filter(is_entire_diet==TRUE)
+```
+
+
+
+
+
+```{r,echo=FALSE}
+## =============================================================================
+## SECTION 0: FORAGE RECLASSIFICATION FUNCTION
+## =============================================================================
+
+#' Reclassify ingredient types to fix forage misclassifications
+#' 
+#' This function corrects 32 identified classification errors:
+#' - 30 items incorrectly classified as forages (seeds, cakes, oils, etc.)
+#' - 2 items that should be forages but aren't (Cowpea Dried, Lablab purpureus Dried Wilted)
+
+
+reclassify_forages <- function(df) {
+  
+  # Define items that should NOT be in forage categories (seeds, cakes, oils, etc.)
+  # These will be reclassified to Crop Product or Crop Byproduct
+  
+  false_positives_to_crop_product <- c(
+    "Sesbania sesban Seed",
+    "Sesbania sesban Seed Roasted",
+    "Mucuna pruriens Seed Alkali Treated Boiled Ground",
+    "Moringa oleifera seed Cold press",
+    "Moringa oleifera Seed Dried Ground",
+    "Delonix regia Seed Ground",
+    "Delonix regia Seed Alkali Treated Dried Fermented Ground",
+    "Delonix regia Seed Ground Roasted",
+    "Delonix regia Seed Dried Ground Roasted",
+    "Mucuna pruriens Seed Boiled Dried Ground",
+    "Mucuna pruriens Seed Alkali Treated Boiled Decorticated Dried Ground",
+    "Garcinia kola Seeds Dried Ground",
+    "Moringa oleifera Seed Oil",
+    "Prosopis africana Seed Ground",
+    "Jatropha curcas Seed Ground",
+    "Arugula Seed Ground",
+    "Black Cumin Seed",
+    "Jatropha curcas Seed Defatted Fermented Ground"
+  )
+  
+  false_positives_to_crop_byproduct <- c(
+    "Mucuna pruriens Protein Isolate Alkali Treated Boiled Decorticated Ground",
+    "Hevea brasiliensis Seed Cake Boiled Dried Ground",
+    "Adansonia digitata Seed Cake Decorticated Ground Screw press",
+    "Adansonia digitata Seed Cake Dried Fermented Ground",
+    "Jatropha curcas Cake Defatted Ground",
+    "Adansonia digitata Seed Cake",
+    "Sclerocarya birrea seed cake Ground",
+    "Jatropha curcas Cake Ground",
+    "Jatropha curcas Cake Dried Ground",
+    "Moringa oleifera Root Bark Dried Ground",
+    "Adansonia digitata Seed Cake Ground"
+  )
+  
+  # Define items that SHOULD be forages but are currently misclassified
+  false_negatives_to_herbaceous <- c(
+    "Cowpea Dried",
+    "Lablab purpureus Dried Wilted"
+  )
+  
+  # Apply reclassifications
+
+df <- df %>%
+    mutate(
+      D.Type_original = D.Type,  # Keep original for reference
+      D.Type = case_when(
+        # Fix false positives: seeds/cakes/oils incorrectly in forage categories
+        D.Item %in% false_positives_to_crop_product ~ "Crop Product",
+        D.Item %in% false_positives_to_crop_byproduct ~ "Crop Byproduct",
+        # Fix false negatives: forages incorrectly classified as Crop Product
+        D.Item %in% false_negatives_to_herbaceous ~ "Herbaceous Fodders",
+        # Keep original classification for everything else
+        TRUE ~ D.Type
+      )
+    )
+  
+  # Report changes
+  n_changes <- sum(df$D.Type != df$D.Type_original, na.rm = TRUE)
+  message(sprintf("Reclassified %d ingredient entries", n_changes))
+  
+  return(df)
+}
+
+#' Additional function to reclassify questionable items (optional)
+#' Use with caution - these may need manual review
+#' 
+#' @param df A data frame containing D.Item and D.Type columns
+#' @param include_questionable Logical, whether to reclassify questionable items
+#' @return The data frame with corrected D.Type values
+
+reclassify_questionable <- function(df, include_questionable = FALSE) {
+  
+  if (!include_questionable) {
+    return(df)
+  }
+  
+  # Questionable items that may need context-specific decisions
+  questionable_items <- list(
+    # Triticale: grain crop, not forage (unless used as hay)
+    "Triticale" = "Crop Product",
+    # Turmeric: spice/supplement, not forage
+    "Turmeric" = "Herb or Extract"
+    # Note: "Barley Dried" left as-is because it could be hay or grain depending on context
+  )
+  
+  for (item in names(questionable_items)) {
+    df <- df %>%
+      mutate(
+        D.Type = ifelse(D.Item == item, questionable_items[[item]], D.Type)
+      )
+  }
+  
+  return(df)
+}
+```
+
+
+```{r,echo=FALSE}
+## =============================================================================
+## SECTION 1: BASIC HELPERS WITH FORAGE RECLASSIFICATION
+## =============================================================================
+
+## 1.1 Purpose per B.Code (Dairy vs Meat)
+## ---------------------------------------------------------------------------
+
+meat_regex <- paste0(
+  "(?i)",
+  "\\bmeat\\s*yield\\b",
+  "|\\bfinal\\s*body\\s*weight\\s*meat\\s*yield\\b",
+  "|\\bslaughter\\s*body\\b",
+  "|\\bcarcass\\b"
+)
+
+purpose_by_code <- merged_metadata$Data.Out %>%
+  mutate(
+    is_milk = Out.Subind == "Milk Yield",
+    is_meat = str_detect(Out.Subind, meat_regex)
+  ) %>%
+  filter(is_milk | is_meat) %>%
+  mutate(
+    Purpose = case_when(
+      is_milk ~ "Dairy",
+      is_meat ~ "Meat",
+      TRUE    ~ NA_character_
+    )
+  ) %>%
+  group_by(B.Code) %>%
+  summarise(
+    Purpose = if ("Dairy" %in% Purpose) "Dairy" else first(Purpose),
+    .groups = "drop"
+  )
+
+## 1.2 Forage proportion with CORRECTED classifications
+## ---------------------------------------------------------------------------
+
+# Get the authoritative D.Type per ingredient from Animals.Diet
+diet_dtype_lookup <- merged_metadata$Animals.Diet %>%
+  select(B.Code, A.Level.Name, D.Item, D.Type) %>%
+  distinct()
+
+# Start from ingredients, overwrite D.Type with the one from Animals.Diet
+ingredients_units_fixed <- ingredients %>%
+  left_join(
+    diet_dtype_lookup,
+    by = c("B.Code", "A.Level.Name", "D.Item"),
+    suffix = c("", ".diet")
+  ) %>%
+  mutate(
+    # Prefer D.Type from Animals.Diet when available
+    D.Type = dplyr::coalesce(D.Type.diet, D.Type),
+    # Harmonise units to kg
+    D.Amount      = ifelse(D.Unit.Amount == "g", D.Amount / 1000, D.Amount),
+    D.Unit.Amount = ifelse(D.Unit.Amount == "g", "kg", D.Unit.Amount)
+  ) %>%
+  select(-D.Type.diet)
+
+# >>> APPLY FORAGE RECLASSIFICATION <<<
+ingredients_units_fixed <- reclassify_forages(ingredients_units_fixed)
+
+# Optionally apply questionable reclassifications (set to TRUE if desired)
+# ingredients_units_fixed <- reclassify_questionable(ingredients_units_fixed, include_questionable = FALSE)
+
+# Keep only diets where all ingredients share the same unit
+diet_valid_units <- ingredients_units_fixed %>%
+  group_by(B.Code, A.Level.Name) %>%
+  filter(n_distinct(D.Unit.Amount, na.rm = TRUE) == 1) %>%
+  ungroup()
+
+# Define forage types (including "Forage Plants" which is used in the data)
+# NOTE: Your original list was c("Forage Trees","Crop Byproduct","Herbaceous Fodders","Agroforestry Fodders")
+# But "Crop Byproduct" is NOT a forage type - it includes straws but also seed cakes, oils, etc.
+# I've corrected this to only include true forage categories:
+
+forage_types <- c(
+  "Forage Trees",
+  "Herbaceous Fodders",
+  "Agroforestry Fodders",
+  "Forage Plants"
+)
+
+# Broader roughage types (forages + crop residues used as roughage)
+roughage_types <- c(
+  "Forage Trees",
+  "Herbaceous Fodders",
+  "Agroforestry Fodders",
+  "Forage Plants",
+  "Crop Byproduct"  # <-- THIS SHOULD BE ADDED HERE
+)
+# Crop byproducts that can serve as roughage (straws, stovers, haulms)
+roughage_crop_byproducts_pattern <- "(?i)(straw|stover|haulm|hay|silage|ensiled)"
+
+# Compute forage proportion using CORRECTED D.Type
+forage_proportions <- diet_valid_units %>%
+  filter(D.Type != "Entire Diet") %>%
+  mutate(
+    # Flag true forages
+    is_forage = D.Type %in% forage_types,
+    # Flag crop byproducts that serve as roughage
+    is_roughage_byproduct = (D.Type == "Crop Byproduct" & 
+                             str_detect(D.Item, roughage_crop_byproducts_pattern))
+  ) %>%
+  group_by(B.Code, A.Level.Name) %>%
+  summarise(
+    any_na        = any(is.na(D.Amount)),
+    total_diet    = ifelse(any_na, NA_real_, sum(D.Amount, na.rm = TRUE)),
+    # Strict forage (only true forage categories)
+    total_forage_strict = ifelse(any_na, NA_real_, 
+                                  sum(D.Amount[is_forage], na.rm = TRUE)),
+    # Broad forage (includes roughage-type crop byproducts like straws)
+    total_forage_broad = ifelse(any_na, NA_real_, 
+                                 sum(D.Amount[is_forage | is_roughage_byproduct], na.rm = TRUE)),
+    n_ingredients = n(),
+    D.Type.first  = D.Type[1],
+    # Strict forage proportion
+    forage_prop_strict = case_when(
+      n_ingredients == 1 & D.Type.first %in% forage_types ~ 1,
+      n_ingredients == 1 & !(D.Type.first %in% forage_types) ~ 0,
+      total_diet > 0 ~ total_forage_strict / total_diet,
+      TRUE ~ NA_real_
+    ),
+    # Broad forage proportion (recommended for beef cattle equations)
+    forage_prop_broad = case_when(
+      n_ingredients == 1 & (D.Type.first %in% forage_types | 
+                            str_detect(D.Item[1], roughage_crop_byproducts_pattern)) ~ 1,
+      n_ingredients == 1 ~ 0,
+      total_diet > 0 ~ total_forage_broad / total_diet,
+      TRUE ~ NA_real_
+    ),
+    .groups = "drop"
+  ) %>%
+  # Use broad forage proportion as default (includes straws, stovers as roughage)
+  mutate(forage_prop = forage_prop_broad)
+
+## 1.3 Body weight (BW) from ingredients
+## ---------------------------------------------------------------------------
+
+BW_by_diet <- ingredients %>%
+  mutate(
+    Out.WG.Unit = tolower(trimws(Out.WG.Unit)),
+    BW_kg = case_when(
+      Out.WG.Unit %in% c("kg", "kilogram", "kilograms") ~ Out.WG.Start,
+      Out.WG.Unit %in% c("g", "gram", "grams")          ~ Out.WG.Start / 1000,
+      TRUE ~ NA_real_
+    )
+  ) %>%
+  group_by(B.Code, A.Level.Name) %>%
+  summarise(
+    BW_kg = if (all(is.na(BW_kg))) NA_real_ else mean(BW_kg, na.rm = TRUE),
+    .groups = "drop"
+  )
+```
+
+
+```{r,echo=FALSE}
+## 1.4 DMI (kg/d) - improved with better source tracking
+## ---------------------------------------------------------------------------
+
+# Sum ingredient-level intakes (kg/d) per diet
+ingredient_intake_summed <- feed_intake_ingredients %>%
+  group_by(B.Code, A.Level.Name) %>%
+  summarise(
+    sum_ingredient_intake = sum(ED.Mean.T, na.rm = TRUE),
+    n_ingredients_with_intake = sum(!is.na(ED.Mean.T)),
+    .groups = "drop"
+  )
+
+# Entire diet intake
+diet_intake <- feed_intake_diet %>%
+  select(B.Code, A.Level.Name, ED.Mean.T) %>%
+  rename(DMI_from_diet = ED.Mean.T)
+
+# DMI from total_amounts (convert to kg/d)
+total_amounts_kg <- total_amounts %>%
+  mutate(
+    DMI_from_total = case_when(
+      D.Unit.Amount %in% c("g", "gram", "grams", "g/day")           ~ Total_Amount / 1000,
+      D.Unit.Amount %in% c("kg", "kilogram", "kilograms", "kg/day") ~ Total_Amount,
+      TRUE ~ NA_real_
+    )
+  ) %>%
+  select(B.Code, A.Level.Name, DMI_from_total)
+
+DMI_table <- diet_intake %>%
+  full_join(ingredient_intake_summed, by = c("B.Code", "A.Level.Name")) %>%
+  full_join(total_amounts_kg, by = c("B.Code", "A.Level.Name")) %>%
+  mutate(
+    DMI_kg_d = case_when(
+      !is.na(DMI_from_diet)         ~ DMI_from_diet,
+      !is.na(DMI_from_total)        ~ DMI_from_total,
+      !is.na(sum_ingredient_intake) ~ sum_ingredient_intake,
+      TRUE ~ NA_real_
+    ),
+    DMI_source = case_when(
+      !is.na(DMI_from_diet)         ~ "diet_level",
+      !is.na(DMI_from_total)        ~ "total_amounts",
+      !is.na(sum_ingredient_intake) ~ "ingredient_sum",
+      TRUE ~ NA_character_
+    )
+  ) %>%
+  select(B.Code, A.Level.Name, DMI_kg_d, DMI_source)
+```
+
+
+```{r,echo=FALSE}
+# =============================================================================
+# GE CALCULATION - FIXED FOR DUPLICATES AND PROPER DIET/INGREDIENT SEPARATION
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Step 0: Clean Gross_energy - remove NA rows and duplicates
+# -----------------------------------------------------------------------------
+
+Gross_energy_clean <- Gross_energy %>%
+  filter(
+    DC.Variable == "GE",
+    !is.na(is_entire_diet),      # Remove rows where is_entire_diet is NA
+    !is.na(DC.Value)             # Remove rows where GE value is NA
+  ) %>%
+  mutate(
+    DC.Unit = tolower(trimws(DC.Unit)),
+    GE_MJ_kg = case_when(
+      DC.Unit %in% c("mj/kg", "mj/kg dm")     ~ DC.Value,
+      DC.Unit %in% c("mcal/kg", "mcal/kg dm") ~ DC.Value * 4.184,
+      DC.Unit %in% c("kcal/kg", "kcal/kg dm") ~ DC.Value / 239,
+      TRUE ~ NA_real_
+    )
+  ) %>%
+  filter(!is.na(GE_MJ_kg))  # Keep only valid GE values
+
+# -----------------------------------------------------------------------------
+# SOURCE 1: Diet-level GE (is_entire_diet == TRUE)
+# -----------------------------------------------------------------------------
+
+GE_entire <- Gross_energy_clean %>%
+  filter(is_entire_diet == TRUE) %>%
+  group_by(B.Code, D.Item) %>%
+  summarise(
+    GE_MJ_kg_diet = mean(GE_MJ_kg, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+cat(sprintf("GE_entire: %d diet-level GE values\n", nrow(GE_entire)))
+
+# -----------------------------------------------------------------------------
+# SOURCE 2: Ingredient-level GE (is_entire_diet == FALSE)
+# -----------------------------------------------------------------------------
+
+GE_ingredients <- Gross_energy_clean %>%
+  filter(is_entire_diet == FALSE) %>%
+  group_by(B.Code, D.Item) %>%
+  summarise(
+    GE_MJ_kg = mean(GE_MJ_kg, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+cat(sprintf("GE_ingredients: %d ingredient-level GE values\n", nrow(GE_ingredients)))
+
+# -----------------------------------------------------------------------------
+# Get total ingredients per diet (for completeness check)
+# -----------------------------------------------------------------------------
+
+ingredients_per_diet <- feed_intake_ingredients %>%
+  group_by(B.Code, A.Level.Name) %>%
+  summarise(
+    n_ingredients_total = n(),
+    .groups = "drop"
+  )
+
+# -----------------------------------------------------------------------------
+# Join ingredient GE with ingredient-level intake (KEEP ALL for diagnostics)
+# -----------------------------------------------------------------------------
+
+GE_ingredient_check <- feed_intake_ingredients %>%
+  left_join(
+    GE_ingredients,
+    by = c("B.Code", "ED.Intake.Item" = "D.Item")
+  ) %>%
+  mutate(
+    has_GE = !is.na(GE_MJ_kg),
+    has_intake = !is.na(ED.Mean.T)
+  )
+
+# -----------------------------------------------------------------------------
+# DIAGNOSTIC: Ingredients with missing GE in diets that have partial coverage
+# -----------------------------------------------------------------------------
+
+diets_with_partial_GE <- GE_ingredient_check %>%
+  group_by(B.Code, A.Level.Name) %>%
+  summarise(
+    n_total = n(),
+    n_with_GE = sum(has_GE),
+    n_missing_GE = sum(!has_GE),
+    pct_with_GE = round(100 * n_with_GE / n_total, 1),
+    .groups = "drop"
+  ) %>%
+  filter(n_with_GE > 0 & n_missing_GE > 0)
+
+# Get ingredients missing GE in those diets
+ingredients_missing_GE <- GE_ingredient_check %>%
+  semi_join(diets_with_partial_GE, by = c("B.Code", "A.Level.Name")) %>%
+  filter(!has_GE) %>%
+  select(B.Code, A.Level.Name, ED.Intake.Item, ED.Mean.T, has_intake)
+
+# Summary: which ingredients most frequently lack GE?
+missing_GE_summary <- ingredients_missing_GE %>%
+  group_by(ED.Intake.Item) %>%
+  summarise(
+    n_times_missing = n(),
+    n_papers = n_distinct(B.Code),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(n_times_missing))
+
+# Print diagnostics
+cat("\n")
+cat("=" %>% rep(70) %>% paste(collapse = ""), "\n")
+cat("DIETS WITH PARTIAL GE COVERAGE\n")
+cat("=" %>% rep(70) %>% paste(collapse = ""), "\n")
+cat(sprintf("Number of diets with some but not all ingredients having GE: %d\n\n", 
+            nrow(diets_with_partial_GE)))
+print(head(diets_with_partial_GE, 20))
+
+cat("\n")
+cat("=" %>% rep(70) %>% paste(collapse = ""), "\n")
+cat("MOST COMMON INGREDIENTS MISSING GE\n")
+cat("=" %>% rep(70) %>% paste(collapse = ""), "\n\n")
+print(head(missing_GE_summary, 30))
+
+# -----------------------------------------------------------------------------
+# Calculate weighted GE from ingredients (only for COMPLETE diets)
+# -----------------------------------------------------------------------------
+
+GE_from_ingredients <- GE_ingredient_check %>%
+  filter(has_GE & has_intake) %>%
+  group_by(B.Code, A.Level.Name) %>%
+  summarise(
+    n_with_GE_and_intake = n(),
+    total_intake = sum(ED.Mean.T, na.rm = TRUE),
+    weighted_GE_sum = sum(GE_MJ_kg * ED.Mean.T, na.rm = TRUE),
+    GE_MJ_kg_from_ingr = weighted_GE_sum / total_intake,
+    .groups = "drop"
+  ) %>%
+  left_join(ingredients_per_diet, by = c("B.Code", "A.Level.Name")) %>%
+  mutate(
+    complete_GE = (n_with_GE_and_intake == n_ingredients_total)
+  ) %>%
+  filter(complete_GE) %>%
+  select(B.Code, A.Level.Name, GE_MJ_kg_from_ingr)
+
+cat(sprintf("\nGE_from_ingredients: %d diets with complete ingredient-level GE\n", 
+            nrow(GE_from_ingredients)))
+
+# -----------------------------------------------------------------------------
+# COMBINE: Prefer diet-level GE, fallback to ingredient-weighted GE
+# -----------------------------------------------------------------------------
+
+GEI_table <- DMI_table %>%
+  # Join diet-level GE (A.Level.Name matches D.Item for diets)
+  left_join(GE_entire, by = c("B.Code", "A.Level.Name" = "D.Item")) %>%
+  # Join ingredient-weighted GE
+  left_join(GE_from_ingredients, by = c("B.Code", "A.Level.Name")) %>%
+  mutate(
+    # Pick best GE source (priority: diet-level > ingredient-weighted)
+    GE_MJ_kg = case_when(
+      !is.na(GE_MJ_kg_diet)      ~ GE_MJ_kg_diet,
+      !is.na(GE_MJ_kg_from_ingr) ~ GE_MJ_kg_from_ingr,
+      TRUE ~ NA_real_
+    ),
+    GE_source = case_when(
+      !is.na(GE_MJ_kg_diet)      ~ "diet_level",
+      !is.na(GE_MJ_kg_from_ingr) ~ "ingredient_weighted",
+      TRUE ~ NA_character_
+    ),
+    # Calculate GEI (MJ/d) = GE (MJ/kg) × DMI (kg/d)
+    GEI_MJ_d = ifelse(
+      !is.na(GE_MJ_kg) & !is.na(DMI_kg_d),
+      GE_MJ_kg * DMI_kg_d,
+      NA_real_
+    )
+  ) %>%
+  select(B.Code, A.Level.Name, DMI_kg_d, DMI_source, GE_MJ_kg, GEI_MJ_d, GE_source)
+
+# -----------------------------------------------------------------------------
+# Final summary
+# -----------------------------------------------------------------------------
+
+cat("\n")
+cat("=" %>% rep(70) %>% paste(collapse = ""), "\n")
+cat("GEI COVERAGE SUMMARY\n")
+cat("=" %>% rep(70) %>% paste(collapse = ""), "\n")
+cat(sprintf("Total diets: %d\n", nrow(GEI_table)))
+cat(sprintf("Diets with GEI: %d (%.1f%%)\n",
+            sum(!is.na(GEI_table$GEI_MJ_d)),
+            100 * sum(!is.na(GEI_table$GEI_MJ_d)) / nrow(GEI_table)))
+
+GEI_table %>%
+  group_by(GE_source) %>%
+  summarise(
+    n_diets = n(),
+    n_papers = n_distinct(B.Code),
+    .groups = "drop"
+  ) %>%
+  print()
+```
+
+
+
+```{r,echo=FALSE}
+## =============================================================================
+## SECTION 2: DEI and MEI - diet-level energy density * DMI
+## =============================================================================
+
+## 2.1 DE density (MJ/kg)
+DE_density <- merged_metadata$Animals.Diet.Comp %>%
+  filter(DC.Variable == "DE") %>%
+  mutate(
+    DC.Value = as.numeric(DC.Value),
+    DC.Unit  = tolower(trimws(DC.Unit)),
+    DE_MJ_kg = case_when(
+      DC.Unit %in% c("mj/kg", "mj/kg dm")     ~ DC.Value,
+      DC.Unit %in% c("mcal/kg", "mcal/kg dm") ~ DC.Value * 4.184,
+      DC.Unit %in% c("kcal/kg", "kcal/kg dm") ~ DC.Value / 239,
+      DC.Unit %in% c("kj/g")                  ~ DC.Value,
+      TRUE ~ NA_real_
+    )
+  ) %>%
+  group_by(B.Code, D.Item) %>%
+  summarise(
+    DE_MJ_kg = if (all(is.na(DE_MJ_kg))) NA_real_ else mean(DE_MJ_kg, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+## 2.2 ME density (MJ/kg)
+ME_density <- merged_metadata$Animals.Diet.Comp %>%
+  filter(DC.Variable == "ME") %>%
+  mutate(
+    DC.Value = as.numeric(DC.Value),
+    DC.Unit  = tolower(trimws(DC.Unit)),
+    ME_MJ_kg = case_when(
+      DC.Unit %in% c("mj/kg", "mj/kg dm")     ~ DC.Value,
+      DC.Unit %in% c("mcal/kg", "mcal/kg dm") ~ DC.Value * 4.184,
+      DC.Unit %in% c("kcal/kg", "kcal/kg dm") ~ DC.Value / 239,
+      DC.Unit %in% c("kj/g")                  ~ DC.Value,
+      TRUE ~ NA_real_
+    )
+  ) %>%
+  group_by(B.Code, D.Item) %>%
+  summarise(
+    ME_MJ_kg = if (all(is.na(ME_MJ_kg))) NA_real_ else mean(ME_MJ_kg, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+## 2.3 Combine with DMI to get DEI and MEI (MJ/d)
+DE_ME_intake <- DMI_table %>%
+  left_join(DE_density, by = c("B.Code", "A.Level.Name" = "D.Item")) %>%
+  left_join(ME_density, by = c("B.Code", "A.Level.Name" = "D.Item")) %>%
+  mutate(
+    DEI_MJ_d = ifelse(!is.na(DE_MJ_kg) & !is.na(DMI_kg_d), 
+                      DE_MJ_kg * DMI_kg_d, NA_real_),
+    MEI_MJ_d = ifelse(!is.na(ME_MJ_kg) & !is.na(DMI_kg_d), 
+                      ME_MJ_kg * DMI_kg_d, NA_real_)
+  ) %>%
+  select(B.Code, A.Level.Name, DE_MJ_kg, ME_MJ_kg, DEI_MJ_d, MEI_MJ_d)
+```
+
+
+```{r,echo=FALSE}
+## =============================================================================
+## SECTION 3: BUILD MASTER DIET-LEVEL TABLE
+## =============================================================================
+
+# Species info
+prod_out_simple <- merged_metadata$Prod.Out %>%
+  select(B.Code, P.Product) %>%
+  distinct()
+
+# Master table: one row per B.Code + Diet
+master <- DMI_table %>%
+  rename(Diet = A.Level.Name) %>%
+  full_join(GEI_table %>% rename(Diet = A.Level.Name),   # ← FIXED: rename A.Level.Name to Diet
+            by = c("B.Code", "Diet")) %>%
+  left_join(prod_out_simple, by = "B.Code") %>%
+  left_join(purpose_by_code, by = "B.Code") %>%
+  left_join(forage_proportions %>% rename(Diet = A.Level.Name),
+            by = c("B.Code", "Diet")) %>%
+  left_join(BW_by_diet %>% rename(Diet = A.Level.Name),
+            by = c("B.Code", "Diet")) %>%
+  left_join(DE_ME_intake %>% rename(Diet = A.Level.Name),
+            by = c("B.Code", "Diet")) %>%
+  mutate(
+    For_percent = ifelse(!is.na(forage_prop), forage_prop * 100, NA_real_)
+  )
+
+master <- master %>%
+  mutate(
+    DMI_kg_d    = dplyr::coalesce(DMI_kg_d.x, DMI_kg_d.y),
+    DMI_source  = dplyr::coalesce(DMI_source.x, DMI_source.y)
+  ) %>%
+  select(
+    -DMI_kg_d.x, -DMI_kg_d.y,
+    -DMI_source.x, -DMI_source.y
+  )
+
+```
+
+
+```{r,echo=FALSE}
+## =============================================================================
+## SECTION 4: COVERAGE FLAGS FOR EACH EQUATION
+## =============================================================================
+
+# Higher-forage cutoff for van Lingen "HF" subset
+higher_forage_cutoff <- 0.25 # 50% of DM
+
+master_flags <- master %>%
+  mutate(
+    # -------------------------------------------------------------------------
+    # DAIRY CATTLE - Niu et al. 2018 DMI_C (all-data)
+    # CH4 (g/d) = 20.7 + 19.0 × DMI (kg/d)
+    # -------------------------------------------------------------------------
+    eq_dairy_niu_DMI_C = (P.Product == "Cattle" &
+                          Purpose == "Dairy" &
+                          !is.na(DMI_kg_d)),
+    
+    # -------------------------------------------------------------------------
+    # BEEF CATTLE - van Lingen et al. 2019 Higher-forage equations
+    # -------------------------------------------------------------------------
+    
+    # DMI_C (higher-forage): CH4 (g/d) = 28.1 + 16.7 × DMI
+    eq_beef_DMI_C_HF = (P.Product == "Cattle" &
+                        Purpose == "Meat" &
+                        !is.na(DMI_kg_d) &
+                        !is.na(forage_prop) &
+                        forage_prop >= higher_forage_cutoff),
+    
+    # Animal_C (higher-forage, Eq. 17): CH4 = -6.41 + 11.3×DMI + 0.557×For + 0.0996×BW
+    eq_beef_Animal_C_HF = (P.Product == "Cattle" &
+                           Purpose == "Meat" &
+                           !is.na(DMI_kg_d) &
+                           !is.na(forage_prop) &
+                           forage_prop >= higher_forage_cutoff &
+                           !is.na(BW_kg)),
+    
+    # -------------------------------------------------------------------------
+    # SHEEP - Patra et al. 2016
+    # -------------------------------------------------------------------------
+    
+    # GEI linear (Eq. 3): EME (MJ/d) = 0.208 + 0.049 × GEI (MJ/d)
+    eq_sheep_GEI_linear = (P.Product == "Sheep" &
+                           !is.na(GEI_MJ_d)),
+    
+    # MEI monomolecular (Model 3): EME = 5.699 - (5.699-0.133) × exp(-0.021×MEI)
+    eq_sheep_MEI_nonlinear = (P.Product == "Sheep" &
+                              !is.na(MEI_MJ_d)),
+    
+    # -------------------------------------------------------------------------
+    # GOATS - Patra & Lalhriatpuii 2015
+    # -------------------------------------------------------------------------
+    
+    # DEI linear (Eq. 3): EME (MJ/d) = 0.242 + 0.0511 × DEI (MJ/d)
+    eq_goat_DEI_linear = (P.Product == "Goat" &
+                          !is.na(DEI_MJ_d)),
+    
+    # MEI Mitscherlich (Eq. 17): EME = 1.721 × [1 - exp(-0.0721 × MEI)]
+    eq_goat_MEI_nonlinear = (P.Product == "Goat" &
+                             !is.na(MEI_MJ_d)),
+      eq_goat_GEI_linear = (P.Product == "Goat" &
+                          !is.na(GEI_MJ_d))
+  )
+```
+
+
+```{r,echo=FALSE}
+## =============================================================================
+## SECTION 5: COVERAGE SUMMARY - IMPROVED
+## =============================================================================
+
+# Define equation metadata
+equation_info <- tibble(
+  equation = c(
+    "Dairy – Niu DMI_C",
+    "Beef – HF DMI_C",
+    "Beef – HF Animal_C",
+    "Sheep – GEI linear",
+    "Sheep – MEI monomolecular",
+    "Goat – DEI linear",
+    "Goat – MEI Mitscherlich",
+    "Goat - GEI linear"
+  ),
+  flag_col = c(
+    "eq_dairy_niu_DMI_C",
+    "eq_beef_DMI_C_HF",
+    "eq_beef_Animal_C_HF",
+    "eq_sheep_GEI_linear",
+    "eq_sheep_MEI_nonlinear",
+    "eq_goat_DEI_linear",
+    "eq_goat_MEI_nonlinear",
+    "eq_goat_GEI_linear"
+  ),
+  species = c("Cattle", "Cattle", "Cattle", "Sheep", "Sheep", "Goat", "Goat","Goat"),
+  purpose = c("Dairy", "Meat", "Meat", "All", "All", "All", "All","All"),
+  predictors = c(
+    "DMI",
+    "DMI, Forage%",
+    "DMI, Forage%, BW",
+    "GEI",
+    "MEI",
+    "DEI",
+    "MEI",
+    "GEI"
+  ),
+  equation_form = c(
+    "CH4 = 124 + 13.3×DMI",
+    "CH4 = 52.8 + 13.18×DMI",
+    "CH4 = -6.41 + 11.3×DMI + 0.557×For + 0.0996×BW",
+    "EME = 0.208 + 0.049×GEI",
+    "EME = 5.699 - 5.566×exp(-0.021×MEI)",
+    "EME = 0.242 + 0.0511×DEI",
+    "EME = 1.721×[1-exp(-0.0721×MEI)]",
+    "EME = 0.265 + 0.0333×GEI"
+  ),
+  is_primary = c(TRUE, FALSE, TRUE, TRUE, FALSE, TRUE, FALSE,TRUE)
+)
+
+# Calculate coverage statistics
+coverage_by_equation <- equation_info %>%
+  rowwise() %>%
+  mutate(
+    n_diets = sum(master_flags[[flag_col]], na.rm = TRUE),
+    n_papers = n_distinct(master_flags$B.Code[master_flags[[flag_col]]])
+  ) %>%
+  ungroup()
+
+# Print summary table
+cat("\n")
+cat("=" %>% rep(80) %>% paste(collapse = ""), "\n")
+cat("COVERAGE SUMMARY: Papers and Diets per Methane Prediction Equation\n")
+cat("=" %>% rep(80) %>% paste(collapse = ""), "\n\n")
+
+knitr::kable(
+  coverage_by_equation %>%
+    select(equation, species, predictors, n_papers, n_diets, is_primary),
+  caption = "Coverage per methane prediction equation",
+  col.names = c("Equation", "Species", "Predictors", "Papers", "Diets", "Primary?")
+)
+```
+
+
+```{r,echo=FALSE}
+## =============================================================================
+## SECTION 6: DETAILED COVERAGE DIAGNOSTICS
+## =============================================================================
+
+# 6.1 Why are diets missing? Diagnose missing variables by species
+diagnose_missing <- function(df, species_filter, purpose_filter = NULL) {
+  
+  filtered <- df %>%
+    filter(P.Product == species_filter)
+  
+  if (!is.null(purpose_filter)) {
+    filtered <- filtered %>% filter(Purpose == purpose_filter)
+  }
+  
+  n_total <- nrow(filtered)
+  
+  tibble(
+    Variable = c("DMI", "GEI", "DEI", "MEI", "BW", "Forage%"),
+    Available = c(
+      sum(!is.na(filtered$DMI_kg_d)),
+      sum(!is.na(filtered$GEI_MJ_d)),
+      sum(!is.na(filtered$DEI_MJ_d)),
+      sum(!is.na(filtered$MEI_MJ_d)),
+      sum(!is.na(filtered$BW_kg)),
+      sum(!is.na(filtered$forage_prop))
+    ),
+    Missing = n_total - c(
+      sum(!is.na(filtered$DMI_kg_d)),
+      sum(!is.na(filtered$GEI_MJ_d)),
+      sum(!is.na(filtered$DEI_MJ_d)),
+      sum(!is.na(filtered$MEI_MJ_d)),
+      sum(!is.na(filtered$BW_kg)),
+      sum(!is.na(filtered$forage_prop))
+    ),
+    Pct_Available = round(100 * Available / n_total, 1)
+  ) %>%
+    mutate(Total_Diets = n_total)
+}
+
+cat("\n\n")
+cat("=" %>% rep(80) %>% paste(collapse = ""), "\n")
+cat("VARIABLE AVAILABILITY DIAGNOSTICS BY SPECIES\n")
+cat("=" %>% rep(80) %>% paste(collapse = ""), "\n\n")
+
+# Dairy cattle
+cat("### Dairy Cattle ###\n")
+dairy_diag <- diagnose_missing(master_flags, "Cattle", "Dairy")
+print(knitr::kable(dairy_diag))
+
+# Beef cattle
+cat("\n### Beef Cattle ###\n")
+beef_diag <- diagnose_missing(master_flags, "Cattle", "Meat")
+print(knitr::kable(beef_diag))
+
+# Sheep
+cat("\n### Sheep ###\n")
+sheep_diag <- diagnose_missing(master_flags, "Sheep")
+print(knitr::kable(sheep_diag))
+
+# Goats
+cat("\n### Goats ###\n")
+goat_diag <- diagnose_missing(master_flags, "Goat")
+print(knitr::kable(goat_diag))
+
+## 6.2 List papers that CAN use each primary equation
+cat("\n\n")
+cat("=" %>% rep(80) %>% paste(collapse = ""), "\n")
+cat("PAPERS WITH COMPLETE DATA FOR PRIMARY EQUATIONS\n")
+cat("=" %>% rep(80) %>% paste(collapse = ""), "\n\n")
+
+primary_equations <- equation_info %>% filter(is_primary)
+
+for (i in 1:nrow(primary_equations)) {
+  eq_name <- primary_equations$equation[i]
+  flag <- primary_equations$flag_col[i]
+  
+  papers <- master_flags %>%
+    filter(.data[[flag]]) %>%
+    distinct(B.Code) %>%
+    pull(B.Code)
+  
+  cat(sprintf("### %s (%d papers) ###\n", eq_name, length(papers)))
+  if (length(papers) > 0) {
+    cat(paste(papers, collapse = ", "), "\n\n")
+  } else {
+    cat("No papers with complete data\n\n")
+  }
+}
+```
+
+
+```{r,echo=FALSE}
+## =============================================================================
+## SECTION 7: IMPLEMENT METHANE EQUATIONS + OUTLIER REMOVAL
+## =============================================================================
+
+library(dplyr)
+
+# Constant to convert MJ CH4 to g CH4
+CH4_energy_factor <- 55.65  # kJ/g CH4
+
+master_ch4 <- master_flags %>%
+  mutate(
+    # -------------------------------------------------------------------------
+    # DAIRY CATTLE - Niu DMI_C
+    # -------------------------------------------------------------------------
+CH4_dairy_niu = ifelse(
+  eq_dairy_niu_DMI_C,
+  124 + 13.3 * DMI_kg_d,  # g/d - CORRECTED
+  NA_real_
+),
+    
+    # -------------------------------------------------------------------------
+    # BEEF CATTLE - van Lingen Higher-forage
+    # -------------------------------------------------------------------------
+CH4_beef_DMI_C = ifelse(
+  eq_beef_DMI_C_HF,
+  52.8 + 13.8 * DMI_kg_d,  # g/d - CORRECTED
+  NA_real_
+),
+    
+    CH4_beef_Animal_C = ifelse(
+      eq_beef_Animal_C_HF,
+      -6.41 + 11.3 * DMI_kg_d + 0.557 * For_percent + 0.0996 * BW_kg,  # g/d
+      NA_real_
+    ),
+    
+    # -------------------------------------------------------------------------
+    # SHEEP - Patra 2016
+    # -------------------------------------------------------------------------
+    # EME (MJ/d) -> CH4 (g/d) = EME * 1000 / 55.65
+    EME_sheep_linear = ifelse(
+      eq_sheep_GEI_linear,
+      0.208 + 0.049 * GEI_MJ_d,  # MJ/d
+      NA_real_
+    ),
+    CH4_sheep_linear = EME_sheep_linear * 1000 / CH4_energy_factor,  # g/d
+    
+    EME_sheep_nonlinear = ifelse(
+      eq_sheep_MEI_nonlinear,
+      5.699 - (5.699 - 0.133) * exp(-0.021 * MEI_MJ_d),  # MJ/d
+      NA_real_
+    ),
+    CH4_sheep_nonlinear = EME_sheep_nonlinear * 1000 / CH4_energy_factor,  # g/d
+    
+    # -------------------------------------------------------------------------
+    # GOATS - Patra & Lalhriatpuii 2015
+    # -------------------------------------------------------------------------
+    # Primary: GEI-based linear model (Eq. 3)
+    EME_goat_linear = ifelse(
+      eq_goat_GEI_linear,
+      0.265 + 0.0333 * GEI_MJ_d,  # MJ/d
+      NA_real_
+    ),
+    CH4_goat_linear = EME_goat_linear * 1000 / CH4_energy_factor,  # g/d
+    
+    # Alternative: MEI-based Mitscherlich model (Eq. 17)
+    EME_goat_nonlinear = ifelse(
+      eq_goat_MEI_nonlinear,
+      1.721 * (1 - exp(-0.0721 * MEI_MJ_d)),  # MJ/d
+      NA_real_
+    ),
+    CH4_goat_nonlinear = EME_goat_nonlinear * 1000 / CH4_energy_factor,  # g/d
+    
+    # -------------------------------------------------------------------------
+    # Select best available CH4 estimate per row
+    # -------------------------------------------------------------------------
+    CH4_g_d = case_when(
+      !is.na(CH4_dairy_niu)       ~ CH4_dairy_niu,
+      !is.na(CH4_beef_Animal_C)   ~ CH4_beef_Animal_C,
+      !is.na(CH4_beef_DMI_C)      ~ CH4_beef_DMI_C,
+      !is.na(CH4_sheep_linear)    ~ CH4_sheep_linear,
+      !is.na(CH4_goat_linear)     ~ CH4_goat_linear,
+      TRUE                        ~ NA_real_
+    ),
+    
+    CH4_equation_used = case_when(
+      !is.na(CH4_dairy_niu)       ~ "Dairy_Niu_DMI_C",
+      !is.na(CH4_beef_Animal_C)   ~ "Beef_Animal_C_HF",
+      !is.na(CH4_beef_DMI_C)      ~ "Beef_DMI_C_HF",
+      !is.na(CH4_sheep_linear)    ~ "Sheep_GEI_linear",
+      !is.na(CH4_goat_linear)     ~ "Goat_GEI_linear",
+      TRUE                        ~ NA_character_
+    ),
+    
+    # Convert to annual (kg/yr), assuming 365 days
+    CH4_kg_yr = CH4_g_d * 365 / 1000
+  ) %>%
+  distinct() %>%
+  
+  # ---------------------------------------------------------------------------
+  # Robust outlier removal by (species × product) on CH4_kg_yr
+  # ---------------------------------------------------------------------------
+  group_by(P.Product, Purpose) %>%
+  mutate(
+    q1   = quantile(CH4_kg_yr, 0.25, na.rm = TRUE),
+    q3   = quantile(CH4_kg_yr, 0.75, na.rm = TRUE),
+    iqr  = q3 - q1,
+    lower = q1 - 3 * iqr,
+    upper = q3 + 3 * iqr,
+    is_outlier = if_else(
+      !is.na(CH4_kg_yr) & iqr > 0,
+      CH4_kg_yr < lower | CH4_kg_yr > upper,
+      FALSE
+    )
+  ) %>%
+  ungroup() %>%
+  filter(!is_outlier | is.na(CH4_kg_yr)) %>%
+  select(-q1, -q3, -iqr, -lower, -upper, -is_outlier)
+
+
+```
+
+
+```{r,echo=FALSE}
+## =============================================================================
+## SECTION 8: FINAL SUMMARY
+## =============================================================================
+
+cat("\n\n")
+cat("=" %>% rep(80) %>% paste(collapse = ""), "\n")
+cat("FINAL SUMMARY: CH4 PREDICTIONS\n")
+cat("=" %>% rep(80) %>% paste(collapse = ""), "\n\n")
+
+ch4_summary <- master_ch4 %>%
+  filter(!is.na(CH4_g_d)) %>%
+  group_by(P.Product, Purpose, CH4_equation_used) %>%
+  summarise(
+    n_diets = n(),
+    n_papers = n_distinct(B.Code),
+    CH4_mean_g_d = round(mean(CH4_g_d, na.rm = TRUE), 1),
+    CH4_sd_g_d = round(sd(CH4_g_d, na.rm = TRUE), 1),
+    CH4_min_g_d = round(min(CH4_g_d, na.rm = TRUE), 1),
+    CH4_max_g_d = round(max(CH4_g_d, na.rm = TRUE), 1),
+    .groups = "drop"
+  )
+
+knitr::kable(
+  ch4_summary,
+  caption = "Summary of CH4 predictions by species/purpose and equation used"
+)
+
+# Overall coverage
+total_diets <- nrow(master_flags)
+diets_with_ch4 <- sum(!is.na(master_ch4$CH4_g_d))
+papers_with_ch4 <- n_distinct(master_ch4$B.Code[!is.na(master_ch4$CH4_g_d)])
+
+cat(sprintf("\nOverall coverage: %d/%d diets (%.1f%%) from %d papers have CH4 predictions\n",
+            diets_with_ch4, total_diets, 100 * diets_with_ch4 / total_diets, papers_with_ch4))
+
+## =============================================================================
+## EXPORT RESULTS
+## =============================================================================
+
+# Save master table with all flags and CH4 predictions
+# saveRDS(master_ch4, "~/Emission_Analysis/data/master_ch4_predictions.rds")
+# write.csv(master_ch4, "~/Emission_Analysis/data/master_ch4_predictions.csv", row.names = FALSE)
+
+# Save coverage summary
+# write.csv(coverage_by_equation, "~/Emission_Analysis/data/equation_coverage_summary.csv", row.names = FALSE)
+```
+
+
+## compare with IPCC results 
+
+```{r,echo=FALSE}
+
+## 1. Load data ---------------------------------------------------------------
+
+# IPCC-style CH4 (from your 6_Emission_CH4_calc pipeline)
+GE_combined <- read.csv("C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/GE_Combined.csv")%>%
+  filter(CH4_kg_year<2000)
+
+# Empirical-equation CH4 (saved from the new 6_bis_ch4_equations script)
+# -> if you used saveRDS instead, replace with readRDS(...)
+#master_ch4 <- read.csv("~/Emission_Analysis/data/master_ch4_predictions.csv")
+
+## 2. Prepare comparison table -----------------------------------------------
+
+# Keep only rows where empirical CH4 was computed
+empirical_ch4 <- master_ch4 %>%
+  filter(!is.na(CH4_kg_yr)) %>%
+  select(
+    B.Code,
+    Diet,
+    P.Product,
+    Purpose,
+    CH4_empirical_kg_yr = CH4_kg_yr,
+    CH4_equation_used
+  )
+
+# Join to IPCC-based CH4 by paper and diet identifier
+# (GE_combined uses D.Item as the diet label)
+ch4_compare <- empirical_ch4 %>%
+  inner_join(
+    GE_combined %>%
+      select(
+        B.Code,
+        D.Item,
+        CH4_IPCC_kg_yr = CH4_kg_year
+      ),
+    by = c("B.Code", "Diet" = "D.Item")
+  ) %>%
+  # Drop any rows where IPCC CH4 is missing
+  filter(!is.na(CH4_IPCC_kg_yr))
+
+# Quick overall stats
+overall_n_diets  <- nrow(ch4_compare)
+overall_n_papers <- n_distinct(ch4_compare$B.Code)
+
+message("Overall comparison: ",
+        overall_n_diets, " diets from ",
+        overall_n_papers, " papers.")
+
+## 3. Overall scatterplot -----------------------------------------------------
+
+overall_label <- paste0(
+  "Overall comparison (n diets = ", overall_n_diets,
+  ", n papers = ", overall_n_papers, ")"
+)
+
+p_overall <- ggplot(ch4_compare,
+                    aes(x = CH4_IPCC_kg_yr,
+                        y = CH4_empirical_kg_yr,
+                        colour = P.Product)) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
+  geom_point(alpha = 0.7, size = 2) +
+  labs(
+    title    = "IPCC vs empirical CH₄ predictions",
+    subtitle = overall_label,
+    x        = "IPCC CH₄ (kg/yr)",
+    y        = "Empirical equation CH₄ (kg/yr)",
+    colour   = "Species"
+  ) +
+  theme_minimal()
+
+print(p_overall)
+
+## 4. Scatterplot per empirical equation -------------------------------------
+
+# Unique equation labels actually used
+eq_list <- ch4_compare %>%
+  filter(!is.na(CH4_equation_used)) %>%
+  distinct(CH4_equation_used) %>%
+  pull(CH4_equation_used)
+
+for (eq in eq_list) {
+  df_eq <- ch4_compare %>%
+    filter(CH4_equation_used == eq)
+
+  n_diets_eq  <- nrow(df_eq)
+  n_papers_eq <- n_distinct(df_eq$B.Code)
+
+  subtitle_eq <- paste0(
+    "Equation: ", eq,
+    "  (n diets = ", n_diets_eq,
+    ", n papers = ", n_papers_eq, ")"
+  )
+
+  p_eq <- ggplot(df_eq,
+                 aes(x = CH4_IPCC_kg_yr,
+                     y = CH4_empirical_kg_yr,
+                     colour = P.Product)) +
+    geom_abline(slope = 1, intercept = 0, linetype = "dashed") +
+    geom_point(alpha = 0.8, size = 2) +
+    labs(
+      title    = "IPCC vs empirical CH₄ predictions by equation",
+      subtitle = subtitle_eq,
+      x        = "IPCC CH₄ (kg/yr)",
+      y        = "Empirical equation CH₄ (kg/yr)",
+      colour   = "Species"
+    ) +
+    theme_minimal()
+
+  print(p_eq)
+}
+
+```
+
+##variation in diets 
+
+```{r,echo=FALSE}
+## =============================================================================
+## INTRA-PAPER CH₄ VARIATION: IPCC VS EMPIRICAL EQUATIONS
+## =============================================================================
+## Requires: ch4_compare (built in previous chunk)
+
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(knitr)
+
+# ---------------------------------------------------------------------------
+# 1) Long format with explicit "method" and "method_detail"
+# ---------------------------------------------------------------------------
+ch4_long <- ch4_compare %>%
+  select(
+    B.Code,
+    Diet,
+    P.Product,
+    Purpose,
+    CH4_IPCC_kg_yr,
+    CH4_empirical_kg_yr,
+    CH4_equation_used
+  ) %>%
+  mutate(
+    CH4_IPCC_kg_yr     = as.numeric(CH4_IPCC_kg_yr),
+    CH4_empirical_kg_yr = as.numeric(CH4_empirical_kg_yr)
+  ) %>%
+  # keep only diets where BOTH methods are available
+  filter(!is.na(CH4_IPCC_kg_yr), !is.na(CH4_empirical_kg_yr))
+
+# One row per (diet, method)
+ch4_long_method <- ch4_long %>%
+  pivot_longer(
+    cols      = c(CH4_IPCC_kg_yr, CH4_empirical_kg_yr),
+    names_to  = "method",
+    values_to = "CH4_kg_yr"
+  ) %>%
+  mutate(
+    method = recode(
+      method,
+      CH4_IPCC_kg_yr      = "IPCC_Tier2",
+      CH4_empirical_kg_yr = "Empirical"
+    ),
+    # For empirical predictions, keep equation name; for IPCC, a single label
+    method_detail = case_when(
+      method == "IPCC_Tier2" ~ "IPCC_Tier2",
+      method == "Empirical"  ~ CH4_equation_used,
+      TRUE                   ~ method
+    )
+  )
+
+# ---------------------------------------------------------------------------
+# 2) Per-paper *and* per-method_detail summary (to see which equation
+#    generates most intra-paper variation)
+# ---------------------------------------------------------------------------
+paper_method_detail <- ch4_long_method %>%
+  group_by(B.Code, P.Product, Purpose, method, method_detail) %>%
+  summarise(
+    n_diets   = n_distinct(Diet),
+    mean_CH4  = mean(CH4_kg_yr, na.rm = TRUE),
+    sd_CH4    = sd(CH4_kg_yr, na.rm = TRUE),
+    min_CH4   = min(CH4_kg_yr, na.rm = TRUE),
+    max_CH4   = max(CH4_kg_yr, na.rm = TRUE),
+    range_CH4 = max_CH4 - min_CH4,
+    iqr_CH4   = IQR(CH4_kg_yr, na.rm = TRUE),
+    cv_CH4    = ifelse(mean_CH4 > 0, sd_CH4 / mean_CH4, NA_real_),
+    .groups   = "drop"
+  ) %>%
+  # need ≥2 diets to have within-paper variation
+  filter(n_diets >= 2)
+
+# Method/equation-level summary across papers
+variation_by_method <- paper_method_detail %>%
+  group_by(method, method_detail, P.Product) %>%
+  summarise(
+    n_papers          = n(),
+    median_n_diets    = median(n_diets, na.rm = TRUE),
+    median_range_CH4  = median(range_CH4, na.rm = TRUE),
+    median_iqr_CH4    = median(iqr_CH4, na.rm = TRUE),
+    median_cv_CH4     = median(cv_CH4, na.rm = TRUE),
+    max_range_CH4     = max(range_CH4, na.rm = TRUE),
+    .groups           = "drop"
+  ) %>%
+  arrange(method, P.Product, desc(median_range_CH4))
+
+kable(
+  variation_by_method,
+  caption = "Within-paper CH₄ variation by estimation method (IPCC vs individual empirical equations)"
+)
+
+# ---------------------------------------------------------------------------
+# 3) Direct IPCC vs Empirical comparison *within the same paper*
+#    (collapsing across empirical equations but using the same diets)
+# ---------------------------------------------------------------------------
+paper_method_any <- ch4_long_method %>%
+  group_by(B.Code, P.Product, Purpose, method) %>%
+  summarise(
+    n_diets   = n_distinct(Diet),
+    mean_CH4  = mean(CH4_kg_yr, na.rm = TRUE),
+    sd_CH4    = sd(CH4_kg_yr, na.rm = TRUE),
+    min_CH4   = min(CH4_kg_yr, na.rm = TRUE),
+    max_CH4   = max(CH4_kg_yr, na.rm = TRUE),
+    range_CH4 = max_CH4 - min_CH4,
+    iqr_CH4   = IQR(CH4_kg_yr, na.rm = TRUE),
+    cv_CH4    = ifelse(mean_CH4 > 0, sd_CH4 / mean_CH4, NA_real_),
+    .groups   = "drop"
+  ) %>%
+  filter(n_diets >= 2)
+
+# wide layout: one row per paper/species, one column per method
+ipcc_empirical_wide <- paper_method_any %>%
+  select(B.Code, P.Product, Purpose, method, n_diets, range_CH4, cv_CH4) %>%
+  pivot_wider(
+    names_from  = method,
+    values_from = c(range_CH4, cv_CH4, n_diets),
+    names_sep   = "_"
+  ) %>%
+  # keep only papers where both IPCC and empirical are available
+  filter(
+    !is.na(range_CH4_IPCC_Tier2),
+    !is.na(range_CH4_Empirical)
+  ) %>%
+  mutate(
+    range_diff      = range_CH4_Empirical - range_CH4_IPCC_Tier2,
+    cv_diff         = cv_CH4_Empirical - cv_CH4_IPCC_Tier2,
+    larger_variance = case_when(
+      range_diff > 0  ~ "Empirical > IPCC",
+      range_diff < 0  ~ "IPCC > Empirical",
+      TRUE            ~ "Equal"
+    )
+  )
+
+# How often does each approach show the largest within-paper range?
+who_has_bigger_range <- ipcc_empirical_wide %>%
+  count(P.Product, larger_variance, name = "n_papers") %>%
+  group_by(P.Product) %>%
+  mutate(share_papers = n_papers / sum(n_papers)) %>%
+  ungroup()
+
+kable(
+  who_has_bigger_range,
+  caption = "Which approach shows larger within-paper CH₄ range (IPCC vs empirical, same diets)"
+)
+
+# ---------------------------------------------------------------------------
+# 4) Papers where empirical equations greatly increase diet separation
+# ---------------------------------------------------------------------------
+top_range_gain <- ipcc_empirical_wide %>%
+  arrange(desc(range_diff)) %>%
+  slice_head(n = 15)
+
+kable(
+  top_range_gain,
+  caption = "Papers where empirical equations produce much larger CH₄ separation between diets (top 15 by range_diff)"
+)
+
+# ---------------------------------------------------------------------------
+# 5) Visual: distribution of within-paper range by method (IPCC vs Empirical)
+# ---------------------------------------------------------------------------
+ggplot(paper_method_any,
+       aes(x = method, y = range_CH4, fill = method)) +
+  geom_boxplot(alpha = 0.6, outlier.alpha = 0.4) +
+  facet_wrap(~ P.Product, scales = "free_y") +
+  labs(
+    title = "Within-paper variation in CH₄ emissions by estimation method",
+    x     = "Method",
+    y     = "Within-paper CH₄ range (kg CH₄ animal⁻¹ yr⁻¹)"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "none",
+    strip.text      = element_text(face = "bold")
+  )
+
+```
+
+## analysis 
+```{r, message=FALSE, warning=FALSE,echo=FALSE}
+# ============================================================
+# Clean merge, filter to real Milk/Meat yields, facet counts,
+# and scatter+LM with per-facet (n, codes) labels (top-right)
+# ============================================================
+
+# --- 1) Harmonize keys and basic cleaning -------------------
+GE_combined_for_merge <- master_ch4 %>%
+  dplyr::filter(!is.na(CH4_kg_yr)) %>%              # keep rows with CH4
+  dplyr::rename(A.Level.Name = Diet)                  # avoid duplicate yield col
+
+yield_data<- read.csv("~/Emission_Analysis/yield_data.csv")%>%select(-c("P.Product"))
+
+yield_data_clean <- yield_data %>%
+  dplyr::filter(!is.na(ED.Mean.T))              # need yield
+# --- 2) Merge yield and emission data -----------------------
+yield_with_emissions <- GE_combined_for_merge %>%
+  dplyr::left_join(
+    yield_data_clean,
+    by = c("B.Code", "A.Level.Name")
+  ) %>%
+  dplyr::filter(!is.na(ED.Mean.T), !is.na(CH4_kg_yr)) %>%
+  dplyr::distinct()
+
+# --- 3) Optional: distinct B.Code per species ---------------
+bcode_per_product <- yield_with_emissions %>%
+  dplyr::distinct(P.Product, B.Code) %>%
+  dplyr::count(P.Product, name = "n_BCodes")
+
+# --- 4) Keep only true Milk/Meat yield outcomes + parse Product ----
+species_order <- c("Cattle", "Goat", "Sheep")  # adjust if needed
+
+yield_with_emissions <- yield_with_emissions %>%
+  dplyr::mutate(P.Product = factor(P.Product, levels = species_order)) %>%
+  dplyr::filter(
+    (
+      stringr::str_detect(Out.Subind, stringr::regex("Milk Yield", ignore_case = TRUE)) |
+      stringr::str_detect(Out.Subind, stringr::regex("Meat Yield", ignore_case = TRUE))
+    ) &
+    !stringr::str_detect(Out.Subind, stringr::regex("Body Weight|Final", ignore_case = TRUE))
+  ) %>%
+  dplyr::mutate(
+    Product = dplyr::case_when(
+      stringr::str_detect(Out.Subind, stringr::regex("milk", ignore_case = TRUE)) ~ "Milk",
+      stringr::str_detect(Out.Subind, stringr::regex("meat", ignore_case = TRUE)) ~ "Meat",
+      TRUE ~ NA_character_
+    )
+  ) %>%
+  dplyr::filter(!is.na(Product)) %>%
+  # Build a facet label used in both plotting and counting
+  dplyr::mutate(facet = interaction(P.Product, Product, sep = " – "))
+
+# --- 5) Per-facet counts: n observations & unique B.Codes ---
+facet_counts <- yield_with_emissions %>%
+  dplyr::group_by(facet) %>%
+  dplyr::summarise(
+    n_obs   = dplyr::n(),
+    n_codes = dplyr::n_distinct(B.Code),
+    .groups = "drop"
+  ) %>%
+  dplyr::mutate(lab = paste0("n=", n_obs, "; papers=", n_codes))
+
+# --- 6) Plot: scatter + LM with per-facet labels ------------
+ggplot(yield_with_emissions,
+       aes(x = ED.Mean.T, y = CH4_kg_yr)) +
+  geom_point(color = "grey40", alpha = 0.35, size = 1.8) +
+  geom_smooth(
+    method = "lm", se = TRUE,
+    color = "grey20", linewidth = 0.5,
+    fill = scales::alpha("lightblue", 0.991)
+  ) +
+  facet_wrap(~ facet, scales = "free") +
+  # top-right annotation for each facet
+  geom_text(
+    data = facet_counts,
+    aes(x = Inf, y = Inf, label = lab),
+    inherit.aes = FALSE,
+    hjust = 1.1, vjust = 1.5,
+    fontface = "bold", size = 3.5, color = "black"
+  ) +
+  scale_y_continuous(
+    "Annual CH₄ emissions (kg CH₄ animal⁻¹ yr⁻¹)",
+    labels = scales::comma_format()
+  ) +
+  scale_x_continuous(
+    "Yield (kg product animal⁻¹ day⁻¹)",
+    labels = scales::comma_format()
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    panel.grid.major = element_line(color = "grey92", linewidth = 0.3),
+    panel.grid.minor = element_blank(),
+    strip.text = element_text(size = 12, face = "bold"),
+    axis.title = element_text(face = "plain"),
+    axis.text  = element_text(color = "black"),
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    legend.position = "none",
+    plot.margin = margin(5.5, 16, 5.5, 5.5)  # a bit more room for labels
+  )
+```
+
+
+```{r include=FALSE, message=FALSE, warning=FALSE}
+# Optional: total unique study codes used after filtering
+n_unique_codes <- dplyr::n_distinct(yield_with_emissions$B.Code)
+n_unique_codes
+
+
+```
+
+
+
+```{r}
+## =====================================================================
+## NUTRIENT-BASED DIET CLUSTERS (CP, NDF, EE) + EI–YIELD QUADRANT PLOTS
+## =====================================================================
+
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(stringr)
+library(janitor)
+
+## ---------------------------------------------------------------------
+## 1. Load diet_percentages and get CP, NDF, EE from Animals.Diet.Comp
+## ---------------------------------------------------------------------
+
+diet_percentages <- read.csv("C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/diet_percentages.csv") %>%
+  clean_names() %>%
+  rename(
+    B.Code             = b_code,
+    A.Level.Name       = a_level_name,
+    D.Item             = d_item,
+    D.Type             = d_type,
+    D.Amount           = d_amount,
+    D.Unit.Amount      = d_unit_amount,
+    Percentage_of_Diet = percentage_of_diet
+  )
+
+nutrient_vars <- c("CP", "NDF", "EE")
+
+diet_comp_all <- merged_metadata$Animals.Diet.Comp %>%
+  mutate(DC.Value = as.numeric(DC.Value))
+
+# CP / NDF / EE always in g/kg DM -> convert to % of DM
+convert_to_pct <- function(value) {
+  ifelse(is.na(value), NA_real_, value / 10)
+}
+
+## ---------------------------------------------------------------------
+## 2. Diet-level nutrients (is_entire_diet == TRUE, CP/NDF/EE)
+## ---------------------------------------------------------------------
+
+diet_comp_diet_long <- diet_comp_all %>%
+  filter(
+    is_entire_diet == TRUE,
+    DC.Variable %in% nutrient_vars
+  ) %>%
+  mutate(
+    value_pct = convert_to_pct(DC.Value),
+    nutrient  = DC.Variable
+  ) %>%
+  select(B.Code, Diet = D.Item, nutrient, value_pct)
+
+diet_comp_diet <- diet_comp_diet_long %>%
+  group_by(B.Code, Diet, nutrient) %>%
+  summarise(
+    value_pct = if (all(is.na(value_pct))) NA_real_ else mean(value_pct, na.rm = TRUE),
+    .groups   = "drop"
+  ) %>%
+  pivot_wider(
+    names_from  = nutrient,
+    values_from = value_pct,
+    names_glue  = "{nutrient}_pct_diet"
+  )
+
+## ---------------------------------------------------------------------
+## 3. Ingredient-level nutrients (is_entire_diet == FALSE, CP/NDF/EE)
+## ---------------------------------------------------------------------
+
+ing_comp_long <- diet_comp_all %>%
+  filter(
+    is_entire_diet == FALSE,
+    DC.Variable %in% nutrient_vars
+  ) %>%
+  mutate(
+    value_pct = convert_to_pct(DC.Value),
+    nutrient  = DC.Variable
+  ) %>%
+  select(B.Code, D.Item, nutrient, value_pct)
+
+ing_comp_wide <- ing_comp_long %>%
+  group_by(B.Code, D.Item, nutrient) %>%
+  summarise(
+    value_pct = if (all(is.na(value_pct))) NA_real_ else mean(value_pct, na.rm = TRUE),
+    .groups   = "drop"
+  ) %>%
+  pivot_wider(
+    names_from  = nutrient,
+    values_from = value_pct,
+    names_glue  = "{nutrient}_pct"
+  )
+
+## ---------------------------------------------------------------------
+## 4. Diet CP/NDF/EE from ingredients using diet_percentages
+## ---------------------------------------------------------------------
+
+diet_fracs <- diet_percentages %>%
+  mutate(
+    frac_DM = Percentage_of_Diet / 100
+  )
+
+# Optional sanity check (ad lib diets will often have total_pct == 0)
+validation_pct <- diet_fracs %>%
+  group_by(B.Code, A.Level.Name) %>%
+  summarise(
+    total_pct = sum(Percentage_of_Diet, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+cov_thresh <- 0.7   # minimum DM coverage to accept ingredient-based value
+
+diet_from_ing <- diet_fracs %>%
+  left_join(
+    ing_comp_wide,
+    by = c("B.Code", "D.Item")
+  ) %>%
+  group_by(B.Code, Diet = A.Level.Name) %>%
+  summarise(
+    # Weighted means (only where nutrient is known)
+    CP_pct_ing_raw  = if (all(is.na(CP_pct)))  NA_real_ else sum(frac_DM * CP_pct,  na.rm = TRUE),
+    NDF_pct_ing_raw = if (all(is.na(NDF_pct))) NA_real_ else sum(frac_DM * NDF_pct, na.rm = TRUE),
+    EE_pct_ing_raw  = if (all(is.na(EE_pct)))  NA_real_ else sum(frac_DM * EE_pct,  na.rm = TRUE),
+    
+    # Coverage: sum of frac_DM where nutrient is known
+    CP_covered  = sum(frac_DM[!is.na(CP_pct)],  na.rm = TRUE),
+    NDF_covered = sum(frac_DM[!is.na(NDF_pct)], na.rm = TRUE),
+    EE_covered  = sum(frac_DM[!is.na(EE_pct)],  na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    CP_pct_ing  = ifelse(CP_covered  >= cov_thresh, CP_pct_ing_raw,  NA_real_),
+    NDF_pct_ing = ifelse(NDF_covered >= cov_thresh, NDF_pct_ing_raw, NA_real_),
+    EE_pct_ing  = ifelse(EE_covered  >= cov_thresh, EE_pct_ing_raw,  NA_real_)
+  ) %>%
+  select(B.Code, Diet, CP_pct_ing, NDF_pct_ing, EE_pct_ing)
+
+## ---------------------------------------------------------------------
+## 5. Combine diet-level and ingredient-based nutrients
+## ---------------------------------------------------------------------
+
+diet_nutrients <- diet_comp_diet %>%
+  full_join(diet_from_ing, by = c("B.Code", "Diet")) %>%
+  mutate(
+    CP_pct  = coalesce(CP_pct_diet,  CP_pct_ing),
+    NDF_pct = coalesce(NDF_pct_diet, NDF_pct_ing),
+    EE_pct  = coalesce(EE_pct_diet,  EE_pct_ing)
+  ) %>%
+  select(B.Code, Diet, CP_pct, NDF_pct, EE_pct) %>%
+  distinct()
+
+cat("Diet nutrient table (CP, NDF, EE):", nrow(diet_nutrients), "diets\n")
+
+## ---------------------------------------------------------------------
+## 6. Merge with existing yield_with_emissions and compute EI
+## ---------------------------------------------------------------------
+## yield_with_emissions already has:
+##  - CH4_kg_yr
+##  - ED.Mean.T
+##  - P.Product, Product, facet, etc.
+
+plot_data <- yield_with_emissions %>%
+  left_join(
+    diet_nutrients %>% rename(A.Level.Name = Diet),
+    by = c("B.Code", "A.Level.Name")
+  ) %>%
+  mutate(
+    CH4_g_d     = CH4_kg_yr * 1000 / 365,
+    EI_g_per_kg = CH4_g_d / ED.Mean.T
+  )
+
+## ---------------------------------------------------------------------
+## 7. Exploratory: variability of CP, NDF, EE
+## ---------------------------------------------------------------------
+
+nutrient_long <- plot_data %>%
+  select(B.Code, P.Product, Product, CP_pct, NDF_pct, EE_pct) %>%
+  pivot_longer(
+    cols      = c(CP_pct, NDF_pct, EE_pct),
+    names_to  = "nutrient",
+    values_to = "value"
+  ) %>%
+  filter(!is.na(value)) %>%
+  mutate(
+    nutrient = recode(
+      nutrient,
+      CP_pct  = "Crude protein (% DM)",
+      NDF_pct = "NDF (% DM)",
+      EE_pct  = "Ether extract (% DM)"
+    )
+  )
+
+# 7.1 Histograms of nutrient distributions
+ggplot(nutrient_long, aes(x = value)) +
+  geom_histogram(bins = 30, fill = "grey70", color = "grey40") +
+  facet_wrap(~ nutrient, scales = "free_x") +
+  labs(
+    x = "Value (% of DM)",
+    y = "Number of diets",
+    title = "Distribution of diet nutrient composition (CP, NDF, EE)"
+  ) +
+  theme_minimal()
+
+# 7.2 Boxplots by species–product
+ggplot(nutrient_long,
+       aes(x = interaction(P.Product, Product),
+           y = value)) +
+  geom_boxplot(outlier.alpha = 0.3) +
+  facet_wrap(~ nutrient, scales = "free_y") +
+  labs(
+    x = "Species – Product",
+    y = "Value (% of DM)",
+    title = "Diet nutrients by species and product"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+
+## ---------------------------------------------------------------------
+## 8. Define nutrient clusters (CP, NDF, EE only)
+## ---------------------------------------------------------------------
+
+plot_data <- plot_data %>%
+  mutate(
+    nutrient_cluster = case_when(
+      # Low-quality roughage: very fibrous, low protein
+      !is.na(NDF_pct) & !is.na(CP_pct) &
+        NDF_pct >= 60 & CP_pct < 10 ~ "Low-quality roughage",
+      
+      # Improved forage / protein-boosted
+      !is.na(NDF_pct) & !is.na(CP_pct) &
+        NDF_pct >= 50 & CP_pct >= 12 ~ "Improved forage / protein-boosted",
+      
+      # High-protein, lower fibre (more concentrate-rich)
+      !is.na(NDF_pct) & !is.na(CP_pct) &
+        NDF_pct < 45 & CP_pct >= 14 ~ "High-protein, low-fibre",
+      
+      # High-fat diets
+      !is.na(EE_pct) & EE_pct >= 6 ~ "High-fat diets",
+      
+      # Has some nutrient info but does not fit above
+      (!is.na(CP_pct) | !is.na(NDF_pct) | !is.na(EE_pct)) ~ "Mixed / other",
+      
+      TRUE ~ NA_character_
+    )
+  ) %>%
+  mutate(
+    nutrient_cluster = factor(
+      nutrient_cluster,
+      levels = c(
+        "Low-quality roughage",
+        "Improved forage / protein-boosted",
+        "High-protein, low-fibre",
+        "High-fat diets",
+        "Mixed / other"
+      )
+    )
+  )
+
+cat("Nutrient clusters (counts):\n")
+print(table(plot_data$nutrient_cluster, useNA = "ifany"))
+
+## ---------------------------------------------------------------------
+## 9. Define global quadrant thresholds (yield & EI)
+## ---------------------------------------------------------------------
+
+quad_data <- plot_data %>%
+  filter(!is.na(EI_g_per_kg), !is.na(ED.Mean.T))
+
+yield_cut_global <- median(quad_data$ED.Mean.T, na.rm = TRUE)
+EI_cut_global    <- median(quad_data$EI_g_per_kg, na.rm = TRUE)
+
+cat("\nQuadrant thresholds:\n")
+cat(" - Yield cut (kg product/d):", round(yield_cut_global, 3), "\n")
+cat(" - EI cut (g CH4/kg product):", round(EI_cut_global, 3), "\n\n")
+
+# Optional: classify quadrant per observation (for summaries if needed)
+plot_data <- plot_data %>%
+  mutate(
+    EI_quadrant = case_when(
+      !is.na(EI_g_per_kg) & !is.na(ED.Mean.T) &
+        EI_g_per_kg <= EI_cut_global & ED.Mean.T >= yield_cut_global ~ "High yield – low EI",
+      !is.na(EI_g_per_kg) & !is.na(ED.Mean.T) &
+        EI_g_per_kg >  EI_cut_global & ED.Mean.T >= yield_cut_global ~ "High yield – high EI",
+      !is.na(EI_g_per_kg) & !is.na(ED.Mean.T) &
+        EI_g_per_kg <= EI_cut_global & ED.Mean.T <  yield_cut_global ~ "Low yield – low EI",
+      !is.na(EI_g_per_kg) & !is.na(ED.Mean.T) &
+        EI_g_per_kg >  EI_cut_global & ED.Mean.T <  yield_cut_global ~ "Low yield – high EI",
+      TRUE ~ NA_character_
+    )
+  )
+
+cat("Quadrant counts:\n")
+print(table(plot_data$EI_quadrant, useNA = "ifany"))
+
+## ---------------------------------------------------------------------
+## 10. 2D EI–yield QUADRANT plots coloured by nutrient cluster
+## ---------------------------------------------------------------------
+
+shape_species <- c(
+  "Cattle" = 16,  # circle
+  "Goat"   = 15,  # square
+  "Sheep"  = 17   # triangle
+)
+
+# 10.1 Overall quadrant plot
+p_ei_overall <- ggplot(
+  plot_data %>% filter(!is.na(EI_g_per_kg)),
+  aes(
+    x     = ED.Mean.T,
+    y     = EI_g_per_kg,
+    color = nutrient_cluster,
+    shape = P.Product
+  )
+) +
+  geom_vline(xintercept = yield_cut_global, linetype = "dashed", color = "grey40") +
+  geom_hline(yintercept = EI_cut_global,    linetype = "dashed", color = "grey40") +
+  geom_point(alpha = 0.7, size = 2) +
+  scale_shape_manual(values = shape_species) +
+  labs(
+    x = "Product output (kg edible product per day)",
+    y = expression("CH"[4]*" emission intensity (g CH"[4]*" / kg product)"),
+    color = "Nutrient cluster",
+    shape = "Species",
+    title = "Diet nutrient clusters in CH\u2084 EI–yield space (global quadrants)",
+    subtitle = paste0(
+      "Vertical line: median yield = ", round(yield_cut_global, 2),
+      " kg/d;  Horizontal line: median EI = ", round(EI_cut_global, 2), " g CH\u2084/kg"
+    )
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(color = "grey92"),
+    legend.position  = "right"
+  )
+
+print(p_ei_overall)
+
+# 10.2 Faceted by species × product with same global quadrants
+p_ei_facet <- ggplot(
+  plot_data %>% filter(!is.na(EI_g_per_kg)),
+  aes(
+    x     = ED.Mean.T,
+    y     = EI_g_per_kg,
+    color = nutrient_cluster,
+    shape = P.Product
+  )
+) +
+  geom_vline(xintercept = yield_cut_global, linetype = "dashed", color = "grey40") +
+  geom_hline(yintercept = EI_cut_global,    linetype = "dashed", color = "grey40") +
+  geom_point(alpha = 0.7, size = 1.8) +
+  scale_shape_manual(values = shape_species) +
+  facet_wrap(~ facet, scales = "free") +
+  labs(
+    x = "Product output (kg edible product per day)",
+    y = expression("CH"[4]*" emission intensity (g CH"[4]*" / kg product)"),
+    color = "Nutrient cluster",
+    shape = "Species",
+    title = "Nutrient-based diet clusters by species and product (global quadrants)"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(color = "grey92"),
+    strip.text       = element_text(face = "bold"),
+    legend.position  = "right"
+  )
+
+print(p_ei_facet)
+
+
+```
+
+
+

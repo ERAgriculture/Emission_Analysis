@@ -579,6 +579,6 @@ merged_metadata$Data.Out <- dt
 rm(list = setdiff(ls(), c("merged_metadata")))
 gc()   # optional: reclaim memory
 
-saveRDS(merged_metadata, "~/Emission_Analysis/data/merged_metadata.rds")   # single file
+saveRDS(merged_metadata, "C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/merged_metadata.rds")   # single file
 
 ```

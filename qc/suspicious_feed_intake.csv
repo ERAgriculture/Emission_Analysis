@@ -1,7 +1,0 @@
-B.Code,A.Level.Name,ED.Intake.Item,ED.Intake.Item.Raw,ED.Mean.T,ED.Error,Out.Subind,P.Product,is_entire_diet,is_group,T.Animals,Out.Unit.Animals,Out.Unit.Time,Out.Unit.Amount,Out.WG.Start,Out.WG.Unit,flag
-HK0260,Centro,T D4 Breed 1...T D4 Breed 2,Entire Diet,0.09290000000000001,3.17,Feed Intake,Sheep,TRUE,FALSE,1,individual,day,kg,NA,NA,too_low_kg
-HK0260,Sirastro,T D3 Breed 1...T D3 Breed 2,Entire Diet,0.07590000000000001,3.17,Feed Intake,Sheep,TRUE,FALSE,1,individual,day,kg,NA,NA,too_low_kg
-HK0260,Stover Con,T D1 Con Breed 1...T D1 Con Breed 2,Entire Diet,0.0485,3.17,Feed Intake,Sheep,TRUE,FALSE,1,individual,day,kg,151,NA,too_low_kg
-HK0260,Stylo,T D2 Breed 1...T D2 Breed 2,Entire Diet,0.07840000000000001,3.17,Feed Intake,Sheep,TRUE,FALSE,1,individual,day,kg,NA,NA,too_low_kg
-LM0299,150g Concentrate Mix...350g Concentrate Mix,B1 and D1...B1 and D2,Entire Diet,787,13.5,Feed Intake,Sheep,TRUE,FALSE,6,individual,day,kg,17.525,kg,too_high_kg
-NN0189,No supplement,No supplement,No supplement,0,NA,Feed Intake,Sheep,TRUE,FALSE,8,individual,day,kg,19.28,kg,too_low_kg

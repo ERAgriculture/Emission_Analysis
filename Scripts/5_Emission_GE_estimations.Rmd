@@ -13,7 +13,8 @@ ingredients <- read.csv("~/Emission_Analysis/data/ingredients_harmonized_subset.
 
 ## 11) Emission calculations 
 
-### 11.1 Estimation of Enteric Methane Emissions Using IPCC Tier 2
+### 11.1 Estimation of Enteric Methane Emissions Usi
+ng IPCC Tier 2
 
 Enteric methane (CH₄) emissions were estimated using the **IPCC Tier 2** methodology, which incorporates animal-specific data such as **gross energy intake (GE)** and **methane conversion factors (Ym)**. This approach improves accuracy over Tier 1 by reflecting diet composition, feed intake, and species-specific differences.
 
@@ -70,35 +71,7 @@ Where:
 
 
 
-```{r,message=FALSE,warning=FALSE}
 
-# 1. Total papers per species
-species_counts <- merged_metadata$`Prod.Out` %>%
-  filter(P.Product %in% c("Cattle", "Sheep", "Goat")) %>%
-  distinct(B.Code, P.Product) %>%
-  count(P.Product, name = "Total_Studies")
-
-# 2. All papers with GE (non-NA)
-GE_data <- merged_metadata$Animals.Diet.Comp %>%
-  filter(DC.Variable == "GE", !is.na(DC.Value) & DC.Value != "") %>%
-  distinct(B.Code)
-
-# 3. Papers with GE and species (intersection)
-GE_species <- merged_metadata$`Prod.Out` %>%
-  filter(P.Product %in% c("Cattle", "Sheep", "Goat")) %>%
-  semi_join(GE_data, by = "B.Code") %>%
-  distinct(B.Code, P.Product) %>%
-  count(P.Product, name = "Studies_with_GE")
-
-# 4. Combine the two
-summary_table <- species_counts %>%
-  full_join(GE_species, by = "P.Product") %>%
-  mutate(across(everything(), ~replace_na(., 0)))
-
-# Display table
-kable(summary_table, caption = "Summary of Data Availability for Enteric CH₄ Emissions (Tier 2)")
-
-```
 
 
 ## 12) Gross energy data 
@@ -164,9 +137,133 @@ Gross_energy <- Gross_energy %>%
 
 
 ```
-g/kg	❌ Not an energy unit	Likely a mistake, investigate or exclude
-% / % DM / % as fed	❌ Not energy units	Same as above
-Unspecified	❌ Ambiguous	Investigate or exclude
+
+
+## hanronize ingredients nutrion 
+
+offal and bran 
+dried and non dried 
+ground not ground 
+molasses
+stover and straw 
+
+```{r}
+
+
+# === 1. LOAD GE DATA ======================================================
+Gross_energy_GE <- Gross_energy %>%
+  filter(DC.Variable == "GE") %>%
+  mutate(
+    DC.Value = as.numeric(DC.Value),
+    D.Item_clean = str_squish(str_to_lower(D.Item))
+  )
+
+
+# === 2. Helper function: collapse ONLY dried/dry/ground ===================
+
+process_words <- c("dried", "dry", "ground")
+
+make_base_item <- function(x) {
+  x_clean <- x %>% str_to_lower() %>% str_squish()
+  
+  # ----- optional simple synonyms (safe, do NOT change nutrition) --------
+  # stover vs straw
+  x_clean <- str_replace_all(x_clean, "\\bstover\\b", "straw")
+  # offal misspelling → bran
+  x_clean <- str_replace_all(x_clean, "\\boffal\\b", "bran")
+  # OPTIONAL: unify molasses names (if you want)
+  # x_clean <- ifelse(str_detect(x_clean, "molasses"), "molasses", x_clean)
+  
+  # ----- drop only non-nutritional processes ------------------------------
+  pattern <- paste0("\\b(", paste(process_words, collapse="|"), ")\\b")
+  x_clean <- str_remove_all(x_clean, pattern)
+  
+  # clean up spacing
+  x_clean <- str_squish(x_clean)
+  return(x_clean)
+}
+
+Gross_energy_GE <- Gross_energy_GE %>%
+  mutate(D.Item_base = make_base_item(D.Item_clean))
+
+
+# === 3. Build source GE per base ingredient ===============================
+
+GE_base_source <- Gross_energy_GE %>%
+  filter(!is.na(DC.Value)) %>%
+  group_by(D.Item_base) %>%
+  summarise(
+    n_source_rows = n(),
+    GE_impute = mean(DC.Value, na.rm = TRUE),
+    GE_min    = min(DC.Value, na.rm = TRUE),
+    GE_max    = max(DC.Value, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+
+# === 4. Identify missing GE rows that CAN be imputed ======================
+
+GE_missing_with_base <- Gross_energy_GE %>%
+  filter(is.na(DC.Value)) %>%
+  left_join(GE_base_source, by = "D.Item_base") %>%
+  filter(!is.na(GE_impute))
+
+
+# === 5. Diagnostics =======================================================
+
+n_total_missing      <- Gross_energy_GE %>% filter(is.na(DC.Value)) %>% nrow()
+n_imputable_rows     <- nrow(GE_missing_with_base)
+n_imputable_items    <- n_distinct(GE_missing_with_base$D.Item)
+n_imputable_papers   <- n_distinct(GE_missing_with_base$B.Code)
+
+message("────────────────────────────────────────────")
+message("Total missing GE rows: ", n_total_missing)
+message("Imputable rows (dried/dry/ground): ", n_imputable_rows)
+message("Distinct ingredients affected: ", n_imputable_items)
+message("Distinct papers gaining GE: ", n_imputable_papers)
+message("────────────────────────────────────────────")
+
+
+
+
+# === 6. Impute GE for harmonisable ingredients ============================
+
+Gross_energy_GE_imputed <- Gross_energy_GE %>%
+  left_join(GE_base_source, by = "D.Item_base") %>%
+  mutate(
+    DC.Value = if_else(
+      is.na(DC.Value) & !is.na(GE_impute),
+      GE_impute,
+      DC.Value
+    ),
+    GE_source = case_when(
+      is.na(GE_source) & is.na(DC.Value) & !is.na(GE_impute) ~ "harmonized_dried_ground",
+      TRUE ~ GE_source
+    ),
+    DC.Unit = if_else(!is.na(DC.Value), "MJ/kg", DC.Unit)
+  ) %>%
+  select(-D.Item_clean, -D.Item_base, -GE_impute, -GE_min, -GE_max)
+
+
+# === 7. Recombine with non-GE variables ===================================
+
+Gross_energy <- Gross_energy %>%
+  filter(DC.Variable != "GE") %>%
+  bind_rows(Gross_energy_GE_imputed)
+
+###########################################################################
+## END OF ONE COMPLETE CHUNK
+###########################################################################
+
+```
+
+```{r}
+check<-Gross_energy%>%
+  filter(is_entire_diet=="FALSE")%>%
+  filter(is_group=="FALSE")%>%
+  filter(is.na(DC.Value))
+```
+
 
 ```{r,message=FALSE,warning=FALSE}
 # 1. Total papers per species
@@ -197,16 +294,7 @@ kable(summary_table, caption = "Summary of Data Availability for Enteric CH₄ E
 ```
 
 
-## 12.2 Gross energy data check 
 
-```{r}
-
-Gross_energy_check <- Gross_energy %>%
-  filter(!is.na(DC.Value))%>%
-  filter(GE_source=="raw data")
-
-
-```
 
 
 ## 12.3) Gross energy for non nutritional items 
@@ -263,16 +351,34 @@ Gross_energy <- Gross_energy %>%
   bind_rows(missing_nonenergy_ge) %>%
   left_join(nonenergy_lookup, by = c("B.Code", "D.Item")) %>%
   mutate(
-    DC.Value  = if_else(DC.Variable == "GE" & flag_nonenergy, 0, DC.Value),
-    DC.Unit   = if_else(DC.Variable == "GE" & flag_nonenergy, "MJ/kg", DC.Unit),
-    GE_source = if_else(DC.Variable == "GE" & flag_nonenergy, "assumed_zero", GE_source)
+    DC.Value  = if_else(
+      DC.Variable == "GE" & !is.na(flag_nonenergy) & flag_nonenergy,
+      0,
+      DC.Value
+    ),
+    DC.Unit   = if_else(
+      DC.Variable == "GE" & !is.na(flag_nonenergy) & flag_nonenergy,
+      "MJ/kg",
+      DC.Unit
+    ),
+    GE_source = if_else(
+      DC.Variable == "GE" & !is.na(flag_nonenergy) & flag_nonenergy,
+      "assumed_zero",
+      GE_source
+    )
   ) %>%
   select(-flag_nonenergy)
-                             # tidy up
+
 
 
 ```
 
+```{r}
+check<-Gross_energy%>%
+  filter(is_entire_diet=="FALSE")%>%
+  filter(is_group=="FALSE")%>%
+  filter(is.na(DC.Value))
+```
 
 ## 13) Estimate gross energy for ingredients from proximate nutritional composition
 
@@ -289,22 +395,33 @@ GE (MJ/kg) = GE (Mcal/kg) × 4.184
 
 ```{r}
 # --- STEP 1: Prepare predictors (CP, EE, Ash) as % of DM ---
-# Keep relevant metadata for later
 metadata_cols <- merged_metadata$Animals.Diet.Comp %>%
   select(B.Code, D.Item, is_entire_diet, Feedipedia) %>%
   distinct()
+# First, de-duplicate metadata_cols
+metadata_cols_unique <- metadata_cols %>%
+  group_by(B.Code, D.Item) %>%
+  summarise(
+    is_entire_diet = case_when(
+      any(is_entire_diet == TRUE, na.rm = TRUE) ~ TRUE,
+      any(is_entire_diet == FALSE, na.rm = TRUE) ~ FALSE,
+      TRUE ~ NA
+    ),
+    Feedipedia = first(na.omit(Feedipedia)),
+    .groups = "drop"
+  )
 
+# Now create ge_predictors with unique metadata
 ge_predictors <- merged_metadata$Animals.Diet.Comp %>%
   filter(DC.Variable %in% c("CP", "EE", "Ash")) %>%
   mutate(
     DC.Unit = trimws(tolower(DC.Unit)),
     DC.Value = as.numeric(DC.Value),
-
     # Harmonize to % of DM
     DC.Value = case_when(
       DC.Unit %in% c("%", "% dm", "% as fed", "g/100g", "g/100g dm") ~ DC.Value,
       DC.Unit %in% c("g", "g/kg", "g/kg dm")                         ~ DC.Value / 10,
-      DC.Unit %in% c("kg", "kg/day")                                ~ DC.Value * 100,
+      DC.Unit %in% c("kg", "kg/day")                                 ~ DC.Value * 100,
       TRUE ~ NA_real_
     ),
     DC.Unit = "%"
@@ -312,8 +429,8 @@ ge_predictors <- merged_metadata$Animals.Diet.Comp %>%
   group_by(B.Code, D.Item, DC.Variable) %>%
   summarise(DC.Value = mean(DC.Value, na.rm = TRUE), .groups = "drop") %>%
   pivot_wider(names_from = DC.Variable, values_from = DC.Value) %>%
-  left_join(metadata_cols, by = c("B.Code", "D.Item"))
-
+  left_join(metadata_cols_unique, by = c("B.Code", "D.Item"))
+  
 # --- STEP 2: Apply Weiss GE equation only where CP, EE, Ash are all present ---
 ge_predicted <- ge_predictors %>%
   mutate(

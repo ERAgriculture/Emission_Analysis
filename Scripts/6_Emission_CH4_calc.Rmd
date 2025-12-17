@@ -5,12 +5,12 @@ date: "2025-09-26"
 ---
 
 ```{r}
-Gross_energy <- read.csv("~/Emission_Analysis/data/Gross_energy.csv")
-merged_metadata <- readRDS("~/Emission_Analysis/data/merged_metadata_nutrition_inference.rds")
-ingredients <- read.csv("~/Emission_Analysis/data/ingredients_harmonized_subset.csv")
-total_amounts <- read.csv("~/Emission_Analysis/data/total_amounts.csv")
-feed_intake_ingredients <- read.csv("~/Emission_Analysis/data/feed_intake_ingredients_harmonized.csv")
-feed_intake_diet <- read.csv("~/Emission_Analysis/data/feed_intake_diet_harmonized.csv")
+Gross_energy <- read.csv("C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/Gross_energy.csv")
+merged_metadata <- readRDS("C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/merged_metadata_nutrition_inference.rds")
+ingredients <- read.csv("C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/ingredients_harmonized_subset.csv")
+total_amounts <- read.csv("C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/total_amounts.csv")
+feed_intake_ingredients <- read.csv("C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/feed_intake_ingredients_harmonized.csv")
+feed_intake_diet <- read.csv("C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/feed_intake_diet_harmonized.csv")
 ```
 
 
@@ -900,10 +900,130 @@ n_CH4_codes_by_product
 
 
 ```
+## Ym analysis 
 
 ```{r}
-write.csv(GE_combined, "~/Emission_Analysis/data/GE_Combined.csv")
-write.csv(yield_data, "~/Emission_Analysis/data/yield_data.csv")
+## ─────────────────────────────────────────────
+## Ym variation within papers (B.Code)
+## ─────────────────────────────────────────────
+
+
+
+# 1) For each paper, count diets and unique Ym values
+Ym_by_paper <- GE_combined %>%
+  filter(!is.na(Ym)) %>%                       # keep only records with Ym
+  group_by(B.Code) %>%
+  summarise(
+    n_diets      = n_distinct(D.Item),        # how many diets in this paper
+    n_unique_Ym  = n_distinct(Ym),            # how many different Ym values
+    Ym_values    = paste(sort(unique(Ym)), collapse = ", "),
+    .groups = "drop"
+  )
+
+# 2) Flag papers with Ym variation inside the paper
+Ym_variation_summary <- Ym_by_paper %>%
+  mutate(has_Ym_variation = n_unique_Ym > 1) %>%
+  count(has_Ym_variation, name = "n_papers") %>%
+  mutate(
+    has_Ym_variation = ifelse(
+      has_Ym_variation,
+      "Different Ym values within paper",
+      "Same Ym value for all diets in paper"
+    )
+  )
+
+# 3) Show summary table
+kable(
+  Ym_variation_summary,
+  caption = "Number of papers with/without variation in Ym across diets"
+)
+
+# (Optional) If you want to inspect which specific papers have varying Ym:
+Ym_by_paper_with_variation <- Ym_by_paper %>%
+  filter(n_unique_Ym > 1)
+
+kable(
+  Ym_by_paper_with_variation,
+  caption = "Papers with more than one Ym value across diets"
+)
+
+```
+
+
+```{r}
+## ─────────────────────────────────────────────
+## CH₄ emission variation within papers (B.Code)
+## ─────────────────────────────────────────────
+
+# 1) Per-paper summary of within-paper CH₄ variation -------------------------
+CH4_by_paper <- GE_combined %>%
+  dplyr::filter(!is.na(CH4_kg_year)) %>%              # keep only records with CH₄
+  dplyr::group_by(B.Code) %>%
+  dplyr::summarise(
+    # main species label for the paper
+    P.Product_main      = dplyr::first(na.omit(P.Product)),
+    n_diets             = dplyr::n_distinct(D.Item),          # how many diets in this paper
+    mean_CH4_kg_year    = mean(CH4_kg_year, na.rm = TRUE),
+    sd_CH4_kg_year      = sd(CH4_kg_year, na.rm = TRUE),
+    min_CH4_kg_year     = min(CH4_kg_year, na.rm = TRUE),
+    max_CH4_kg_year     = max(CH4_kg_year, na.rm = TRUE),
+    range_CH4_kg_year   = max_CH4_kg_year - min_CH4_kg_year,
+    cv_CH4              = ifelse(mean_CH4_kg_year > 0,
+                                 sd_CH4_kg_year / mean_CH4_kg_year,
+                                 NA_real_),                    # coefficient of variation
+    .groups = "drop"
+  )
+
+# 2) Flag papers with >1 diet and non-zero range in CH₄ ----------------------
+CH4_variation_summary <- CH4_by_paper %>%
+  dplyr::mutate(has_CH4_variation = n_diets > 1 & range_CH4_kg_year > 0) %>%
+  dplyr::count(has_CH4_variation, name = "n_papers") %>%
+  dplyr::mutate(
+    has_CH4_variation = dplyr::if_else(
+      has_CH4_variation,
+      "Different CH₄ emissions across diets within paper",
+      "Single diet or identical CH₄ across diets"
+    )
+  )
+
+# 3) Summary table: how many papers show within-paper CH₄ variation ----------
+knitr::kable(
+  CH4_variation_summary,
+  caption = "Number of papers with/without variation in CH₄ emissions across diets"
+)
+
+# 4) Optional: inspect the distribution of within-paper variation by species -
+CH4_variation_by_species <- CH4_by_paper %>%
+  dplyr::group_by(P.Product_main) %>%
+  dplyr::summarise(
+    n_papers          = dplyr::n(),
+    median_n_diets    = stats::median(n_diets, na.rm = TRUE),
+    median_range_CH4  = stats::median(range_CH4_kg_year, na.rm = TRUE),
+    median_cv_CH4     = stats::median(cv_CH4, na.rm = TRUE),
+    max_range_CH4     = max(range_CH4_kg_year, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+knitr::kable(
+  CH4_variation_by_species,
+  caption = "Within-paper CH₄ variation by species (range and CV across diets)"
+)
+
+# 5) Optional: list top papers with the largest CH₄ range --------------------
+CH4_top_variation <- CH4_by_paper %>%
+  dplyr::arrange(dplyr::desc(range_CH4_kg_year)) %>%
+  dplyr::slice_head(n = 15)
+
+knitr::kable(
+  CH4_top_variation,
+  caption = "Papers with the largest within-paper range in CH₄ emissions (kg CH₄ yr⁻¹ animal⁻¹)"
+)
+
+```
+
+```{r}
+write.csv(GE_combined, "C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/GE_Combined.csv")
+write.csv(yield_data, "C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/yield_data.csv")
 
 ```
 

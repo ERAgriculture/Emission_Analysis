@@ -41,7 +41,7 @@ library(data.table)
 library(purrr)
 library(janitor)
 library(ggalt)
-merged_metadata <- readRDS("~/Emission_Analysis/data/merged_metadata.rds")
+merged_metadata <- readRDS("C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/merged_metadata.rds")
 ```
 
 
@@ -556,81 +556,121 @@ This step standardizes ingredient amount units (e.g., from mg, kg, %, etc.) to a
 ```{r,message=FALSE,warning=FALSE}
 # Diet ingredients: breakdown of all ingredients within each diet
 ingredients <- merged_metadata$Animals.Diet %>%
-  mutate(D.Amount = as.numeric(D.Amount))%>% 
-  filter(!is.na(D.Item))  # those are for entire diets 
+  mutate(D.Amount = as.numeric(D.Amount)) %>% 
+  filter(!is.na(D.Item))  # keep only ingredient rows (no "entire diet" metadata)
 
-# Function to harmonize diet ingredient units (only change: kg/t handling)
+# Function to harmonize diet ingredient units
 harmonize_units <- function(df) {
   df %>%
     mutate(
       # Record original units
-      Units = paste(D.Unit.Amount, D.Unit.Time, D.Unit.Animals, sep = ";"),
-
-      # Harmonize weight and volume units to a consistent base
+      Units = paste(D.Unit.Amount, D.Unit.Time, D.Unit.Animals, sep = ";")
+    ) %>%
+    
+    # ------------------------------------------------------------------
+    # 1) Harmonise weight / volume units (may change D.Amount)
+    # ------------------------------------------------------------------
+    mutate(
       D.Amount = case_when(
         D.Unit.Amount %in% c("kg", "mg", "g/100g", "l", "kg/t", "g/300l",
                              "mg/kg", "kg/100kg", "kg/100kg body weight",
                              "kg/kg metabolic weight", "g/kg metabolic weight (0.75)",
                              "g/kg DMI", "g/L", "g/kg DM") ~ {
           case_when(
-            D.Unit.Amount == "kg" ~ D.Amount * 1000,
-            D.Unit.Amount == "mg" ~ D.Amount / 1000,
-            D.Unit.Amount == "g/100g" ~ D.Amount * 10,
-            D.Unit.Amount == "l" ~ D.Amount * 1000,
-            D.Unit.Amount == "kg/t" ~ D.Amount,
-            D.Unit.Amount == "g/300l" ~ D.Amount / 300,
-            D.Unit.Amount == "mg/kg" ~ D.Amount / 1000,
-            D.Unit.Amount %in% c("kg/100kg", "kg/100kg body weight") ~ D.Amount * 10,
-            D.Unit.Amount == "kg/kg metabolic weight" ~ D.Amount * 1000,
-            D.Unit.Amount %in% c("g/kg body weight (0.75)", "g/kg Body Weight (0.75)") ~ D.Amount,
-            D.Unit.Amount == "g/kg DMI" ~ D.Amount,
-            D.Unit.Amount == "g/kg DM" ~ D.Amount,
-            TRUE ~ D.Amount
+            D.Unit.Amount == "kg"                         ~ D.Amount * 1000,
+            D.Unit.Amount == "mg"                         ~ D.Amount / 1000,
+            D.Unit.Amount == "g/100g"                     ~ D.Amount * 10,
+            D.Unit.Amount == "l"                          ~ D.Amount * 1000,
+            D.Unit.Amount == "kg/t"                       ~ D.Amount,          # already g/kg after relabel
+            D.Unit.Amount == "g/300l"                     ~ D.Amount / 300,
+            D.Unit.Amount == "mg/kg"                      ~ D.Amount / 1000,
+            D.Unit.Amount %in% c("kg/100kg",
+                                 "kg/100kg body weight")  ~ D.Amount * 10,
+            D.Unit.Amount == "kg/kg metabolic weight"     ~ D.Amount * 1000,
+            D.Unit.Amount %in% c("g/kg body weight (0.75)",
+                                 "g/kg Body Weight (0.75)",
+                                 "g/kg metabolic weight (0.75)") ~ D.Amount,
+            D.Unit.Amount == "g/kg DMI"                   ~ D.Amount,
+            D.Unit.Amount == "g/kg DM"                    ~ D.Amount,
+            TRUE                                          ~ D.Amount
           )
         },
         TRUE ~ D.Amount
       ),
-
-      # Update D.Unit.Amount
-      D.Unit.Amount = case_when(
-        D.Unit.Amount == "kg" ~ "g",
-        D.Unit.Amount == "mg" ~ "g",
-        D.Unit.Amount == "g/100g" ~ "g/kg",
-        D.Unit.Amount == "l" ~ "ml",
-        D.Unit.Amount == "kg/t" ~ "g/kg",
-        D.Unit.Amount == "g/300l" ~ "g/L",
-        D.Unit.Amount == "mg/kg" ~ "g/kg",
-        D.Unit.Amount %in% c("kg/100kg", "kg/100kg body weight") ~ "g/kg body weight",
-        D.Unit.Amount %in% c("g/kg body weight (0.75)", "g/kg Body Weight (0.75)", "g/kg metabolic weight (0.75)") ~ "g/kg metabolic weight",
-        D.Unit.Amount == "kg/kg metabolic weight" ~ "g/kg metabolic weight",
-        D.Unit.Amount == "g/kg DMI" ~ "g/kg",
-        D.Unit.Amount == "g/kg DM" ~ "g/kg",
-        D.Unit.Amount == "g/L" ~ "g/L",
-        D.Unit.Amount == "g/kg Body Weight" ~ "g/kg body weight",
-        TRUE ~ D.Unit.Amount
-      ),
-
-      # Harmonize time units to day (excluding "individual", only changing "experiment")
-    D.Amount = case_when(
-  D.Unit.Time == "week" ~ D.Amount / 7,
-  D.Unit.Time == "month" ~ D.Amount / 30,
-  D.Unit.Time == "2 weeks" ~ D.Amount / 14,
-  D.Unit.Time == "4 days interval" ~ D.Amount / 4,
-  D.Unit.Time == "2x/day" ~ D.Amount * 2,
-  TRUE ~ D.Amount  # Leave "experiment" and others untouched
-),
-
       
-
-      D.Unit.Time = case_when(
-        D.Unit.Time %in% c("week", "month", "2 weeks", "4 days interval", "2x/day") ~ "day",
-        D.Unit.Time == "experiment" ~ D.Unit.Time,
-        TRUE ~ D.Unit.Time
+      # Canonical D.Unit.Amount labels
+      D.Unit.Amount = case_when(
+        D.Unit.Amount == "kg"                 ~ "g",
+        D.Unit.Amount == "mg"                 ~ "g",
+        D.Unit.Amount == "g/100g"             ~ "g/kg",
+        D.Unit.Amount == "l"                  ~ "ml",
+        D.Unit.Amount == "kg/t"               ~ "g/kg",
+        D.Unit.Amount == "g/300l"             ~ "g/L",
+        D.Unit.Amount == "mg/kg"              ~ "g/kg",
+        D.Unit.Amount %in% c("kg/100kg",
+                             "kg/100kg body weight") ~ "g/kg body weight",
+        D.Unit.Amount %in% c("g/kg body weight (0.75)",
+                             "g/kg Body Weight (0.75)",
+                             "g/kg metabolic weight (0.75)") ~ "g/kg metabolic weight",
+        D.Unit.Amount == "kg/kg metabolic weight" ~ "g/kg metabolic weight",
+        D.Unit.Amount == "g/kg DMI"          ~ "g/kg",
+        D.Unit.Amount == "g/kg DM"           ~ "g/kg",
+        D.Unit.Amount == "g/L"               ~ "g/L",
+        D.Unit.Amount == "g/kg Body Weight"  ~ "g/kg body weight",
+        TRUE                                 ~ D.Unit.Amount
+      )
+    ) %>%
+    
+    # ------------------------------------------------------------------
+    # 2) Define “relative / composition” units where time/animal do NOT
+    #    affect the numeric amount
+    # ------------------------------------------------------------------
+    mutate(
+      is_relative = D.Unit.Amount %in% c(
+        "%", "% Diet", "% Concentrate",
+        "g/kg", "g/kg DM", "g/kg DMI",
+        "g/L"
+      )
+    ) %>%
+    
+    # ------------------------------------------------------------------
+    # 3) Harmonise time units to "day"
+    #    → Only change D.Amount when NOT relative
+    # ------------------------------------------------------------------
+    mutate(
+      D.Amount = case_when(
+        !is_relative & D.Unit.Time == "week"            ~ D.Amount / 7,
+        !is_relative & D.Unit.Time == "month"           ~ D.Amount / 30,
+        !is_relative & D.Unit.Time == "2 weeks"         ~ D.Amount / 14,
+        !is_relative & D.Unit.Time == "4 days interval" ~ D.Amount / 4,
+        !is_relative & D.Unit.Time == "2x/day"          ~ D.Amount * 2,
+        TRUE                                            ~ D.Amount
       ),
-
-      # Remove units if amount is NA
-      D.Unit.Amount = ifelse(is.na(D.Amount), NA_character_, D.Unit.Amount),
-      D.Unit.Time = ifelse(is.na(D.Amount), NA_character_, D.Unit.Time),
+      D.Unit.Time = case_when(
+        D.Unit.Time %in% c("week", "month", "2 weeks",
+                           "4 days interval", "2x/day") ~ "day",
+        D.Unit.Time == "experiment"                     ~ D.Unit.Time,
+        TRUE                                            ~ D.Unit.Time
+      )
+    ) %>%
+    
+    # ------------------------------------------------------------------
+    # 4) Standardise animal unit labels (no scaling here)
+    #    → we’ll do numeric scaling later and *skip* relative units
+    # ------------------------------------------------------------------
+    mutate(
+      D.Unit.Animals = case_when(
+        is_relative & is.na(D.Unit.Animals) ~ "individual",
+        TRUE                                ~ D.Unit.Animals
+      )
+    ) %>%
+    
+    # ------------------------------------------------------------------
+    # 5) Drop units if amount is NA
+    # ------------------------------------------------------------------
+    mutate(
+      D.Unit.Amount  = ifelse(is.na(D.Amount), NA_character_, D.Unit.Amount),
+      D.Unit.Time    = ifelse(is.na(D.Amount), NA_character_, D.Unit.Time),
       D.Unit.Animals = ifelse(is.na(D.Amount), NA_character_, D.Unit.Animals)
     )
 }
@@ -644,22 +684,32 @@ reps <- merged_metadata$MT.Out %>%
   distinct(B.Code, A.Level.Name, .keep_all = TRUE)
 
 # Adjust for 'all animals in replicate'
+# → Only scale for *absolute* units (NOT for composition units)
 ingredients <- ingredients %>%
-  left_join(reps %>% dplyr::select(B.Code, A.Level.Name, T.Animals), by = c("B.Code", "A.Level.Name")) %>%
+  left_join(reps %>% dplyr::select(B.Code, A.Level.Name, T.Animals),
+            by = c("B.Code", "A.Level.Name")) %>%
   mutate(
+    is_relative = D.Unit.Amount %in% c(
+      "%", "% Diet", "% Concentrate",
+      "g/kg", "g/kg DM", "g/kg DMI",
+      "g/L"
+    ),
     D.Amount = case_when(
-      D.Unit.Animals == "all animals in replicate" & !is.na(T.Animals) ~ D.Amount / T.Animals,
+      D.Unit.Animals == "all animals in replicate" &
+        !is.na(T.Animals) & !is_relative ~ D.Amount / T.Animals,
       TRUE ~ D.Amount
     ),
-    D.Unit.Animals = ifelse(D.Unit.Animals == "all animals in replicate", "individual", D.Unit.Animals)
-  )
+    D.Unit.Animals = ifelse(D.Unit.Animals == "all animals in replicate",
+                            "individual", D.Unit.Animals)
+  ) %>%
+  select(-is_relative)
 
 # Refresh Units column
 ingredients <- ingredients %>%
   mutate(Units = paste(D.Unit.Amount, D.Unit.Time, D.Unit.Animals, sep = ";"))
 
 # Cleanup
-rm(harmonize_units,reps,feed_data)
+rm(harmonize_units, reps)
 
 ```
 
@@ -667,41 +717,61 @@ rm(harmonize_units,reps,feed_data)
 ### 1.6) remove experimental scales because no times and then amounts are too big 
 
 ```{r}
-# ingredients<-ingredients%>%
-#   filter(D.Unit.Time!="experiment")
-# 
-# # --- Fix unit representation for LM0128 to "g day individual" -------------------
-# ingredients <- ingredients %>%
-#   mutate(
-#     # Convert mg → g for LM0128
-#     D.Amount = if_else(B.Code == "LM0128" & D.Unit.Amount == "mg",
-#                        D.Amount / 1000,   # convert mg to g
-#                        D.Amount),
-#     # Update all relevant unit fields for LM0128
-#     D.Unit.Amount = if_else(B.Code == "LM0128", "g", D.Unit.Amount),
-#     D.Unit.Time = if_else(B.Code == "LM0128", "day", D.Unit.Time),
-#     D.Unit.Animals = if_else(B.Code == "LM0128", "individual", D.Unit.Animals),
-#     # Combine them into a single standardized unit descriptor
-#     D.Unit.Standard = if_else(B.Code == "LM0128",
-#                               "g day individual",
-#                               paste(D.Unit.Amount, D.Unit.Time, D.Unit.Animals))
-#   )
-# 
-# merged_metadata$Animals.Diet <- merged_metadata$Animals.Diet %>%
-#   mutate(
-#     # Convert mg → g for LM0128
-#     D.Amount = if_else(B.Code == "LM0128" & D.Unit.Amount == "mg",
-#                        D.Amount / 1000,   # convert mg to g
-#                        D.Amount),
-#     # Update all relevant unit fields for LM0128
-#     D.Unit.Amount = if_else(B.Code == "LM0128", "g", D.Unit.Amount),
-#     D.Unit.Time = if_else(B.Code == "LM0128", "day", D.Unit.Time),
-#     D.Unit.Animals = if_else(B.Code == "LM0128", "individual", D.Unit.Animals),
-#     # Combine them into a single standardized unit descriptor
-#     D.Unit.Standard = if_else(B.Code == "LM0128",
-#                               "g day individual",
-#                               paste(D.Unit.Amount, D.Unit.Time, D.Unit.Animals))
-#   )
+# 1) Define relative / composition units
+relative_units <- c(
+  "%", "% Diet", "% Basal Diet", "% Body Mass", "% Herbaceous Cover",
+  "% Shrub Species", "% of concentrate", "% concentrate", "% Concentrate",
+  "% of supplement", "% Grass Hay Mixture", "% of Total Grazing Area",
+  "% of Control Diet(Natural Pasture Hay)", "% single cell protein",
+  "estimated % Body Mass",
+  "g/kg", "g/kg metabolic weight", "g/kg body weight", "g/kg  Maize Grain",
+  "g/kg DM", "g/kg DMI",
+  "g/L", "g/10 L water", "g/Nitrogen",
+  "ml/L of water"  # also relative to a carrier
+)
+
+# 2) Drop only *absolute* experiment-scale doses
+ingredients <- ingredients %>%
+  filter(
+    # keep all rows that are NOT experiment-scale
+    D.Unit.Time != "experiment" |
+      # or, if they are experiment-scale, keep only if the unit is relative
+      D.Unit.Amount %in% relative_units
+  )
+
+
+# --- Fix unit representation for LM0128 to "g day individual" -------------------
+ingredients <- ingredients %>%
+  mutate(
+    # Convert mg → g for LM0128
+    D.Amount = if_else(B.Code == "LM0128" & D.Unit.Amount == "mg",
+                       D.Amount / 1000,   # convert mg to g
+                       D.Amount),
+    # Update all relevant unit fields for LM0128
+    D.Unit.Amount = if_else(B.Code == "LM0128", "g", D.Unit.Amount),
+    D.Unit.Time = if_else(B.Code == "LM0128", "day", D.Unit.Time),
+    D.Unit.Animals = if_else(B.Code == "LM0128", "individual", D.Unit.Animals),
+    # Combine them into a single standardized unit descriptor
+    D.Unit.Standard = if_else(B.Code == "LM0128",
+                              "g day individual",
+                              paste(D.Unit.Amount, D.Unit.Time, D.Unit.Animals))
+  )
+
+merged_metadata$Animals.Diet <- merged_metadata$Animals.Diet %>%
+  mutate(
+    # Convert mg → g for LM0128
+    D.Amount = if_else(B.Code == "LM0128" & D.Unit.Amount == "mg",
+                       D.Amount / 1000,   # convert mg to g
+                       D.Amount),
+    # Update all relevant unit fields for LM0128
+    D.Unit.Amount = if_else(B.Code == "LM0128", "g", D.Unit.Amount),
+    D.Unit.Time = if_else(B.Code == "LM0128", "day", D.Unit.Time),
+    D.Unit.Animals = if_else(B.Code == "LM0128", "individual", D.Unit.Animals),
+    # Combine them into a single standardized unit descriptor
+    D.Unit.Standard = if_else(B.Code == "LM0128",
+                              "g day individual",
+                              paste(D.Unit.Amount, D.Unit.Time, D.Unit.Animals))
+  )
 
 ```
 
@@ -969,7 +1039,6 @@ missing_unit_feed_intake<- merged_metadata$Data.Out %>%
 # ─────────────────────────────────────────────────────────────
 #  PRE-CLEANING (applied directly to merged_metadata$Data.Out)
 # ─────────────────────────────────────────────────────────────
-
 merged_metadata$Data.Out <- merged_metadata$Data.Out %>%
   mutate(
     Out.Unit = tolower(trimws(Out.Unit))
@@ -977,24 +1046,31 @@ merged_metadata$Data.Out <- merged_metadata$Data.Out %>%
   mutate(
     # AG0051: feed intake units should be kg/day (values 8–9 kg realistic)
     Out.Unit = if_else(
-      B.Code == "AG0051" & str_detect(Out.Unit, "^g")&  str_detect(Out.Code.Joined, "^Feed Intake"),
+      B.Code == "AG0051" & str_detect(Out.Unit, "^g") & str_detect(Out.Code.Joined, "^Feed Intake"),
       "kg/individual/day", Out.Unit
     ),
 
     # NN0212: entire-diet feed intake given in g/day (~70 g/day realistic)
     Out.Unit = if_else(
-      B.Code == "NN0212" & str_detect(Out.Unit, "^g") &  str_detect(Out.Code.Joined, "^Feed Intake"),
+      B.Code == "NN0212" & str_detect(Out.Unit, "^g") & str_detect(Out.Code.Joined, "^Feed Intake"),
       "g dm/kg body weight (0.75)", Out.Unit
+    ),
+
+    # LM0104: values stored as kg but actually grams per individual per day
+    Out.Unit = if_else(
+      B.Code == "LM0104" & str_detect(Out.Unit, "^kg") & str_detect(Out.Code.Joined, "^Feed Intake"),
+      "g/individual/day",  # or "g dm/individual/day" if you know it's DM
+      Out.Unit
     ),
 
     # NN0217: some rows use kg/day but actually g/kg metabolic weight
     Out.Unit = case_when(
-      B.Code == "NN0217" & str_detect(Out.Unit, "kg dm/individual/day") &  str_detect(Out.Code.Joined, "^Feed Intake") ~
+      B.Code == "NN0217" & str_detect(Out.Unit, "kg dm/individual/day") & str_detect(Out.Code.Joined, "^Feed Intake") ~
         "g dm/individual/day",
       TRUE ~ Out.Unit
     ),
-     Out.Unit = case_when(
-      B.Code == "NN0234" & str_detect(Out.Unit, "kg dm/individual/day") &  str_detect(Out.Code.Joined, "^Feed Intake") ~
+    Out.Unit = case_when(
+      B.Code == "NN0234" & str_detect(Out.Unit, "kg dm/individual/day") & str_detect(Out.Code.Joined, "^Feed Intake") ~
         "g dm/individual/day",
       TRUE ~ Out.Unit
     ),
@@ -1011,46 +1087,111 @@ merged_metadata$Data.Out <- merged_metadata$Data.Out %>%
 
 #### 2.4.1) Harmonization of feed intake data
 
+# when there are more than one feed intake for the same thing but different units 
+
 ```{r}
+# ============================================================
+# De-duplicate feed-intake rows in Data.Out by unit preference
+# ============================================================
+
+# Work on a lowercase / trimmed version of Out.Unit first
+merged_metadata$Data.Out <- merged_metadata$Data.Out %>%
+  mutate(
+    Out.Unit = tolower(trimws(Out.Unit))
+  )
+
+# Split feed-intake vs other outputs
+data_out_feed <- merged_metadata$Data.Out %>%
+  filter(Out.Subind == "Feed Intake")
+
+data_out_other <- merged_metadata$Data.Out %>%
+  filter(Out.Subind != "Feed Intake")
+
+# Define preferences for feed-intake units
+# (adjust this list if needed)
+data_out_feed <- data_out_feed %>%
+  mutate(
+    priority = case_when(
+      # best: already in kg/individual/day (or DM version)
+      Out.Unit %in% c("kg/individual/day", "kg dm/individual/day") ~ 1L,
+
+      # second-best: g per individual per day
+      Out.Unit %in% c("g/individual/day", "g dm/individual/day") ~ 2L,
+
+      # everything else (e.g. g dm/kg bw^0.75, %, etc.)
+      TRUE ~ 3L
+    )
+  ) %>%
+  group_by(B.Code, A.Level.Name, ED.Intake.Item) %>%
+  arrange(
+    priority,                 # 1 < 2 < 3
+    desc(!is.na(ED.Error))    # within same priority, prefer rows with an SE
+  ) %>%
+  slice(1) %>%                # keep only the best row per diet
+  ungroup() %>%
+  select(-priority)
+
+# Recombine with all non-feed-intake rows
+merged_metadata$Data.Out <- bind_rows(
+  data_out_other,
+  data_out_feed
+) %>%
+  arrange(B.Code, A.Level.Name, Out.Subind)
+
+```
+
+
+```{r}
+# ============================================================
+# Build clean feed_intake table (kg DM or kg fresh / animal / day)
+# Drop BW-based intakes if no body weight is available
+# ============================================================
+
+library(dplyr)
+library(stringr)
+library(forcats)
+
+# ---- 1) Extract and parse feed-intake rows ------------------
 
 feed_intake <- merged_metadata$Data.Out %>%
-  select(B.Code, A.Level.Name, ED.Intake.Item, ED.Intake.Item.Raw,
-         ED.Mean.T, ED.Error, Out.Unit, Out.Subind,P.Product,
-         is_entire_diet, is_group, T.Animals) %>%
+  select(
+    B.Code, A.Level.Name, ED.Intake.Item, ED.Intake.Item.Raw,
+    ED.Mean.T, ED.Error, Out.Unit, Out.Subind, P.Product,
+    is_entire_diet, is_group, T.Animals
+  ) %>%
   filter(Out.Subind == "Feed Intake") %>%
   filter(!is.na(ED.Mean.T)) %>%
-  # ───────────────────────────────────────────────────────────────────────
+  # normalise "entire diet" label
   mutate(
     is_entire = is.na(ED.Intake.Item.Raw) | ED.Intake.Item.Raw == "",
     ED.Intake.Item.Raw = if_else(is_entire, "Entire Diet", ED.Intake.Item.Raw),
     ED.Intake.Item     = if_else(is_entire, "Entire Diet", ED.Intake.Item)
   ) %>%
   select(-is_entire) %>%
-  # ───────────────────────────────────────────────────────────────────────
+  # parse unit into amount / animals / time
   mutate(
     Out.Unit = tolower(trimws(Out.Unit)),
     # default when unit is NA or empty: g/individual/day
     Out.Unit = if_else(is.na(Out.Unit) | Out.Unit == "", "g/individual/day", Out.Unit),
+
     Out.Unit.Animals = str_extract(Out.Unit, "\\b(individual|replicate|animal replicate)\\b"),
     Out.Unit.Time    = str_extract(Out.Unit, "\\b(day|d|yr|year|experiment)\\b"),
     Out.Unit.Amount  = Out.Unit %>%
       str_remove_all("\\b(individual|replicate|animal replicate)\\b") %>%
-      str_remove_all("\\b(day|d|yr|year)\\b") %>%
+      str_remove_all("\\b(day|d|yr|year|experiment)\\b") %>%
       str_replace_all("/+", "/") %>%
       str_trim() %>%
       str_remove("/$")
   )
-  
 
+# ---- 2) Convert replicate-level intake to individual-level ---
 
-# Step 3: Convert replicate-level intake to individual-level when possible
 feed_intake <- feed_intake %>%
   mutate(
-    # Ensure numeric type
     ED.Mean.T = as.numeric(ED.Mean.T),
     T.Animals = as.numeric(T.Animals),
 
-    # Convert intake and update unit
+    # replicate -> individual
     ED.Mean.T = case_when(
       Out.Unit.Animals == "replicate" & !is.na(T.Animals) & T.Animals > 0 ~ ED.Mean.T / T.Animals,
       TRUE ~ ED.Mean.T
@@ -1061,19 +1202,17 @@ feed_intake <- feed_intake %>%
     )
   ) %>%
   mutate(
-  Out.Unit = case_when(
-    !is.na(Out.Unit.Amount) & !is.na(Out.Unit.Animals) & !is.na(Out.Unit.Time) ~
-      paste0(Out.Unit.Amount, "/", Out.Unit.Animals, "/", Out.Unit.Time),
-    !is.na(Out.Unit.Amount) & !is.na(Out.Unit.Animals) ~
-      paste0(Out.Unit.Amount, "/", Out.Unit.Animals),
-    TRUE ~ Out.Unit  # fallback to whatever was already there
+    Out.Unit = case_when(
+      !is.na(Out.Unit.Amount) & !is.na(Out.Unit.Animals) & !is.na(Out.Unit.Time) ~
+        paste0(Out.Unit.Amount, "/", Out.Unit.Animals, "/", Out.Unit.Time),
+      !is.na(Out.Unit.Amount) & !is.na(Out.Unit.Animals) ~
+        paste0(Out.Unit.Amount, "/", Out.Unit.Animals),
+      TRUE ~ Out.Unit
+    )
   )
-)
 
+# ---- 3) Normalise parsed unit parts for matching -------------
 
-
-
-# 1) Normalize parsed unit parts so matching works
 feed_intake_norm <- feed_intake %>%
   mutate(
     Out.Unit.Animals = tolower(Out.Unit.Animals) %>%
@@ -1084,12 +1223,13 @@ feed_intake_norm <- feed_intake %>%
       str_squish()
   )
 
-# 1️⃣ Define preferences
+# preferences for deduplicating multiple units for same diet item
 preferred_units   <- c("kg dm", "kg", "g dm", "g")  # dm first, then fresh
 preferred_time    <- "day"
 preferred_animals <- "individual"
 
-# 2️⃣ Prioritize and keep one row per (paper × diet item)
+# ---- 4) Prioritise and keep one row per (paper × diet item) --
+
 feed_intake <- feed_intake_norm %>%
   mutate(
     priority = case_when(
@@ -1102,26 +1242,22 @@ feed_intake <- feed_intake_norm %>%
         Out.Unit.Animals == preferred_animals ~ 2L,
       TRUE ~ 3L
     ),
-    # numeric ranking for the preferred_units order
     unit_rank = match(Out.Unit.Amount, preferred_units)
   ) %>%
   group_by(B.Code, A.Level.Name, ED.Intake.Item) %>%
   arrange(
-    priority,                          # 1 < 2 < 3
-    desc(Out.Unit.Time == "day"),      # prefer daily if all are prio 3
+    priority,
+    desc(Out.Unit.Time == "day"),
     desc(Out.Unit.Animals == "individual"),
-    unit_rank,                         # follow kg dm > kg > g dm > g
+    unit_rank,
     !is.na(ED.Error)
   ) %>%
   slice(1) %>%
   ungroup() %>%
   select(-priority, -unit_rank)
 
+# ---- 5) Join body weight and fill within animal level --------
 
-### keep unique units of ingredients 
-
-
-# Step 3: Join body weight
 feed_intake <- feed_intake %>%
   left_join(
     weights_unique %>%
@@ -1130,70 +1266,94 @@ feed_intake <- feed_intake %>%
   ) %>%
   group_by(A.Level.Name) %>%
   mutate(
-    Out.WG.Start = ifelse(is.na(Out.WG.Start),
-                          first(na.omit(Out.WG.Start)),
-                          Out.WG.Start)
+    Out.WG.Start = ifelse(
+      is.na(Out.WG.Start),
+      first(na.omit(Out.WG.Start)),
+      Out.WG.Start
+    )
   ) %>%
   ungroup() %>%
   distinct()
 
-# Step 4: Convert ED.Mean.T to kg/day
+# ---- 6) Convert ED.Mean.T to kg/day where possible -----------
+
 feed_intake <- feed_intake %>%
   mutate(
-    Out.Unit = trimws(tolower(Out.Unit)),
+    Out.Unit       = trimws(tolower(Out.Unit)),
     Out.Unit.Amount = trimws(str_remove(Out.Unit.Amount, "/$")),
-    
-    # Convert ED.Mean.T to kg/day where possible
+
+    # numeric conversion
     ED.Mean.T = case_when(
       Out.Unit.Amount %in% c("g", "g dm") ~ ED.Mean.T / 1000,
       Out.Unit.Amount %in% c("kg", "kg dm") ~ ED.Mean.T,
       Out.Unit.Amount == "g dm/100 g" ~ ED.Mean.T * 10 / 1000,
       Out.Unit.Amount == "g/week" ~ ED.Mean.T / 7 / 1000,
       Out.Unit.Amount == "mg" ~ ED.Mean.T / 1e6,
-      
-      # Body weight–based conversions only if Out.WG.Start is not NA
-      Out.Unit.Amount %in% c("g dm/kg metabolic weight", "g/kg metabolic weight", "g dm/kg metabolic weight") & !is.na(Out.WG.Start) ~ 
-        (ED.Mean.T * Out.WG.Start^0.75) / 1000,
 
-      Out.Unit.Amount == "kg dm/kg metabolic weight" & !is.na(Out.WG.Start) ~ 
-        ED.Mean.T * Out.WG.Start^0.75,
+      # body-weight–based conversions only if BW available
+      Out.Unit.Amount %in% c("g dm/kg metabolic weight", "g/kg metabolic weight", "g dm/kg metabolic weight") &
+        !is.na(Out.WG.Start) ~ (ED.Mean.T * Out.WG.Start^0.75) / 1000,
 
-      Out.Unit.Amount %in% c("g dm/kg body weight", "g/kg body weight", "g/g body weight") & !is.na(Out.WG.Start) ~ 
-        (ED.Mean.T * Out.WG.Start) / 1000,
+      Out.Unit.Amount == "kg dm/kg metabolic weight" &
+        !is.na(Out.WG.Start) ~ ED.Mean.T * Out.WG.Start^0.75,
 
-      Out.Unit.Amount %in% c("g/kg body weight (0.75)", "g dm/kg body weight (0.75)") & !is.na(Out.WG.Start) ~ 
-        (ED.Mean.T * Out.WG.Start^0.75) / 1000,
+      Out.Unit.Amount %in% c("g dm/kg body weight", "g/kg body weight", "g/g body weight") &
+        !is.na(Out.WG.Start) ~ (ED.Mean.T * Out.WG.Start) / 1000,
 
-      Out.Unit.Amount %in% c("% body weight", "dm % body weight") & !is.na(Out.WG.Start) ~ 
-        (ED.Mean.T / 100) * Out.WG.Start,
+      Out.Unit.Amount %in% c("g/kg body weight (0.75)", "g dm/kg body weight (0.75)") &
+        !is.na(Out.WG.Start) ~ (ED.Mean.T * Out.WG.Start^0.75) / 1000,
 
-      TRUE ~ ED.Mean.T  # fallback: leave unchanged
+      Out.Unit.Amount %in% c("% body weight", "dm % body weight") &
+        !is.na(Out.WG.Start) ~ (ED.Mean.T / 100) * Out.WG.Start,
+
+      TRUE ~ ED.Mean.T
     ),
 
-    # Only update unit if we were able to convert to kg
+    # only update unit if we actually converted to kg
     Out.Unit.Amount = case_when(
-      Out.Unit.Amount %in% c("g", "g dm", "g dm/100 g", "g/week", "mg","kg dm") ~ "kg",
-      Out.Unit.Amount %in% c("g/kg body weight", "g dm/kg body weight", "g/g body weight") & !is.na(Out.WG.Start) ~ "kg",
-      Out.Unit.Amount %in% c("g/kg metabolic weight", "g dm/kg metabolic weight", "g dm/kg metabolic weight") & !is.na(Out.WG.Start) ~ "kg",
-      Out.Unit.Amount %in% c("kg dm/kg metabolic weight") & !is.na(Out.WG.Start) ~ "kg",
-      Out.Unit.Amount %in% c("g/kg body weight (0.75)", "g dm/kg body weight (0.75)") & !is.na(Out.WG.Start) ~ "kg",
-      Out.Unit.Amount %in% c("% body weight", "dm % body weight") & !is.na(Out.WG.Start) ~ "kg",
-      TRUE ~ Out.Unit.Amount  # keep the original if no conversion
+      Out.Unit.Amount %in% c("g", "g dm", "g dm/100 g", "g/week", "mg", "kg dm") ~ "kg",
+      Out.Unit.Amount %in% c("g/kg body weight", "g dm/kg body weight", "g/g body weight") &
+        !is.na(Out.WG.Start) ~ "kg",
+      Out.Unit.Amount %in% c("g/kg metabolic weight", "g dm/kg metabolic weight") &
+        !is.na(Out.WG.Start) ~ "kg",
+      Out.Unit.Amount == "kg dm/kg metabolic weight" &
+        !is.na(Out.WG.Start) ~ "kg",
+      Out.Unit.Amount %in% c("g/kg body weight (0.75)", "g dm/kg body weight (0.75)") &
+        !is.na(Out.WG.Start) ~ "kg",
+      Out.Unit.Amount %in% c("% body weight", "dm % body weight") &
+        !is.na(Out.WG.Start) ~ "kg",
+      TRUE ~ Out.Unit.Amount
     )
   ) %>%
   select(-Out.Unit)
 
-# Retain most interpretable row per intake item
+# ---- 7) DROP BW-based rows with NO body weight ---------------
+
+feed_intake <- feed_intake %>%
+  filter(
+    !(
+      str_detect(Out.Unit.Amount, "body weight|metabolic weight") &
+      is.na(Out.WG.Start)
+    )
+  )
+
+# ---- 8) Retain the most interpretable row per intake item ----
+
 feed_intake <- feed_intake %>%
   group_by(B.Code, A.Level.Name, ED.Intake.Item.Raw) %>%
   arrange(
-    desc(!is.na(ED.Mean.T)), 
+    desc(!is.na(ED.Mean.T)),
     desc(Out.Unit.Amount == "kg"),
     desc(Out.Unit.Animals == "individual"),
     desc(Out.Unit.Time == "day")
   ) %>%
   slice(1) %>%
   ungroup()
+
+# ---- 9) Remove experiment-scale intakes ----------------------
+
+feed_intake <- feed_intake %>%
+  filter(Out.Unit.Time != "experiment")
 
 ```
 
@@ -1231,7 +1391,6 @@ suspicious_feed_intake <- feed_intake %>%
     )
   ) %>% 
   filter(!is.na(flag))%>%
-  filter(P.Product %in% c("Cattle","Sheep","Goat"))%>%
   filter(is_entire_diet=="TRUE")
 
 print(suspicious_feed_intake)
@@ -1242,7 +1401,72 @@ print(suspicious_feed_intake)
 
 ```
 
+## when all in % and one mising ing 
 
+
+```{r}
+# ignore water / minerals / salt when checking "true" missing ingredients
+ignore_pattern <- "(?i)water|mineral|salt"
+
+perc_complement <- ingredients %>%
+  group_by(B.Code, A.Level.Name) %>%
+  summarise(
+    # flag salt / mineral / water rows
+    is_smw   = grepl(ignore_pattern, D.Item),
+
+    # how many "real" (non-salt/mineral/water) ingredients in this diet?
+    n_non_smw = sum(!is_smw),
+
+    # 1) all known amounts in this diet must be % / % Diet
+    all_perc = all(D.Unit.Amount[!is.na(D.Amount)] %in% c("%", "% Diet")),
+
+    # 2) count "true" missing ingredients = NA amount and NOT salt/mineral/water
+    n_missing = sum(is.na(D.Amount) & !is_smw),
+
+    # 3) name of the (only) missing non-salt/mineral/water ingredient
+    missing_item = first(D.Item[is.na(D.Amount) & !is_smw]),
+
+    # 4) sum of all known % amounts (including salt/mineral/water if present)
+    sum_known = sum(D.Amount[!is.na(D.Amount)], na.rm = TRUE),
+
+    .groups = "drop"
+  ) %>%
+  # keep only diets where:
+  #  • all known amounts are in %, AND
+  #  • exactly one non-SMW ingredient is missing, AND
+  #  • there is more than one non-SMW ingredient overall
+  filter(all_perc, n_missing == 1, n_non_smw > 1) %>%
+  mutate(
+    fill_value_raw = 100 - sum_known,
+    # drop obviously bad negatives
+    fill_value = ifelse(fill_value_raw < 0, NA_real_, fill_value_raw)
+  ) %>%
+  # do NOT fill if computed % is 0 or 100
+  filter(!is.na(fill_value), fill_value > 0, fill_value < 100) %>%
+  select(B.Code, A.Level.Name, missing_item, fill_value) %>%
+  distinct()
+
+# Apply the complement
+ingredients <- ingredients %>%
+  left_join(
+    perc_complement,
+    by = c("B.Code", "A.Level.Name", "D.Item" = "missing_item")
+  ) %>%
+  mutate(
+    # fill only where we have a valid fill_value
+    D.Amount = ifelse(is.na(D.Amount) & !is.na(fill_value),
+                      fill_value,
+                      D.Amount),
+
+    # for those filled rows, standardise unit to "% Diet"
+    D.Unit.Amount = ifelse(!is.na(fill_value),
+                           "% Diet",
+                           D.Unit.Amount)
+  ) %>%
+  select(-fill_value) %>%
+  distinct()
+
+```
 
 #### 2.4.3) Use of feed intake for ingredient amounts
 
@@ -1262,8 +1486,9 @@ When we translate relative inclusion rates (“% of diet”, “g kg⁻¹ diet
 
 
 ```{r}
-library(dplyr)
-library(stringr)
+
+
+
 
 ## ----------------------------------------------------------
 ## 0. Ensure Source column exists
@@ -1331,7 +1556,7 @@ ingredients_fi <- ingredients_clean %>%
 ## ----------------------------------------------------------
 ## 5. Replace amounts using feed_intake priority
 ## ----------------------------------------------------------
-ingredients_fi <- ingredients_fi %>%
+ingredients <- ingredients_fi %>%
   mutate(
     has_ing   = !is.na(ing_intake),
     has_total = !is.na(total_intake),
@@ -1375,251 +1600,354 @@ ingredients_fi <- ingredients_fi %>%
     "total_intake","total_unit_amount","total_unit_time","total_unit_animals",
     "ED_item_clean",
     "D.Amount_new","D.Unit.Amount_new","D.Unit.Time_new","D.Unit.Animals_new"
-  )))
-
-## ----------------------------------------------------------
-## 6. IMPORT ALL MISSING FEED-INTAKE ITEMS (YOUR NEW RULE!)
-## ----------------------------------------------------------
-missing_ing <- feed_intake %>%
-  filter(!is_entire_diet) %>%      # everything except entire diet
-  anti_join(
-    ingredients_fi,
-    by = c("B.Code","A.Level.Name","ED.Intake.Item"="D.Item")
-  )
-
-imported_from_fi <- missing_ing %>%
-  transmute(
-    B.Code, A.Level.Name,
-    D.Item         = ED.Intake.Item,
-    D.Type         = "Imported_from_feed_intake",
-    D.Amount       = ED.Mean.T,
-    D.Unit.Amount  = Out.Unit.Amount,
-    D.Unit.Time    = Out.Unit.Time,
-    D.Unit.Animals = Out.Unit.Animals,
-    DC.Is.Dry      = NA,
-    D.Ad.lib       = NA,
-    D.Item.Group   = NA_character_,
-    D.Item.AOM     = NA_character_,
-    AOM.Scientific.Name = NA_character_,
-    Source         = "feed_intake",
-    intake_source  = "feed_intake_only"
-  )
-
-## ----------------------------------------------------------
-## FINAL OUTPUT
-## ----------------------------------------------------------
-ingredients_final <- bind_rows(ingredients_fi, imported_from_fi) %>%
+  )))%>%
   distinct()
 
 
+
+
 ```
+
+
+# when we dont have amount for one element but we have full diet intake 
+
+```{r}
+# -------------------------------------------------------------------
+# 1) Measured diet-level intake (already in kg / animal / day)
+# -------------------------------------------------------------------
+diet_intake <- feed_intake %>%
+  filter(is_entire_diet) %>%                       # only "Entire Diet" rows
+  transmute(
+    B.Code,
+    A.Level.Name,
+    P.Product,
+    diet_intake_kg     = ED.Mean.T,                # already harmonised to kg/d
+    diet_intake_source = "measured_feed_intake"
+  ) %>%
+  # ensure one row per diet
+  group_by(B.Code, A.Level.Name) %>%
+  summarise(
+    P.Product       = first(P.Product),
+    diet_intake_kg  = mean(diet_intake_kg, na.rm = TRUE),
+    diet_intake_source = first(diet_intake_source),
+    .groups = "drop"
+  )
+
+# -------------------------------------------------------------------
+# 2) Complement-fill ONE missing ingredient using total intake
+#     (excluding water/mineral/salt as "true" ingredients)
+#     + keep tables of where it applies / fails
+# -------------------------------------------------------------------
+ignore_pattern <- "(?i)water|mineral|salt"
+
+compl_candidates <- ingredients %>%
+  # attach measured diet intake
+  left_join(diet_intake, by = c("B.Code", "A.Level.Name")) %>%
+  mutate(
+    # flag water/mineral/salt rows
+    is_smw = grepl(ignore_pattern, D.Item),
+
+    # amounts converted to kg for mass-balance (only g / kg are usable)
+    amount_kg = case_when(
+      !is.na(D.Amount) & D.Unit.Amount == "kg" ~ D.Amount,
+      !is.na(D.Amount) & D.Unit.Amount == "g"  ~ D.Amount / 1000,
+      TRUE                                    ~ NA_real_
+    ),
+
+    # for non-SMW, non-missing rows, we demand g or kg per individual per day
+    ok_unit = is.na(D.Amount) | (                             # <- NOTE: "|" not "||"
+      D.Unit.Amount %in% c("g", "kg") &
+      (is.na(D.Unit.Time)    | D.Unit.Time    == "day") &
+      (is.na(D.Unit.Animals) | D.Unit.Animals == "individual")
+    )
+  ) %>%
+  group_by(B.Code, A.Level.Name) %>%
+  summarise(
+    P.Product       = first(P.Product),
+    diet_intake_kg  = first(diet_intake_kg),
+    has_diet_intake = !is.na(diet_intake_kg),
+
+    # how many non-SMW ingredients in this diet?
+    n_non_smw       = sum(!is_smw),
+
+    # all non-SMW, non-missing ingredients have acceptable units?
+    all_ok_units    = all(ok_unit[!is_smw & !is.na(D.Amount)]),
+
+    # number of "true" missing ingredients (non-SMW with NA amount)
+    n_missing       = sum(is.na(D.Amount) & !is_smw),
+
+    # name of the (only) missing non-SMW ingredient
+    missing_item    = first(D.Item[is.na(D.Amount) & !is_smw]),
+
+    # sum of all known ingredient intakes in kg (including SMW if known)
+    sum_known_kg    = sum(amount_kg[!is.na(amount_kg)], na.rm = TRUE),
+
+    .groups = "drop"
+  ) %>%
+  # We only *consider* complementing when:
+  #  - we have measured diet intake
+  #  - all "real" ingredients have usable units
+  #  - exactly one real ingredient is missing
+  #  - there is more than one real ingredient overall
+  filter(
+    has_diet_intake,
+    all_ok_units,
+    n_missing == 1,
+    n_non_smw > 1
+  ) %>%
+  mutate(
+    complement_kg = diet_intake_kg - sum_known_kg,
+    complement_kg = ifelse(complement_kg < 0, 0, complement_kg)
+  )
+
+# 🔎 TABLE 1: cases where complement_kg == 0 (nothing left to allocate)
+compl_zero_tbl <- compl_candidates %>%
+  filter(complement_kg == 0) %>%
+  select(B.Code, A.Level.Name, P.Product,
+         missing_item, diet_intake_kg, sum_known_kg, complement_kg)
+
+# 🔎 TABLE 2: cases where we *actually* impute an ingredient
+compl_use_tbl <- compl_candidates %>%
+  filter(complement_kg > 0) %>%
+  select(B.Code, A.Level.Name, P.Product,
+         missing_item, diet_intake_kg, sum_known_kg, complement_kg)
+
+# This is the table used to update ingredients:
+compl_info <- compl_use_tbl %>%
+  select(B.Code, A.Level.Name, missing_item, complement_kg)
+
+# -------------------------------------------------------------------
+# 3) Apply complement to ingredients table
+# -------------------------------------------------------------------
+ingredients <- ingredients %>%
+  left_join(
+    compl_info,
+    by = c("B.Code", "A.Level.Name", "D.Item" = "missing_item")
+  ) %>%
+  mutate(
+    # fill missing ingredient amount in kg/day
+    D.Amount       = ifelse(!is.na(complement_kg), complement_kg, D.Amount),
+    D.Unit.Amount  = ifelse(!is.na(complement_kg), "kg",  D.Unit.Amount),
+    D.Unit.Time    = ifelse(!is.na(complement_kg), "day", D.Unit.Time),
+    D.Unit.Animals = ifelse(!is.na(complement_kg), "individual", D.Unit.Animals),
+
+    # provenance flag
+    D.Type = ifelse(
+      !is.na(complement_kg),
+      ifelse(is.na(D.Type),
+             "complement_from_total_intake",
+             paste0(D.Type, ";complement_from_total_intake")),
+      D.Type
+    )
+  ) %>%
+  select(-complement_kg)
+
+
+```
+
+
+
+
 ## diet groups 
 
 Some basal diet ingredients feed intake are given in the data out tab but for group of ingredients. The aim of this chunck is to give for each of those ingredient the right correponsing intake . 
 
 harmonize names 
 ```{r}
-library(readxl)
-library(dplyr)
-library(stringr)
-library(tidyr)
-library(purrr)
-
-###############################################################################
-### 0) Load master-sheet
-###############################################################################
-
-url <- "https://github.com/Mlolita26/ERA_Docs/raw/main/era_master_sheet(17).xlsx"
-temp_file <- tempfile(fileext = ".xlsx")
-
-download.file(url, destfile = temp_file, mode = "wb")
-mastersheet <- read_excel(temp_file, sheet = "ani_diet")
-
-###############################################################################
-### 1) Build master-sheet token lookup
-###############################################################################
-
-master_token_table <- mastersheet %>%
-  mutate(
-    D.Item.full  = D.Item,
-    D.Item.token = str_split(D.Item, ";")
-  ) %>%
-  unnest_longer(D.Item.token) %>%
-  mutate(
-    D.Item.token   = trimws(tolower(D.Item.token)),
-    canonical_name = D.Item.Root.Comp.Proc_Major
-  ) %>%
-  filter(D.Item.token != "")
-
-###############################################################################
-### 2) Expand grouped ingredients and handle special process tokens
-###############################################################################
-
-special_processes <- c("drying", "fresh", "ensilation")
-
-ingredients_groups <- ingredients_final %>%
-  filter(str_detect(D.Item, ";")) %>%
-  mutate(
-    D.Item.original = D.Item,
-    raw_tokens      = str_split(D.Item, ";")
-  ) %>%
-  mutate(
-    raw_tokens = map(raw_tokens, function(tokens) {
-
-      cleaned <- character(0)
-
-      for (t in tokens) {
-
-        t_clean <- trimws(t)
-        t_low   <- trimws(tolower(t_clean))
-
-        if (length(cleaned) == 0) {
-
-          cleaned <- c(cleaned, t_clean)
-
-        } else if (t_low %in% special_processes) {
-
-          # Append processing to previous ingredient
-          cleaned[length(cleaned)] <- paste0(
-            cleaned[length(cleaned)], "||", tools::toTitleCase(t_low)
-          )
-
-        } else {
-          cleaned <- c(cleaned, t_clean)
-        }
-      }
-
-      cleaned
-    })
-  ) %>%
-  select(-D.Item) %>%
-  unnest_longer(raw_tokens, values_to = "token_raw") %>%
-  mutate(
-    token_raw   = trimws(token_raw),
-    token_match = trimws(tolower(token_raw))
-  )
-
-###############################################################################
-### 3) Match tokens to master-sheet
-###############################################################################
-
-ingredients_matched <- ingredients_groups %>%
-  left_join(master_token_table,
-            by = c("token_match" = "D.Item.token"),
-            multiple = "all") %>%
-  mutate(
-    matched       = !is.na(canonical_name),
-    unmatched     =  is.na(canonical_name),
-    token_cleaned = ifelse(matched, canonical_name, token_raw)
-  )
-
-###############################################################################
-### 4) Split D.Amount proportionally across grouped items
-###############################################################################
-
-ingredients_matched <- ingredients_matched %>%
-  group_by(B.Code, A.Level.Name, D.Item.original) %>%
-  mutate(
-    n_items  = n(),
-    D.Amount = D.Amount / n_items
-  ) %>%
-  ungroup()
-
-###############################################################################
-### 5) Build cleaned expanded ingredient table
-###############################################################################
-
-ingredients_cleaned_expanded <- ingredients_matched %>%
-  mutate(D.Item = token_cleaned) %>%
-  select(
-    B.Code, A.Level.Name, D.Item,
-    D.Type, D.Amount, D.Unit.Amount, D.Unit.Time, D.Unit.Animals,
-    DC.Is.Dry, D.Ad.lib, D.Item.Group, AOM.Scientific.Name,
-    Source, Units, T.Animals, Out.WG.Start, Out.WG.Unit,
-    intake_source,
-    D.Item.original,
-    token_raw, token_cleaned,
-    matched, unmatched,
-    D.Item.full
-  )
-
-###############################################################################
-### 6) Add original rows without ";" unchanged
-###############################################################################
-
-ingredients_expanded <- bind_rows(
-  ingredients_final %>% filter(!str_detect(D.Item, ";")),
-  ingredients_cleaned_expanded
-)
-
-
-ingredients_expanded <- ingredients_expanded %>%
-  group_by(B.Code, A.Level.Name) %>%
-  mutate(
-    # all ingredients actually present in the diet before feed-intake imports
-    diet_items = list(unique(D.Item[D.Type != "Imported_from_feed_intake"])),
-
-    # identify feed-intake rows introducing NEW ingredients
-    is_new_feedintake_item =
-      D.Type == "Imported_from_feed_intake" &
-      !(D.Item %in% diet_items[[1]])
-  ) %>%
-  ungroup() %>%
-  filter(!is_new_feedintake_item) %>%
-  select(-diet_items, -is_new_feedintake_item)
-
-
-###############################################################################
-### 7) Build original ingredient name universe
-###############################################################################
-
-original_items <- ingredients_final %>%
-  mutate(D.Item.clean = trimws(tolower(D.Item))) %>%
-  distinct(B.Code, A.Level.Name, D.Item.clean)
-
-###############################################################################
-### 8) Identify extracted items NOT in original ingredient list
-###############################################################################
-
-ingredients_expanded2 <- ingredients_expanded %>%
-  mutate(D.Item.clean = trimws(tolower(D.Item)))
-
-ingredients_extracted_only <- ingredients_expanded2 %>%
-  anti_join(original_items,
-            by = c("B.Code", "A.Level.Name", "D.Item.clean"))
-
-###############################################################################
-### 9) Keep only items originally present in ingredient list
-###############################################################################
-
-ingredients_expanded_clean <- ingredients_expanded2 %>%
-  semi_join(original_items,
-            by = c("B.Code", "A.Level.Name", "D.Item.clean"))
-
-###############################################################################
-### 10) Deduplicate: prioritize ingredient rows over feed intake rows
-###############################################################################
-
-ingredients <- ingredients_expanded_clean %>%
-  group_by(B.Code, A.Level.Name, D.Item) %>%
-  arrange(
-    desc(intake_source == "feed_intake_only" & !is.na(D.Amount)),
-    desc(!is.na(D.Amount)),
-    intake_source == "feed_intake_only"
-  ) %>%
-  slice(1) %>%
-  ungroup()
+# library(readxl)
+# library(dplyr)
+# library(stringr)
+# library(tidyr)
+# library(purrr)
+# 
+# ###############################################################################
+# ### 0) Load master-sheet
+# ###############################################################################
+# 
+# url <- "https://github.com/Mlolita26/ERA_Docs/raw/main/era_master_sheet(17).xlsx"
+# temp_file <- tempfile(fileext = ".xlsx")
+# 
+# download.file(url, destfile = temp_file, mode = "wb")
+# mastersheet <- read_excel(temp_file, sheet = "ani_diet")
+# 
+# ###############################################################################
+# ### 1) Build master-sheet token lookup
+# ###############################################################################
+# 
+# master_token_table <- mastersheet %>%
+#   mutate(
+#     D.Item.full  = D.Item,
+#     D.Item.token = str_split(D.Item, ";")
+#   ) %>%
+#   unnest_longer(D.Item.token) %>%
+#   mutate(
+#     D.Item.token   = trimws(tolower(D.Item.token)),
+#     canonical_name = D.Item.Root.Comp.Proc_Major
+#   ) %>%
+#   filter(D.Item.token != "")
+# 
+# ###############################################################################
+# ### 2) Expand grouped ingredients and handle special process tokens
+# ###############################################################################
+# 
+# special_processes <- c("drying", "fresh", "ensilation")
+# 
+# ingredients_groups <- ingredients %>%
+#   filter(str_detect(D.Item, ";")) %>%
+#   mutate(
+#     D.Item.original = D.Item,
+#     raw_tokens      = str_split(D.Item, ";")
+#   ) %>%
+#   mutate(
+#     raw_tokens = map(raw_tokens, function(tokens) {
+# 
+#       cleaned <- character(0)
+# 
+#       for (t in tokens) {
+# 
+#         t_clean <- trimws(t)
+#         t_low   <- trimws(tolower(t_clean))
+# 
+#         if (length(cleaned) == 0) {
+# 
+#           cleaned <- c(cleaned, t_clean)
+# 
+#         } else if (t_low %in% special_processes) {
+# 
+#           # Append processing to previous ingredient
+#           cleaned[length(cleaned)] <- paste0(
+#             cleaned[length(cleaned)], "||", tools::toTitleCase(t_low)
+#           )
+# 
+#         } else {
+#           cleaned <- c(cleaned, t_clean)
+#         }
+#       }
+# 
+#       cleaned
+#     })
+#   ) %>%
+#   select(-D.Item) %>%
+#   unnest_longer(raw_tokens, values_to = "token_raw") %>%
+#   mutate(
+#     token_raw   = trimws(token_raw),
+#     token_match = trimws(tolower(token_raw))
+#   )
+# 
+# ###############################################################################
+# ### 3) Match tokens to master-sheet
+# ###############################################################################
+# 
+# ingredients_matched <- ingredients_groups %>%
+#   left_join(master_token_table,
+#             by = c("token_match" = "D.Item.token"),
+#             multiple = "all") %>%
+#   mutate(
+#     matched       = !is.na(canonical_name),
+#     unmatched     =  is.na(canonical_name),
+#     token_cleaned = ifelse(matched, canonical_name, token_raw)
+#   )
+# 
+# ###############################################################################
+# ### 4) Split D.Amount proportionally across grouped items
+# ###############################################################################
+# 
+# ingredients_matched <- ingredients_matched %>%
+#   group_by(B.Code, A.Level.Name, D.Item.original) %>%
+#   mutate(
+#     n_items  = n(),
+#     D.Amount = D.Amount / n_items
+#   ) %>%
+#   ungroup()
+# 
+# ###############################################################################
+# ### 5) Build cleaned expanded ingredient table
+# ###############################################################################
+# 
+# ingredients_cleaned_expanded <- ingredients_matched %>%
+#   mutate(D.Item = token_cleaned) %>%
+#   select(
+#     B.Code, A.Level.Name, D.Item,
+#     D.Type, D.Amount, D.Unit.Amount, D.Unit.Time, D.Unit.Animals,
+#     DC.Is.Dry, D.Ad.lib, D.Item.Group, AOM.Scientific.Name,
+#     Source, Units, T.Animals, Out.WG.Start, Out.WG.Unit,
+#     intake_source,
+#     D.Item.original,
+#     token_raw, token_cleaned,
+#     matched, unmatched,
+#     D.Item.full
+#   )
+# 
+# ###############################################################################
+# ### 6) Add original rows without ";" unchanged
+# ###############################################################################
+# 
+# ingredients_expanded <- bind_rows(
+#   ingredients %>% filter(!str_detect(D.Item, ";")),
+#   ingredients_cleaned_expanded
+# )
+# 
+# 
+# ingredients_expanded <- ingredients_expanded %>%
+#   group_by(B.Code, A.Level.Name) %>%
+#   mutate(
+#     # all ingredients actually present in the diet before feed-intake imports
+#     diet_items = list(unique(D.Item[D.Type != "Imported_from_feed_intake"])),
+# 
+#     # identify feed-intake rows introducing NEW ingredients
+#     is_new_feedintake_item =
+#       D.Type == "Imported_from_feed_intake" &
+#       !(D.Item %in% diet_items[[1]])
+#   ) %>%
+#   ungroup() %>%
+#   filter(!is_new_feedintake_item) %>%
+#   select(-diet_items, -is_new_feedintake_item)
+# 
+# 
+# ###############################################################################
+# ### 7) Build original ingredient name universe
+# ###############################################################################
+# 
+# original_items <- ingredients %>%
+#   mutate(D.Item.clean = trimws(tolower(D.Item))) %>%
+#   distinct(B.Code, A.Level.Name, D.Item.clean)
+# 
+# ###############################################################################
+# ### 8) Identify extracted items NOT in original ingredient list
+# ###############################################################################
+# 
+# ingredients_expanded2 <- ingredients_expanded %>%
+#   mutate(D.Item.clean = trimws(tolower(D.Item)))
+# 
+# ingredients_extracted_only <- ingredients_expanded2 %>%
+#   anti_join(original_items,
+#             by = c("B.Code", "A.Level.Name", "D.Item.clean"))
+# 
+# ###############################################################################
+# ### 9) Keep only items originally present in ingredient list
+# ###############################################################################
+# 
+# ingredients_expanded_clean <- ingredients_expanded2 %>%
+#   semi_join(original_items,
+#             by = c("B.Code", "A.Level.Name", "D.Item.clean"))
+# 
+# ###############################################################################
+# ### 10) Deduplicate: prioritize ingredient rows over feed intake rows
+# ###############################################################################
+# 
+# ingredients <- ingredients_expanded_clean %>%
+#   group_by(B.Code, A.Level.Name, D.Item) %>%
+#   arrange(
+#     desc(intake_source == "feed_intake_only" & !is.na(D.Amount)),
+#     desc(!is.na(D.Amount)),
+#     intake_source == "feed_intake_only"
+#   ) %>%
+#   slice(1) %>%
+#   ungroup()
 
 ```
 
-### 4.2) Estimate total feed intake at the diet level to deduce missing ingredients intake. 
-
-added a final step that automatically fills exactly one missing ingredient amount per diet by subtracting the sum of known ingredient amounts from the total diet intake, ensuring every diet is mass-balanced when complete feed-intake data exist.
-So when amount is missing use complete diet feed intake info 
-
-OR 
-
-use Andy equations from https://www.cambridge.org/core/journals/animal/article/abs/nutritional-requirements-of-sheep-goats-and-cattle-in-warm-climates-a-metaanalysis/FBD20A80D070721414426A94E87888B8 
+### use Andy equations from https://www.cambridge.org/core/journals/animal/article/abs/nutritional-requirements-of-sheep-goats-and-cattle-in-warm-climates-a-metaanalysis/FBD20A80D070721414426A94E87888B8 
 then we could get total estimated intake for the missing ones and deduce the missing ingredients. That could also work for the diets for which we only have % and no mentioned amount or intake. 
 
 
@@ -1656,8 +1984,7 @@ diet_intake_measured <- feed_intake %>%
     diet_intake_kg      = ED.Mean.T,               # already in kg/d
     diet_intake_source  = "measured_feed_intake"
   ) %>%
-  distinct()%>%
-  filter(P.Product %in% c("Cattle","Sheep","Goat"))
+  distinct()
 
 ## ---------------------------------------------------------------------------
 ## 2) Predicted DMI using Archimède eq. for ALL diets with BW
@@ -1703,8 +2030,9 @@ diet_intake_all <- bind_rows(
   distinct(B.Code, A.Level.Name, .keep_all = TRUE)
 
 ## ---------------------------------------------------------------------------
+## ---------------------------------------------------------------------------
 ## 3bis) Evaluate Archimède predictions vs measured FI (diagnostics only)
-##       (does NOT affect diet_intake_all)
+##       (with R² and RMSE, overall and by species)
 ## ---------------------------------------------------------------------------
 
 dmi_eval <- diet_intake_measured %>%
@@ -1715,10 +2043,7 @@ dmi_eval <- diet_intake_measured %>%
   ) %>%
   filter(!is.na(pred_diet_intake_kg)) %>%
   mutate(
-    error_kg      = pred_diet_intake_kg - diet_intake_kg,
-    abs_error_kg  = abs(error_kg),
-    rel_error     = error_kg / diet_intake_kg,
-    abs_rel_error = abs(rel_error)
+    error_kg = pred_diet_intake_kg - diet_intake_kg
   ) %>%
   left_join(
     merged_metadata$Prod.Out %>%
@@ -1726,27 +2051,40 @@ dmi_eval <- diet_intake_measured %>%
     by = "B.Code"
   )
 
+## ---- overall diagnostics (R² & RMSE) --------------------------------------
 dmi_eval_overall <- dmi_eval %>%
   summarise(
-    n_diets    = n(),
-    mean_obs   = mean(diet_intake_kg, na.rm = TRUE),
-    mean_pred  = mean(pred_diet_intake_kg, na.rm = TRUE),
-    bias_kg    = mean(error_kg, na.rm = TRUE),
-    mae_kg     = mean(abs_error_kg, na.rm = TRUE),
-    mape_pct   = mean(abs_rel_error, na.rm = TRUE) * 100
-  )
+    n_diets   = n(),
+    mean_obs  = mean(diet_intake_kg, na.rm = TRUE),
+    mean_pred = mean(pred_diet_intake_kg, na.rm = TRUE),
 
+    # RMSE in kg / d
+    rmse_kg = sqrt(mean(error_kg^2, na.rm = TRUE)),
+
+    # R² = 1 - SSE/SST
+    sse = sum((diet_intake_kg - pred_diet_intake_kg)^2, na.rm = TRUE),
+    sst = sum((diet_intake_kg - mean(diet_intake_kg, na.rm = TRUE))^2, na.rm = TRUE),
+    r2  = ifelse(sst > 0, 1 - sse/sst, NA_real_)
+  ) %>%
+  select(-sse, -sst)   # drop internals
+
+## ---- diagnostics by species (R² & RMSE) -----------------------------------
 dmi_eval_by_species <- dmi_eval %>%
   group_by(P.Product.x) %>%
   summarise(
-    n_diets    = n(),
-    mean_obs   = mean(diet_intake_kg, na.rm = TRUE),
-    mean_pred  = mean(pred_diet_intake_kg, na.rm = TRUE),
-    bias_kg    = mean(error_kg, na.rm = TRUE),
-    mae_kg     = mean(abs_error_kg, na.rm = TRUE),
-    mape_pct   = mean(abs_rel_error, na.rm = TRUE) * 100,
-    .groups    = "drop"
-  )
+    n_diets   = n(),
+    mean_obs  = mean(diet_intake_kg, na.rm = TRUE),
+    mean_pred = mean(pred_diet_intake_kg, na.rm = TRUE),
+
+    rmse_kg = sqrt(mean(error_kg^2, na.rm = TRUE)),
+
+    sse = sum((diet_intake_kg - pred_diet_intake_kg)^2, na.rm = TRUE),
+    sst = sum((diet_intake_kg - mean(diet_intake_kg, na.rm = TRUE))^2, na.rm = TRUE),
+    r2  = ifelse(sst > 0, 1 - sse/sst, NA_real_),
+
+    .groups = "drop"
+  ) %>%
+  select(-sse, -sst)
 
 
 library(ggplot2)
@@ -1775,151 +2113,285 @@ p_dmi
 ```
 
 
+
+## impute feed intake of ingrdients by substracting estimated feed intake by the total feed intake of ingredients 
+
 ```{r}
-# ## ---------------------------------------------------------------------------
-# ## 4) Use diet_intake_all to convert diets defined ONLY in relative units
-# ##    (% / % Diet / g·kg⁻¹) where NO absolute amount exists.
-# ##    These are typically the "we only have %" + no feed intake cases.
-# ## ---------------------------------------------------------------------------
-# 
-# # Identify diets where:
-# #  - we have diet_intake (measured OR predicted),
-# #  - at least one relative unit (% or g/kg),
-# #  - NO absolute (g or kg) ingredient amount yet.
-# rel_only_diets <- ingredients %>%
-#   left_join(diet_intake_all, by = c("B.Code", "A.Level.Name")) %>%
-#   group_by(B.Code, A.Level.Name) %>%
-#   summarise(
-#     has_diet_intake = any(!is.na(diet_intake_kg)),
-#     has_abs = any(D.Unit.Amount %in% c("g", "kg") & !is.na(D.Amount)),
-#     has_rel = any(D.Unit.Amount %in% c("%", "% Diet", "g/kg") & !is.na(D.Amount)),
-#     .groups = "drop"
-#   ) %>%
-#   filter(has_diet_intake, !has_abs, has_rel)
-# 
-# rel_key <- rel_only_diets %>%
-#   mutate(key = paste(B.Code, A.Level.Name)) %>%
-#   pull(key)
-# 
-# ingredients <- ingredients %>%
-#   left_join(diet_intake_all, by = c("B.Code", "A.Level.Name")) %>%
-#   mutate(
-#     diet_key      = paste(B.Code, A.Level.Name),
-#     use_rel_pred  = diet_key %in% rel_key
-#   ) %>%
-#   mutate(
-#     # Convert relative units to kg/day using diet_intake_kg
-#     D.Amount = case_when(
-#       use_rel_pred & D.Unit.Amount %in% c("%", "% Diet") &
-#         !is.na(D.Amount) & !is.na(diet_intake_kg) ~
-#         (D.Amount / 100) * diet_intake_kg,                     # kg/d
-# 
-#       use_rel_pred & D.Unit.Amount == "g/kg" &
-#         !is.na(D.Amount) & !is.na(diet_intake_kg) ~
-#         (D.Amount * diet_intake_kg) / 1000,                    # g/kg * kg = g -> /1000 -> kg
-# 
-#       TRUE ~ D.Amount
-#     ),
-#     D.Unit.Amount = case_when(
-#       use_rel_pred & D.Unit.Amount %in% c("%", "% Diet", "g/kg") &
-#         !is.na(diet_intake_kg) ~ "kg",
-#       TRUE ~ D.Unit.Amount
-#     ),
-#     # Flag provenance of these amounts
-#     D.Type = dplyr::case_when(
-#       use_rel_pred & !is.na(diet_intake_kg) &
-#         (D.Unit.Amount == "kg") ~
-#         ifelse(is.na(D.Type),
-#                "from_predicted_DMI_Archimede2014",
-#                paste0(D.Type, ";from_predicted_DMI_Archimede2014")),
-#       TRUE ~ D.Type
-#     )
-#   ) %>%
-#   select(-diet_key)
-# 
-# ## ---------------------------------------------------------------------------
-# ## ---------------------------------------------------------------------------
-# ## 5) COMPLEMENT FILL:
-# ##    For diets where we know total intake (measured or predicted)
-# ##    and EXACTLY ONE non-mineral/salt/water ingredient still has NA D.Amount,
-# ##    compute that missing amount as:
-# ##      total_intake_kg - sum_known_ingredients_kg
-# ## ---------------------------------------------------------------------------
-# 
-# # First, attach diet_intake_kg cleanly (avoid .x/.y suffixes)
-# ingredients_with_dietintake <- ingredients %>%
-#   # drop any previous diet_intake columns if they exist
-#   dplyr::select(-dplyr::any_of(c("diet_intake_kg", "diet_intake_source"))) %>%
-#   left_join(diet_intake_all, by = c("B.Code", "A.Level.Name"))
-# 
-# # Compute complement values at diet level
-# complement_info <- ingredients_with_dietintake %>%
-#   group_by(B.Code, A.Level.Name) %>%
-#   summarise(
-#     # take first non-NA diet_intake_kg, or NA if none
-#     total_intake = {
-#       x <- diet_intake_kg[!is.na(diet_intake_kg)]
-#       if (length(x) == 0) NA_real_ else x[1]
-#     },                                                  # kg/d
-#     n_missing    = sum(is.na(D.Amount) & !ignore_for_balance),
-#     missing_item = {
-#       idx <- which(is.na(D.Amount) & !ignore_for_balance)
-#       if (length(idx) == 0) NA_character_ else D.Item[idx[1]]
-#     },
-#     sum_known    = sum(D.Amount[!is.na(D.Amount) & !ignore_for_balance],
-#                        na.rm = TRUE),
-#     .groups      = "drop"
-#   ) %>%
-#   # Only fill when: we know total intake AND exactly one missing amount
-#   filter(!is.na(total_intake), n_missing == 1) %>%
-#   mutate(
-#     complement_value = total_intake - sum_known,
-#     complement_value = ifelse(complement_value < 0, 0, complement_value)  # avoid negative
-#   )
-# 
-# # Merge complement back into the original `ingredients` table
-# ingredients <- ingredients %>%
-#   left_join(
-#     complement_info %>%
-#       select(B.Code, A.Level.Name, missing_item, complement_value),
-#     by = c("B.Code", "A.Level.Name", "D.Item" = "missing_item")
-#   ) %>%
-#   mutate(
-#     # Fill missing amount where complement_value is available
-#     D.Amount = ifelse(is.na(D.Amount) & !is.na(complement_value),
-#                       complement_value,
-#                       D.Amount),
-# 
-#     # Standardise units for complemented amount
-#     D.Unit.Amount  = ifelse(!is.na(complement_value), "kg", D.Unit.Amount),
-#     D.Unit.Time    = ifelse(!is.na(complement_value), "day", D.Unit.Time),
-#     D.Unit.Animals = ifelse(!is.na(complement_value), "individual", D.Unit.Animals),
-# 
-#     # Flag provenance
-#     D.Type = ifelse(!is.na(complement_value),
-#                     ifelse(is.na(D.Type),
-#                            "complement_from_total_intake",
-#                            paste0(D.Type, ";complement_from_total_intake")),
-#                     D.Type)
-#   ) %>%
-#   select(-complement_value)
-# 
-# # Clean helper column
-# ingredients <- ingredients %>%
-#   select(-ignore_for_balance)
+## ---------------------------------------------------------------------------
+## 4.2ter) Complement-fill ONE missing absolute ingredient per diet
+##         using measured/predicted total DMI (diet_intake_all)
+##         (only diets where all non-missing ingredients are NOT in
+##          %, % Diet, or g/kg)
+## ---------------------------------------------------------------------------
 
+# 1) Summarise diets that qualify for complementing
+abs_complement_info <- ingredients %>%
+  left_join(diet_intake_all, by = c("B.Code", "A.Level.Name")) %>%
+  group_by(B.Code, A.Level.Name) %>%
+  summarise(
+    # total intake in kg/d (first non-NA if any)
+    total_intake_kg = {
+      v <- na.omit(diet_intake_kg)
+      if (length(v) == 0) NA_real_ else v[1]
+    },
 
-###############################################################################
-### END Archimède-based DMI + complement + evaluation block
-###############################################################################
+    # counts restricted to mass-balance ingredients
+    n_missing_abs = sum(
+      is.na(D.Amount) &
+        !ignore_for_balance &
+        !(D.Unit.Amount %in% c("%", "% Diet", "g/kg"))
+    ),
+    n_rel = sum(
+      !is.na(D.Amount) &
+        !ignore_for_balance &
+        D.Unit.Amount %in% c("%", "% Diet", "g/kg")
+    ),
+    n_abs_non_missing = sum(
+      !is.na(D.Amount) &
+        !ignore_for_balance &
+        !(D.Unit.Amount %in% c("%", "% Diet", "g/kg"))
+    ),
+
+    missing_item = {
+      idx <- which(
+        is.na(D.Amount) &
+          !ignore_for_balance &
+          !(D.Unit.Amount %in% c("%", "% Diet", "g/kg"))
+      )
+      if (length(idx) == 0) NA_character_ else D.Item[idx[1]]
+    },
+
+    # sum of known absolute ingredient intakes in kg/d
+    sum_known_kg = sum(
+      dplyr::case_when(
+        !is.na(D.Amount) &
+          !ignore_for_balance &
+          !(D.Unit.Amount %in% c("%", "% Diet", "g/kg")) &
+          D.Unit.Amount == "kg" ~ D.Amount,
+        !is.na(D.Amount) &
+          !ignore_for_balance &
+          !(D.Unit.Amount %in% c("%", "% Diet", "g/kg")) &
+          D.Unit.Amount == "g"  ~ D.Amount / 1000,
+        TRUE ~ 0
+      ),
+      na.rm = TRUE
+    ),
+    .groups = "drop"
+  ) %>%
+  # keep diets with: total intake known, exactly one missing abs ingredient,
+  # no relative-unit ingredients, and at least one known abs ingredient
+  filter(
+    !is.na(total_intake_kg),
+    n_missing_abs == 1,
+    n_rel == 0,
+    n_abs_non_missing > 0
+  ) %>%
+  mutate(
+    complement_value_kg = pmax(total_intake_kg - sum_known_kg, 0)
+  )
+
+# Optional: table to inspect which diets were complemented
+one_missing_abs_diets <- abs_complement_info %>%
+  select(
+    B.Code, A.Level.Name,
+    total_intake_kg, sum_known_kg,
+    complement_value_kg, n_abs_non_missing
+  )
+
+# 2) Apply complement to the missing ingredient rows in `ingredients`
+ingredients <- ingredients %>%
+  left_join(
+    abs_complement_info %>%
+      select(B.Code, A.Level.Name, missing_item, complement_value_kg),
+    by = c("B.Code", "A.Level.Name", "D.Item" = "missing_item")
+  ) %>%
+  mutate(
+    # fill only where we have a complement_value_kg
+    D.Amount = dplyr::if_else(
+      is.na(D.Amount) & !is.na(complement_value_kg),
+      complement_value_kg,
+      D.Amount
+    ),
+    D.Unit.Amount = dplyr::if_else(
+      !is.na(complement_value_kg),
+      "kg",
+      D.Unit.Amount
+    ),
+    D.Unit.Time = dplyr::if_else(
+      !is.na(complement_value_kg) & is.na(D.Unit.Time),
+      "day",
+      D.Unit.Time
+    ),
+    D.Unit.Animals = dplyr::if_else(
+      !is.na(complement_value_kg) & is.na(D.Unit.Animals),
+      "individual",
+      D.Unit.Animals
+    ),
+    D.Type = dplyr::case_when(
+      !is.na(complement_value_kg) & is.na(D.Type) ~
+        "complement_from_total_intake_archimede",
+      !is.na(complement_value_kg) & !is.na(D.Type) ~
+        paste0(D.Type, ";complement_from_total_intake_archimede"),
+      TRUE ~ D.Type
+    )
+  ) %>%
+  select(-complement_value_kg)
+
+# If you’re done with mass-balance helpers, you can drop this now:
+# ingredients <- ingredients %>% select(-ignore_for_balance)
 
 ```
 
+## use full diet intake (estimated) to change % to kg in amounts units 
 
+```{r}
+## ============================================================
+## 4.x) Convert diets where *all* ingredients are in % / % Diet
+##      (no missing amounts) using total intake from diet_intake_all
+##      (measured if available, otherwise Archimède prediction)
+## ============================================================
+
+# 1) Flag diet-level % properties ------------------------------------
+diet_pct_flag <- ingredients %>%
+  group_by(B.Code, A.Level.Name) %>%
+  summarise(
+    # all non-missing amounts in this diet are % or % Diet
+    all_in_pct = all(D.Unit.Amount[!is.na(D.Amount)] %in% c("%", "% Diet")),
+
+    # there are no missing amounts in this diet
+    no_missing = all(!is.na(D.Amount)),
+
+    # sum of all % / % Diet amounts
+    sum_pct = ifelse(
+      all_in_pct,
+      sum(D.Amount[D.Unit.Amount %in% c("%", "% Diet")], na.rm = TRUE),
+      NA_real_
+    ),
+
+    n_rows = n(),
+    .groups = "drop"
+  )
+
+# 2) Keep only diets that are pure-% and well-formed -----------------
+#    and attach measured or Archimède intake from diet_intake_all
+pct_diets_eligible <- diet_pct_flag %>%
+  filter(
+    all_in_pct,
+    no_missing,
+    !is.na(sum_pct),
+    sum_pct > 80,    # e.g. sanity window for total %
+    sum_pct < 120
+  ) %>%
+  inner_join(
+    diet_intake_all %>%      # IMPORTANT: use measured + Archimède, not diet_intake only
+      select(B.Code, A.Level.Name, P.Product,
+             diet_intake_kg, diet_intake_source),
+    by = c("B.Code", "A.Level.Name")
+  )
+
+# optional: keep a log / separate dataset of these diets
+pct_diets_log <- pct_diets_eligible %>%
+  select(B.Code, A.Level.Name, P.Product,
+         all_in_pct, no_missing, sum_pct,
+         diet_intake_kg, diet_intake_source, n_rows)
+
+# 3) Apply conversion for those diets only ---------------------------
+ingredients <- ingredients %>%
+  left_join(
+    pct_diets_eligible %>%
+      select(B.Code, A.Level.Name, diet_intake_kg, diet_intake_source),
+    by = c("B.Code", "A.Level.Name")
+  ) %>%
+  mutate(
+    # we convert only when:
+    #  - that diet is flagged as eligible (has diet_intake_kg from the join)
+    #  - this row is % or % Diet
+    #  - amount is non-missing
+    use_pct_conv = !is.na(diet_intake_kg) &
+                   D.Unit.Amount %in% c("%", "% Diet") &
+                   !is.na(D.Amount),
+
+    # convert % to kg using (pct / 100) * total intake
+    D.Amount = case_when(
+      use_pct_conv ~ (D.Amount / 100) * diet_intake_kg,
+      TRUE         ~ D.Amount
+    ),
+
+    # set units for converted rows
+    D.Unit.Amount = case_when(
+      use_pct_conv ~ "kg",
+      TRUE         ~ D.Unit.Amount
+    ),
+    D.Unit.Time = case_when(
+      use_pct_conv & is.na(D.Unit.Time) ~ "day",
+      TRUE                              ~ D.Unit.Time
+    ),
+    D.Unit.Animals = case_when(
+      use_pct_conv & is.na(D.Unit.Animals) ~ "individual",
+      TRUE                                 ~ D.Unit.Animals
+    ),
+
+    # provenance tag: note whether we used measured or archimede
+    D.Type = case_when(
+      use_pct_conv & is.na(D.Type) ~
+        paste0("from_pct_using_", diet_intake_source),
+      use_pct_conv & !is.na(D.Type) ~
+        paste0(D.Type, ";from_pct_using_", diet_intake_source),
+      TRUE ~ D.Type
+    )
+  ) %>%
+  select(-diet_intake_kg, -diet_intake_source, -use_pct_conv)
+
+
+```
 BO1017 remove the ones with NA because the data is here -> extraction pb 
 remove all the mineral and salt and water 
 
 BO1018
+
+
+## diag 
+
+```{r}
+ingredients <- ingredients %>%
+  filter(
+    # keep everything EXCEPT rows that:
+    #  - have NA amount
+    #  - and are salt / mineral / water
+    !( is.na(D.Amount) &
+       grepl("(?i)water|mineral|salt", D.Item) )
+  )
+
+
+diagnostics <- ingredients %>%
+  group_by(B.Code, A.Level.Name) %>%
+  summarise(
+    # any ingredients expressed in % or % Diet?
+    has_pct      = any(D.Unit.Amount %in% c("%", "% Diet"), na.rm = TRUE),
+    n_pct        = sum(D.Unit.Amount %in% c("%", "% Diet"), na.rm = TRUE),
+
+    # missing amounts (any)
+    has_missing_any   = any(is.na(D.Amount)),
+    n_missing_any     = sum(is.na(D.Amount)),
+
+    # "true" missing amounts = excluding water/mineral/salt rows
+    has_missing_true  = any(is.na(D.Amount) & !grepl(ignore_pattern, D.Item)),
+    n_missing_true    = sum(is.na(D.Amount) & !grepl(ignore_pattern, D.Item)),
+
+    n_rows = n(),
+    .groups = "drop"
+  ) %>%
+  # keep only diets with % ingredients OR true missing amounts
+  filter(has_pct | has_missing_true)
+
+# Optional: ingredient-level view restricted to those diets
+diagnostic_ingredients <- ingredients %>%
+  inner_join(
+    diagnostics %>% select(B.Code, A.Level.Name),
+    by = c("B.Code", "A.Level.Name")
+  )
+```
+
 
 ## 9) Tagg ingredient with control or trt 
 
@@ -1985,21 +2457,21 @@ feed_intake_diet <- feed_intake_diet %>%
 
 
 
-saveRDS(merged_metadata, "~/Emission_Analysis/data/merged_metadata_harmonized.rds")
+saveRDS(merged_metadata, "C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/merged_metadata_harmonized.rds")
 
 
-saveRDS(ingredients, "~/Emission_Analysis/data/ingredients_harmonized.rds")
+saveRDS(ingredients, "C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/ingredients_harmonized.rds")
 write.csv(ingredients, "~/Emission_Analysis/data/ingredients_harmonized.csv")
 
 
-write.csv(feed_intake, "~/Emission_Analysis/data/feed_intake_harmonized.csv")
+write.csv(feed_intake, "C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/feed_intake_harmonized.csv")
 
-write.csv(feed_intake, "~/Emission_Analysis/data/feed_intake_ingredients_harmonized.csv")
-write.csv(feed_intake, "~/Emission_Analysis/data/feed_intake_diet_harmonized.csv")
+write.csv(feed_intake, "C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/feed_intake_ingredients_harmonized.csv")
+write.csv(feed_intake, "C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/feed_intake_diet_harmonized.csv")
 
-write.csv(feed_intake_diet, "~/Emission_Analysis/data/diet_intake_final.csv")
+write.csv(feed_intake_diet, "C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/diet_intake_final.csv")
 
-write.csv(weights_unique, "~/Emission_Analysis/data/weights_unique.csv")
+write.csv(weights_unique, "C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/weights_unique.csv")
 
 
 

@@ -5,8 +5,8 @@ date: "2025-09-26"
 ---
 
 ```{r}
-ingredients <- read.csv("~/Emission_Analysis/data/ingredients_harmonized_subset.rds")
-feed_intake <- read.csv("~/Emission_Analysis/data/feed_intake_harmonized.csv")
+ingredients <- read.csv("C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/ingredients_harmonized_subset.rds")
+feed_intake <- read.csv("C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/feed_intake_harmonized.csv")
 
 ```
 
@@ -16,57 +16,63 @@ feed_intake <- read.csv("~/Emission_Analysis/data/feed_intake_harmonized.csv")
 This table presents the relative percentage of each ingredient within a diet. To ensure accurate proportion calculations, we first filtered the dataset to include only diets with consistent units. Diets with incompatible or non-harmonizable units were excluded, as their proportions could not be reliably determined.
 
 ```{r,message=FALSE,warning=FALSE}
-# ────────────────────────────────────────────────────────────────────────────
-# (a) Ingredient-based totals  ----------------------------------------------
-consistent_diets <- ingredients %>%                       # ignore “Entire Diet” rows
+## 1. INGREDIENT-BASED TOTALS (ignoring ingredients with NA amount) ---------
+
+# Drop ingredients with missing amount (treat as non-existing)
+ingredients_nonmissing <- ingredients %>%
+  filter(!is.na(D.Amount))
+
+# Keep only diets where (non-missing) ingredients share a single unit
+consistent_diets <- ingredients_nonmissing %>%
   group_by(B.Code, A.Level.Name) %>%
-  mutate(Unit_Count = n_distinct(D.Unit.Amount)) %>%      # always 1 after conversion
-  filter(Unit_Count == 1) %>%                             # keep only single-unit diets
+  mutate(Unit_Count = n_distinct(D.Unit.Amount)) %>%   # based only on non-missing rows
+  filter(Unit_Count == 1) %>%                          # keep diets with a single unit
   ungroup()
 
-diet_completeness <- consistent_diets %>% 
-  group_by(B.Code, A.Level.Name) %>%
-  summarise(
-    n_total      = n(),
-    n_nonmissing = sum(!is.na(D.Amount)),
-    .groups      = "drop"
-  ) %>%
-  filter(n_total == n_nonmissing)
-
+# Sum ingredient amounts within each diet (all in the same unit)
 total_ingr <- consistent_diets %>%
-  semi_join(diet_completeness, by = c("B.Code", "A.Level.Name")) %>%
   group_by(B.Code, A.Level.Name, D.Unit.Amount) %>%
-  summarise(Total_Amount_ingr = sum(D.Amount), .groups = "drop")
+  summarise(
+    Total_Amount_ingr = sum(D.Amount),
+    .groups = "drop"
+  )
 
-# ────────────────────────────────────────────────────────────────────────────
-# (b) Whole-diet feed-intake rows  ------------------------------------------
-#     Use the ORIGINAL ‘feed_intake’ table, because that still carries
-#     ED.Mean.T and Out.Unit.Amount.
-feed_intake_diet_g <- feed_intake %>% 
-  filter(is_entire_diet) %>%                               # only full-diet rows
+## 2. WHOLE-DIET FEED-INTAKE TOTALS (absolute g/animal/day) -----------------
+
+feed_intake_diet_g <- feed_intake %>%
+  filter(is_entire_diet) %>%   # only full-diet rows
   mutate(
-    Intake_Amount_g = case_when(                           # kg → g
-      Out.Unit.Amount == "kg" ~ ED.Mean.T * 1000,
-      Out.Unit.Amount == "g"  ~ ED.Mean.T,
-      TRUE                    ~ NA_real_
+    Intake_Amount_g = case_when(
+      Out.Unit.Amount == "kg" ~ ED.Mean.T * 1000,  # kg → g
+      Out.Unit.Amount == "g"  ~ ED.Mean.T,         # already g
+      TRUE                    ~ NA_real_           # other units not handled here
     ),
-    D.Unit.Amount = "g"                                     # unify the unit
-  ) %>% 
+    D.Unit.Amount = "g"        # unify intake-based totals to g
+  ) %>%
   select(B.Code, A.Level.Name, D.Unit.Amount, Intake_Amount_g)
 
-# ────────────────────────────────────────────────────────────────────────────
-# (c) Merge the two sources, prefer feed-intake -----------------------------
-# --- Final merge: prefer feed-intake total when available ---
+## 3. MERGE SOURCES AND FILTER TO ABSOLUTE MASS UNITS -----------------------
+
+# we only trust totals in "g" or "kg" (absolute mass per animal/day)
+valid_total_units <- c("g", "kg")
+
 total_amounts <- feed_intake_diet_g %>%
-  full_join(total_ingr, by = c("B.Code", "A.Level.Name", "D.Unit.Amount")) %>%
+  full_join(total_ingr,
+            by = c("B.Code", "A.Level.Name", "D.Unit.Amount")) %>%
   mutate(
-    Total_Amount = coalesce(Intake_Amount_g, Total_Amount_ingr)  # prefer measured intake
+    # Prefer measured intake if available, otherwise ingredient sum
+    Total_Amount = coalesce(Intake_Amount_g, Total_Amount_ingr)
   ) %>%
-  select(B.Code, A.Level.Name, D.Unit.Amount, Total_Amount)
+  select(B.Code, A.Level.Name, D.Unit.Amount, Total_Amount) %>%
+  # keep only absolute mass units and positive totals
+  filter(
+    D.Unit.Amount %in% valid_total_units,
+    !is.na(Total_Amount),
+    Total_Amount > 0
+  )
 
+## 4. CHECK UNIT CORRESPONDENCE (ingredients vs totals) ---------------------
 
-# ────────────────────────────────────────────────────────────────────────────
-# 2.  Check unit correspondence  ---------------------------------------------
 unit_check <- ingredients %>%
   select(B.Code, A.Level.Name, Ingredient_Unit = D.Unit.Amount) %>%
   distinct() %>%
@@ -77,35 +83,50 @@ unit_check <- ingredients %>%
   ) %>%
   mutate(Consistent_Units = Ingredient_Unit == Total_Unit)
 
-# Keep only diets whose units match
+# Keep only diets where ingredient units and total units match
 consistent_unit_diets <- unit_check %>%
   filter(Consistent_Units) %>%
   select(B.Code, A.Level.Name)
 
+# Ingredients used for % calculations:
+#   - diet has consistent units
+#   - D.Amount is non-missing (missing = not present)
 ingredients_clean <- ingredients %>%
-  semi_join(consistent_unit_diets, by = c("B.Code", "A.Level.Name"))
+  semi_join(consistent_unit_diets, by = c("B.Code", "A.Level.Name")) %>%
+  filter(!is.na(D.Amount))
 
 totals_clean <- total_amounts %>%
   semi_join(consistent_unit_diets, by = c("B.Code", "A.Level.Name"))
 
-# ────────────────────────────────────────────────────────────────────────────
-# 3.  Percentage contribution of each ingredient -----------------------------
-diet_percentages <- ingredients_clean %>% 
-  left_join(totals_clean,
-            by = c("B.Code", "A.Level.Name", "D.Unit.Amount")) %>% 
+## 5. PERCENTAGE CONTRIBUTION OF EACH INGREDIENT ----------------------------
+
+diet_percentages <- ingredients_clean %>%
+  left_join(
+    totals_clean,
+    by = c("B.Code", "A.Level.Name", "D.Unit.Amount")
+  ) %>%
   mutate(
-    Percentage_of_Diet = ifelse(Total_Amount > 0,
-                                (D.Amount / Total_Amount) * 100,
-                                NA_real_)
-  ) %>% 
+    Percentage_of_Diet = ifelse(
+      Total_Amount > 0,
+      (D.Amount / Total_Amount) * 100,
+      NA_real_
+    )
+  ) %>%
   select(
     B.Code, A.Level.Name, D.Item, D.Type,
     D.Amount, D.Unit.Amount, Percentage_of_Diet
   )
 
-# (optional) remove helpers --------------------------------------------------
-rm(consistent_diets, diet_completeness, total_ingr,
-   feed_intake_diet_g, unit_check, consistent_unit_diets)
+# optional cleanup
+rm(
+  ingredients_nonmissing,
+  consistent_diets,
+  total_ingr,
+  feed_intake_diet_g,
+  unit_check,
+  consistent_unit_diets,
+  valid_total_units
+)
 
 ```
 
@@ -138,10 +159,8 @@ The lines that have 0 as validation are the ones that were feeding ad libitum fo
 dir.create(file.path("data"), showWarnings = FALSE, recursive = TRUE)
 
 # 1) merged metadata after all corrections
-write.csv(diet_percentages,
-        file.path("data","diet_percentages.csv"))
-write.csv(total_amounts,
-        file.path("data","total_amounts.csv"))
+write.csv(diet_percentages,"C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/diet_percentages.csv")
+write.csv(total_amounts,"C:/Users/mlolita/OneDrive - CGIAR/Alliance - ClimateActionNetZero - 1_Projects/G227-A1712_SAAF/2_Technical & Data/Lolita Emissions Paper/Emission_Analysis/data/total_amounts.csv")
 
 
 ```
